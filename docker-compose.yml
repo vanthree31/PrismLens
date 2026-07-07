@@ -1,0 +1,49 @@
+# Global News Briefing - Docker Compose
+# Usage: docker-compose up -d
+
+version: '3.8'
+
+services:
+  # ═══════════════════════════════════════════
+  # Main Application
+  # ═══════════════════════════════════════════
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: global-news-briefing
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./output:/app/output
+      - ./cache:/app/cache
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config:/app/config:ro
+      - ./prompts:/app/prompts:ro
+    environment:
+      - TZ=Asia/Shanghai
+    networks:
+      - app-network
+
+  # ═══════════════════════════════════════════
+  # Redis (Optional - for caching & future API)
+  # ═══════════════════════════════════════════
+  redis:
+    image: redis:7-alpine
+    container_name: global-news-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD:-changeme}
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    profiles:
+      - with-redis
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis-data:

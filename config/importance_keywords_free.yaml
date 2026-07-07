@@ -1,0 +1,237 @@
+# PrismLens 免费版 — 地缘风险信号关键词
+# 仅包含基础关键词，不含评分权重、传导链、量化锚点等核心算法参数
+# 完整版请购买 PrismLens 付费版
+
+# ═══════════════════════════════════════════════════
+# 分类关键词
+# ═══════════════════════════════════════════════════
+categories:
+  国际政治:
+    weight: 3
+    keywords:
+      - "sanctions package"
+      - "制裁措施"
+      - "diplomatic talks"
+      - "外交谈判"
+      - "bilateral summit"
+      - "双边峰会"
+      - "UN Security Council"
+      - "联合国安理会"
+      - "NATO expansion"
+      - "北约东扩"
+      - "BRICS summit"
+      - "金砖峰会"
+      - "trade war"
+      - "贸易战"
+      - "tariff escalation"
+      - "关税升级"
+      - "embargo"
+      - "禁运"
+      - "territorial dispute"
+      - "领土争端"
+
+  军事:
+    weight: 4
+    keywords:
+      - "carrier strike group"
+      - "航母打击群"
+      - "military drill"
+      - "军事演习"
+      - "missile test"
+      - "导弹试射"
+      - "hypersonic weapon"
+      - "高超音速武器"
+      - "nuclear submarine"
+      - "核潜艇"
+      - "arms deal"
+      - "军售协议"
+      - "troop deployment"
+      - "军队部署"
+      - "military buildup"
+      - "军事集结"
+      - "drone strike"
+      - "无人机打击"
+      - "ceasefire"
+      - "停火"
+
+  地缘冲突:
+    weight: 5
+    keywords:
+      - "escalation"
+      - "升级"
+      - "invasion"
+      - "入侵"
+      - "occupation"
+      - "占领"
+      - "civil war"
+      - "内战"
+      - "coup"
+      - "政变"
+      - "insurgency"
+      - "叛乱"
+      - "border clash"
+      - "边境冲突"
+      - "siege"
+      - "围困"
+      - "humanitarian crisis"
+      - "人道主义危机"
+      - "refugee"
+      - "难民"
+
+  金融风险:
+    weight: 4
+    keywords:
+      - "interest rate hike"
+      - "加息"
+      - "inflation surge"
+      - "通胀飙升"
+      - "recession"
+      - "衰退"
+      - "debt crisis"
+      - "债务危机"
+      - "bank failure"
+      - "银行倒闭"
+      - "currency crash"
+      - "货币崩盘"
+      - "market crash"
+      - "市场崩盘"
+      - "default"
+      - "违约"
+      - "bond yield surge"
+      - "债券收益率飙升"
+      - "capital flight"
+      - "资本外流"
+
+  能源航运:
+    weight: 4
+    keywords:
+      - "oil price surge"
+      - "油价飙升"
+      - "OPEC cut"
+      - "OPEC减产"
+      - "energy crisis"
+      - "能源危机"
+      - "shipping disruption"
+      - "航运中断"
+      - "pipeline"
+      - "管线"
+      - "LNG"
+      - "liquefied natural gas"
+      - "液化天然气"
+      - "strait blockade"
+      - "海峡封锁"
+      - "tanker"
+      - "油轮"
+      - "supply chain"
+      - "供应链"
+
+  科技竞争:
+    weight: 3
+    keywords:
+      - "chip ban"
+      - "芯片禁令"
+      - "export control"
+      - "出口管制"
+      - "semiconductor"
+      - "半导体"
+      - "AI"
+      - "人工智能"
+      - "quantum computing"
+      - "量子计算"
+      - "cyber attack"
+      - "网络攻击"
+      - "tech decoupling"
+      - "科技脱钩"
+      - "5G"
+      - "satellite"
+      - "卫星"
+      - "space weapon"
+      - "太空武器"
+
+  资源安全:
+    weight: 3
+    keywords:
+      - "rare earth"
+      - "稀土"
+      - "lithium"
+      - "锂"
+      - "cobalt"
+      - "钴"
+      - "uranium"
+      - "铀"
+      - "food crisis"
+      - "粮食危机"
+      - "grain export ban"
+      - "粮食出口禁令"
+      - "fertilizer"
+      - "化肥"
+      - "water scarcity"
+      - "水资源短缺"
+      - "critical minerals"
+      - "关键矿产"
+
+  社会稳定:
+    weight: 2
+    keywords:
+      - "protest"
+      - "抗议"
+      - "riot"
+      - "骚乱"
+      - "strike"
+      - "罢工"
+      - "election"
+      - "选举"
+      - "political crisis"
+      - "政治危机"
+      - "regime change"
+      - "政权更迭"
+      - "sanctions impact"
+      - "制裁影响"
+      - "public unrest"
+      - "社会动荡"
+
+# ═══════════════════════════════════════════════════
+# 信号等级定义
+# ═══════════════════════════════════════════════════
+signal_levels:
+  S:
+    name: "全球战略级变化"
+    description: "多国政府参与、金融市场剧烈波动、军事/能源重大变化"
+    threshold: 80
+  A:
+    name: "重大区域风险"
+    description: "区域政府介入、制裁/出口管制升级、军事部署变化"
+    threshold: 60
+  B:
+    name: "持续观察信号"
+    description: "多媒体报道、趋势性变化、尚未升级"
+    threshold: 35
+  C:
+    name: "短期噪音"
+    description: "单一来源、情绪性报道、无实质政策变化"
+    threshold: 0
+
+# ═══════════════════════════════════════════════════
+# 负面过滤词（降低噪音）
+# ═══════════════════════════════════════════════════
+negative_filters:
+  - "celebrity"
+  - "entertainment"
+  - "sports"
+  - "weather forecast"
+  - "horoscope"
+  - "recipe"
+  - "fashion"
+  - "gossip"
+  - "reality show"
+  - "award ceremony"
+  - "名人"
+  - "娱乐"
+  - "体育"
+  - "天气预报"
+  - "星座"
+  - "食谱"
+  - "时尚"
+  - "八卦"
+  - "综艺节目"
+  - "颁奖典礼"

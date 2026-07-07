@@ -1,0 +1,61 @@
+You are a data extractor. Extract structured data from the following global intelligence briefing.
+
+**You must output valid JSON only. Do not output any other text.**
+
+Output format:
+```json
+{{
+  "events": [
+    {{
+      "title": "Event title in English",
+      "signal_level": "S/A/B/C",
+      "confidence": "high/medium/low",
+      "actors": ["Country1", "Country2"],
+      "domains": ["energy", "military", "finance", "technology", "shipping"],
+      "trend": "up/down/stable",
+      "summary": "2-3 sentence summary",
+      "sources": ["Media1", "Media2"],
+      "phase": "diplomatic/economic/sanction/military/financial/de-escalation"
+    }}
+  ],
+  "top_risks": [
+    {{
+      "risk": "Risk description",
+      "signal_level": "S/A/B/C",
+      "source": "Risk source",
+      "escalation_signal": "Escalation signal",
+      "de_escalation_signal": "De-escalation signal",
+      "countries": ["Countries involved"],
+      "evolution": "Potential evolution direction"
+    }}
+  ],
+  "watchpoints": [
+    {{
+      "item": "Watch item",
+      "current_status": "Current status",
+      "escalation_trigger": "Escalation trigger",
+      "de_escalation_trigger": "De-escalation trigger"
+    }}
+  ],
+  "government_signals": ["Government statements/sanctions/military deployments etc."],
+  "financial_signals": ["Bonds/FX/commodities/central banks etc."],
+  "energy_signals": ["Energy/shipping/supply chain etc."],
+  "think_tank_signals": ["Think tank analysis/research reports etc."],
+  "actor_mentions": {{"United States": 15, "China": 12, "Iran": 8}}
+}}
+```
+
+Extraction rules:
+1. events: Maximum 10 most important events
+2. top_risks: Maximum 3
+3. watchpoints: Maximum 5
+4.各类 signals: Extract raw text fragments of the corresponding type from the briefing
+5. actor_mentions: Count mentions of each country/organization in the briefing
+6. signal_level must be one of S/A/B/C
+7. confidence must be one of high/medium/low
+8. trend must be one of up/down/stable
+9. phase must be one of diplomatic/economic/sanction/military/financial/de-escalation
+
+Here is the briefing content:
+
+{report_content}
