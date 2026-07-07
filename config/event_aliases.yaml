@@ -1,0 +1,126 @@
+# 事件别名配置
+# 用于 canonicalize_event_id() 将不同标题映射到同一事件 ID
+#
+# priority: 数字越大优先级越高，避免主题污染
+# keywords: 触发关键词（子串匹配）
+# exclude: 排除关键词（若标题包含则跳过此主题）
+
+event_aliases:
+  中东航运风险:
+    priority: 10
+    keywords:
+      - 霍尔木兹
+      - 红海
+      - 胡塞
+      - 航运中断
+      - 油轮
+      - hormuz
+      - red sea
+      - shipping disruption
+    exclude:
+      - 供应链
+      - 集装箱
+
+  台海局势:
+    priority: 10
+    keywords:
+      - 台湾
+      - 台海
+      - 两岸
+      - taiwan
+      - cross-strait
+    exclude: []
+
+  AI芯片出口管制:
+    priority: 9
+    keywords:
+      - 芯片禁令
+      - 出口管制
+      - 半导体
+      - chip ban
+      - export control
+      - NVIDIA
+      - HBM
+    exclude: []
+
+  俄乌冲突:
+    priority: 8
+    keywords:
+      - 乌克兰
+      - 俄乌
+      - ukraine
+      - 北约东扩
+    exclude:
+      - 俄罗斯经济
+      - 俄中贸易
+
+  全球金融风险:
+    priority: 7
+    keywords:
+      - 债券抛售
+      - 美债
+      - 收益率飙升
+      - debt crisis
+      - bond sell-off
+      - 通胀飙升
+      - inflation surge
+    exclude:
+      - 油价
+      - 天然气
+
+  中东冲突:
+    priority: 8
+    keywords:
+      - 加沙
+      - 以色列
+      - 伊朗
+      - gaza
+      - israel
+      - iran
+      - 黎巴嫩
+      - 停火
+    exclude: []
+
+  去美元化:
+    priority: 6
+    keywords:
+      - 去美元化
+      - 金砖货币
+      - de-dollarization
+      - BRICS currency
+    exclude: []
+
+  稀土与关键矿产:
+    priority: 6
+    keywords:
+      - 稀土
+      - 锂
+      - 钴
+      - rare earth
+      - lithium
+      - cobalt
+    exclude: []
+
+  全球供应链:
+    priority: 5
+    keywords:
+      - 供应链中断
+      - 集装箱危机
+      - supply chain disruption
+      - 港口拥堵
+    exclude:
+      - 霍尔木兹
+      - 红海
+      - 胡塞
+
+  能源危机:
+    priority: 6
+    keywords:
+      - 油价飙升
+      - 天然气危机
+      - OPEC减产
+      - oil surge
+      - energy crisis
+    exclude:
+      - 油价小幅
+      - 能源转型

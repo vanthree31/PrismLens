@@ -1,0 +1,60 @@
+你是一个数据提取器。从以下国际局势日报中提取结构化数据。
+
+**你必须只输出合法 JSON，不要输出任何其他文字。**
+
+输出格式：
+```json
+{{
+  "events": [
+    {{
+      "title": "事件中文标题",
+      "signal_level": "S/A/B/C",
+      "confidence": "高/中/低",
+      "actors": ["国家1", "国家2"],
+      "domains": ["能源", "军事", "金融", "科技", "航运"],
+      "trend": "up/down/stable",
+      "summary": "2-3句概括",
+      "sources": ["媒体1", "媒体2"],
+      "phase": "diplomatic/economic/sanction/military/financial/de-escalation"
+    }}
+  ],
+  "top_risks": [
+    {{
+      "risk": "风险描述",
+      "signal_level": "S/A/B/C",
+      "source": "风险来源",
+      "escalation_signal": "升级信号",
+      "de_escalation_signal": "缓和信号",
+      "countries": ["涉及国家"],
+      "evolution": "潜在演化方向"
+    }}
+  ],
+  "watchpoints": [
+    {{
+      "item": "观察项",
+      "current_status": "当前状态",
+      "escalation_trigger": "升级触发条件",
+      "de_escalation_trigger": "缓和触发条件"
+    }}
+  ],
+  "government_signals": ["政府声明/制裁/军事部署等"],
+  "financial_signals": ["债券/汇率/商品/央行等"],
+  "energy_signals": ["能源/航运/供应链等"],
+  "think_tank_signals": ["智库分析/研究报告等"],
+  "actor_mentions": {{"美国": 15, "中国": 12, "伊朗": 8}}
+}}
+
+提取规则：
+1. events: 最多 10 个最重要的事件
+2. top_risks: 最多 3 个
+3. watchpoints: 最多 5 个
+4. 各类 signals: 从日报中提取对应类型的原始文本片段
+5. actor_mentions: 统计每个国家/组织在日报中被提及的次数
+6. signal_level 必须是 S/A/B/C 之一
+7. confidence 必须是 高/中/低 之一
+8. trend 必须是 up/down/stable 之一
+9. phase 必须是 diplomatic/economic/sanction/military/financial/de-escalation 之一
+
+以下是日报内容：
+
+{report_content}

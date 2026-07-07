@@ -1,0 +1,149 @@
+# PrismLens 免费版新闻源配置
+# 仅包含 10 个核心新闻源，覆盖主要区域
+# 完整版（101+ 源）请购买 PrismLens 付费版
+
+# ─────────────────────────────────────────────────
+# 抓取策略
+# ─────────────────────────────────────────────────
+fetch_strategy:
+  tier_1_direct_rss:
+    priority: 10
+    description: "核心源：直接 RSS feed，最高优先级"
+    timeout: 20
+    max_retries: 3
+  tier_2_google_news:
+    priority: 6
+    description: "补充源：Google News RSS 代理，中等优先级"
+    timeout: 15
+    max_retries: 2
+
+health_thresholds:
+  min_success_rate: 0.3
+  cooldown_hours: 24
+  max_consecutive_fails: 5
+
+sources:
+  # ═══════════════════════════════════════════════
+  # 免费版：10 个核心新闻源
+  # ═══════════════════════════════════════════════
+
+  # 北美
+  - name: "Reuters"
+    url: "https://news.google.com/rss/search?q=site:reuters.com+world&hl=en&gl=US&ceid=US:en"
+    type: rss
+    region: "北美"
+    media_type: mainstream_media
+    narrative_alignment: neutral
+    credibility: 9
+    signal_weight: 8
+    bias_score: 2
+    weight: 9
+    tier: 1
+
+  - name: "CNN"
+    url: "http://rss.cnn.com/rss/edition_world.rss"
+    type: rss
+    region: "北美"
+    media_type: mainstream_media
+    narrative_alignment: western_liberal
+    credibility: 7
+    signal_weight: 6
+    bias_score: 5
+    weight: 8
+
+  # 欧洲
+  - name: "BBC"
+    url: "https://feeds.bbci.co.uk/news/world/rss.xml"
+    type: rss
+    region: "欧洲"
+    media_type: mainstream_media
+    narrative_alignment: western_liberal
+    credibility: 8
+    signal_weight: 7
+    bias_score: 3
+    weight: 8
+    tier: 1
+
+  - name: "Financial Times"
+    url: "https://www.ft.com/rss/home/uk"
+    type: rss
+    region: "欧洲"
+    media_type: financial_media
+    narrative_alignment: financial_capital
+    credibility: 9
+    signal_weight: 8
+    bias_score: 3
+    weight: 9
+    tier: 1
+
+  # 中东
+  - name: "Al Jazeera"
+    url: "https://www.aljazeera.com/xml/rss/all.xml"
+    type: rss
+    region: "中东"
+    media_type: mainstream_media
+    narrative_alignment: anti_western
+    credibility: 6
+    signal_weight: 7
+    bias_score: 6
+    weight: 7
+
+  # 亚洲
+  - name: "Nikkei Asia"
+    url: "https://asia.nikkei.com/rss"
+    type: rss
+    region: "亚洲"
+    media_type: financial_media
+    narrative_alignment: neutral
+    credibility: 8
+    signal_weight: 7
+    bias_score: 2
+    weight: 8
+    tier: 1
+
+  # 中国
+  - name: "新华社英文版"
+    url: "https://news.google.com/rss/search?q=site:xinhuanet.com+english&hl=en&gl=US&ceid=US:en"
+    type: rss
+    region: "中国"
+    media_type: state_media
+    narrative_alignment: chinese_state
+    credibility: 5
+    signal_weight: 7
+    bias_score: 7
+    weight: 6
+
+  - name: "CGTN"
+    url: "https://news.google.com/rss/search?q=site:cgtn.com&hl=en&gl=US&ceid=US:en"
+    type: rss
+    region: "中国"
+    media_type: state_media
+    narrative_alignment: chinese_state
+    credibility: 4
+    signal_weight: 6
+    bias_score: 8
+    weight: 5
+
+  # 俄罗斯
+  - name: "RT"
+    url: "https://www.rt.com/rss/news/"
+    type: rss
+    region: "俄罗斯"
+    media_type: state_media
+    narrative_alignment: russian_state
+    credibility: 3
+    signal_weight: 6
+    bias_score: 9
+    weight: 4
+
+  # 大洋洲
+  - name: "ABC Australia"
+    url: "https://www.abc.net.au/news/feed/2942460/rss.xml"
+    type: rss
+    region: "大洋洲"
+    media_type: mainstream_media
+    narrative_alignment: neutral
+    credibility: 8
+    signal_weight: 5
+    bias_score: 2
+    weight: 7

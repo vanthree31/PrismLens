@@ -1,0 +1,76 @@
+[project]
+name = "global-news-briefing"
+version = "2.2.0"
+description = "PrismLens Global Intelligence - 101源多阵营战略情报系统"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "PrismLens Team"}
+]
+keywords = ["osint", "intelligence", "geopolitics", "news", "ai"]
+dependencies = [
+    "feedparser>=6.0",
+    "requests>=2.31",
+    "beautifulsoup4>=4.12",
+    "python-dotenv>=1.0",
+    "PyYAML>=6.0",
+    "markdown>=3.5",
+    "jinja2>=3.1",
+    "tenacity>=8.2",
+    "lxml>=5.0",
+    "yfinance>=0.2.31",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[tool.ruff]
+# Ruff configuration
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.",
+    "raise NotImplementedError",
+]

@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Environment
+.env
+
+# Data (mount as volume)
+output/
+cache/
+data/
+logs/
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+docker-compose.yml
+docker-compose.override.yml
+
+# Docs
+docs/
+*.md
+!README.md
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
