@@ -1,0 +1,62 @@
+# 主题词表 (Topics Dictionary)
+# 用于事件 ID 生成、主题分类、风险传导
+#
+# 格式: code -> {names: [别名列表], risk_chain}
+# risk_chain: 该主题的风险传导路径（用于 AI 分析参考）
+
+topics:
+  taiwan-strait:
+    names: ["台海", "台湾", "Taiwan", "Taiwan Strait", "cross-strait", "两岸"]
+    risk_chain: ["半导体供应", "科技供应链", "全球贸易", "避险情绪", "军工"]
+
+  hormuz:
+    names: ["霍尔木兹", "Hormuz", "Strait of Hormuz", "霍尔木兹海峡"]
+    risk_chain: ["能源价格", "航运成本", "通胀预期", "利率预期", "风险资产"]
+
+  red-sea:
+    names: ["红海", "Red Sea", "Bab el-Mandeb"]
+    risk_chain: ["航运成本", "保险费率", "供应链延迟"]
+
+  gaza:
+    names: ["加沙", "Gaza", "巴勒斯坦", "Palestine"]
+    risk_chain: ["中东稳定", "油价", "地区冲突扩大"]
+
+  russia-ukraine:
+    names: ["俄乌", "乌克兰", "Ukraine", "Russia-Ukraine", "Donbas"]
+    risk_chain: ["能源供应", "粮食安全", "欧洲安全", "北约"]
+
+  ai-chip:
+    names: ["AI芯片", "AI chip", "半导体", "semiconductor", "芯片", "chip"]
+    risk_chain: ["AI算力", "云计算成本", "科技资本开支", "国产替代"]
+
+  oil:
+    names: ["油价", "原油", "石油", "oil", "crude oil", "LNG", "天然气", "natural gas"]
+    risk_chain: ["上游成本", "制造业成本", "消费通胀", "央行政策"]
+
+  bond:
+    names: ["债券", "美债", "国债", "bond", "treasury", "收益率", "yield"]
+    risk_chain: ["流动性", "融资成本", "新兴市场", "避险资产"]
+
+  rare-earth:
+    names: ["稀土", "rare earth", "关键矿产", "critical mineral", "锂", "lithium", "钴", "cobalt"]
+    risk_chain: ["新能源", "电池", "国防工业", "供应链安全"]
+
+  supply-chain:
+    names: ["供应链", "supply chain", "集装箱", "container", "航运", "shipping"]
+    risk_chain: ["制造业", "消费品价格", "全球贸易"]
+
+  de-dollar:
+    names: ["去美元化", "de-dollarization", "金砖货币", "BRICS currency", "储备货币"]
+    risk_chain: ["美元地位", "外汇储备", "国际支付"]
+
+  nuclear:
+    names: ["核", "核武", "nuclear", "核武器", "核试验"]
+    risk_chain: ["军备竞赛", "地区安全", "不扩散体系"]
+
+  climate:
+    names: ["气候", "climate", "碳排放", "carbon emission", "能源转型"]
+    risk_chain: ["能源政策", "产业转型", "碳关税"]
+
+  cyber:
+    names: ["网络攻击", "cyber attack", "黑客", "hacker", "数据泄露"]
+    risk_chain: ["关键基础设施", "金融安全", "国家安全"]

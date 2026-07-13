@@ -11,15 +11,17 @@
 """
 
 import logging
+import os
 import re
 import smtplib
-import traceback
 from datetime import datetime
+from email import encoders
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
 from pathlib import Path
+
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 logger = logging.getLogger("global_news.mailer")
 
@@ -31,15 +33,15 @@ def _extract_plain_text(html_content: str) -> str:
     简单策略：提取标题和关键段落，去掉所有标签
     """
     # 提取 h2 标题
-    h2_titles = re.findall(r'<h2[^>]*>(.*?)</h2>', html_content, re.DOTALL)
+    h2_titles = re.findall(r"<h2[^>]*>(.*?)</h2>", html_content, re.DOTALL)
     # 去除 HTML 标签
-    clean_titles = [re.sub(r'<[^>]+>', '', t).strip() for t in h2_titles]
+    clean_titles = [re.sub(r"<[^>]+>", "", t).strip() for t in h2_titles]
 
     # 提取前几个段落文本
-    paragraphs = re.findall(r'<p>(.*?)</p>', html_content, re.DOTALL)
+    paragraphs = re.findall(r"<p>(.*?)</p>", html_content, re.DOTALL)
     clean_paras = []
     for p in paragraphs:
-        text = re.sub(r'<[^>]+>', '', p).strip()
+        text = re.sub(r"<[^>]+>", "", p).strip()
         if len(text) > 20 and len(text) < 500:  # 过滤太短或太长的
             clean_paras.append(text)
 
@@ -97,6 +99,13 @@ def send_report(
         logger.error(f"报告文件不存在: {report_path}")
         return False
 
+    # Dry-run 安全检查（借鉴 HN Briefing Agent 模式）
+    delivery_mode = os.environ.get("AGENTSCOUT_DELIVERY", "").lower()
+    if delivery_mode != "live":
+        logger.info("[DRY-RUN] 邮件未实际发送（设置 AGENTSCOUT_DELIVERY=live 以启用真实发送）")
+        logger.info(f"[DRY-RUN] 收件人: {smtp_to}, 报告: {report_path.name}")
+        return True  # dry-run 成功，不阻塞流程
+
     # 读取 HTML 内容
     try:
         html_content = report_path.read_text(encoding="utf-8")
@@ -109,7 +118,9 @@ def send_report(
 
     # 构建邮件
     today = datetime.now().strftime("%Y-%m-%d")
-    subject = f"Global Intelligence Briefing — {today}" if lang == "en" else f"全球局势日报 — {today}"
+    subject = (
+        f"Global Intelligence Briefing — {today}" if lang == "en" else f"全球局势日报 — {today}"
+    )
 
     # 创建多部分邮件
     msg = MIMEMultipart()
@@ -120,46 +131,89 @@ def send_report(
     # 添加纯文本正文
     msg.attach(MIMEText(plain_text, "plain", "utf-8"))
 
-    # 添加 HTML 文件作为附件
+    # 添加 HTML 文件作为附件（检查大小）
+    html_bytes = html_content.encode("utf-8")
+    max_attachment_bytes = 45 * 1024 * 1024  # 45MB，留余量避免触发服务器限制
+    if len(html_bytes) > max_attachment_bytes:
+        logger.error(
+            f"附件过大: {len(html_bytes) / 1024 / 1024:.1f}MB，超过 45MB 限制。"
+            f"请减少报告内容或拆分发送。"
+        )
+        return False
+
     attachment = MIMEBase("application", "octet-stream")
-    attachment.set_payload(html_content.encode("utf-8"))
+    attachment.set_payload(html_bytes)
     encoders.encode_base64(attachment)
 
     # 使用报告文件名作为附件名
     filename = report_path.name
-    attachment.add_header(
-        "Content-Disposition",
-        "attachment",
-        filename=("utf-8", "", filename)
-    )
+    attachment.add_header("Content-Disposition", "attachment", filename=("utf-8", "", filename))
     msg.attach(attachment)
 
-    # 发送
-    try:
-        if smtp_port == 465:
-            # SSL 连接
-            with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=30) as server:
-                server.login(smtp_user, smtp_pass)
-                server.sendmail(smtp_user, smtp_to, msg.as_string())
-        else:
-            # STARTTLS 连接
-            with smtplib.SMTP(smtp_host, smtp_port, timeout=30) as server:
-                server.starttls()
-                server.login(smtp_user, smtp_pass)
-                server.sendmail(smtp_user, smtp_to, msg.as_string())
+    # 发送（smtp_to 可能是逗号分隔的多收件人，需转为列表）
+    recipients = [addr.strip() for addr in smtp_to.split(",") if addr.strip()]
 
+    try:
+        _smtp_send(smtp_host, smtp_port, smtp_user, smtp_pass, recipients, msg.as_string())
         logger.info(f"日报已发送至 {smtp_to}")
         return True
 
     except smtplib.SMTPAuthenticationError:
-        logger.error("SMTP 认证失败，请检查邮箱地址和授权码")
+        logger.error(
+            f"SMTP 认证失败 [{smtp_host}:{smtp_port}]。"
+            f"请检查: 1) 邮箱地址是否正确 2) 是否使用了授权码而非登录密码 "
+            f"3) QQ邮箱需在设置>账户中开启SMTP并生成授权码"
+        )
         return False
     except smtplib.SMTPConnectError:
-        logger.error(f"无法连接到 SMTP 服务器 {smtp_host}:{smtp_port}")
+        logger.error(
+            f"无法连接到 SMTP 服务器 {smtp_host}:{smtp_port}，已重试3次。请检查服务器地址和端口"
+        )
         return False
     except Exception as e:
-        logger.error(f"邮件发送失败: {type(e).__name__}: {e}")
+        logger.error(f"邮件发送失败 [{smtp_host}:{smtp_port}]: {e}", exc_info=True)
         return False
+
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=2, max=10),
+    retry=retry_if_exception_type(
+        (smtplib.SMTPServerDisconnected, smtplib.SMTPConnectError, ConnectionError, TimeoutError)
+    ),
+    reraise=True,
+)
+def _smtp_send(
+    smtp_host: str,
+    smtp_port: int,
+    smtp_user: str,
+    smtp_pass: str,
+    recipients: list[str],
+    msg_string: str,
+) -> None:
+    """SMTP 发送核心逻辑，带自动重试（仅对瞬时错误重试）"""
+    if smtp_port == 465:
+        with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=30) as server:
+            server.login(smtp_user, smtp_pass)
+            server.sendmail(smtp_user, recipients, msg_string)
+    else:
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=30) as server:
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            server.login(smtp_user, smtp_pass)
+            server.sendmail(smtp_user, recipients, msg_string)
+
+
+def _sanitize_error_detail(error_detail: str, max_len: int = 300) -> str:
+    """截断并清理错误详情，避免泄露内部路径和堆栈信息"""
+    # 移除常见的文件路径模式
+    sanitized = re.sub(r"[A-Za-z]:\\[^\s,;)]+", "[path]", error_detail)
+    sanitized = re.sub(r"/[a-zA-Z_][\w/]*/[^\s,;)]+", "[path]", sanitized)
+    # 截断过长内容
+    if len(sanitized) > max_len:
+        sanitized = sanitized[:max_len] + "...(已截断)"
+    return sanitized
 
 
 def send_failure_notification(
@@ -183,21 +237,24 @@ def send_failure_notification(
         True 发送成功，False 发送失败
     """
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    subject = f"⚠️ 全球局势日报生成失败 - {today}"
+    subject = f"全球局势日报生成失败 - {today}"
+
+    # 清理错误详情，避免泄露内部实现细节
+    safe_error = _sanitize_error_detail(error_detail)
 
     # 构建纯文本邮件
     body = f"""全球局势日报 - 运行失败通知
-{'=' * 50}
+{"=" * 50}
 
 失败时间: {today}
 错误详情:
-{error_detail}
+{safe_error}
 
-{'=' * 50}
+{"=" * 50}
 
 请检查以下内容:
-1. 日志文件: logs/briefing_{datetime.now().strftime('%Y%m%d')}.log
-2. 运行状态: data/runtime/current_run.json
+1. 查看系统日志获取详细错误信息
+2. 检查运行状态
 3. 网络连接和 API 配置
 
 --
@@ -210,21 +267,10 @@ Global News Briefing System
     msg["To"] = smtp_user  # 发给自己
 
     try:
-        if smtp_port == 465:
-            with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=30) as server:
-                server.login(smtp_user, smtp_pass)
-                server.sendmail(smtp_user, smtp_user, msg.as_string())
-        else:
-            with smtplib.SMTP(smtp_host, smtp_port, timeout=30) as server:
-                server.starttls()
-                server.login(smtp_user, smtp_pass)
-                server.sendmail(smtp_user, smtp_user, msg.as_string())
-
-        logger.info(f"失败通知已发送至 {smtp_user}")
-        print(f"[OK] 失败通知已发送至 {smtp_user}")
+        _smtp_send(smtp_host, smtp_port, smtp_user, smtp_pass, [smtp_user], msg.as_string())
+        logger.info("失败通知已发送")
         return True
 
     except Exception as e:
-        logger.error(f"失败通知发送失败: {type(e).__name__}: {e}")
-        print(f"[X] 失败通知发送失败: {e}")
+        logger.error(f"失败通知发送失败 [{smtp_host}:{smtp_port}]: {e}", exc_info=True)
         return False

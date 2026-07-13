@@ -7,12 +7,10 @@
 
 import json
 import logging
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Optional
 
-from src.utils import get_data_dir, get_today_str, load_phase_transitions_config
+from src.utils import get_data_dir, load_phase_transitions_config
 
 logger = logging.getLogger("global_news.evolution")
 
@@ -21,6 +19,7 @@ SCHEMA_VERSION = "1.0"
 # ─────────────────────────────────────────────────
 # 从配置加载（带 fallback）
 # ─────────────────────────────────────────────────
+
 
 def _load_phase_types() -> dict:
     """加载阶段类型定义"""
@@ -43,17 +42,22 @@ def _load_phase_deltas() -> dict:
     try:
         config = load_phase_transitions_config()
         result = {}
-        for key, info in config.get("phase_transitions", {}).items():
+        for _key, info in config.get("phase_transitions", {}).items():
             from_tuple = (info["from"], info["to"])
             result[from_tuple] = info["risk_delta"]
         return result
     except Exception:
         return {
-            ("diplomatic", "sanction"): 10, ("diplomatic", "military"): 25,
-            ("diplomatic", "economic"): 8, ("sanction", "military"): 25,
-            ("sanction", "economic"): 10, ("economic", "military"): 25,
-            ("economic", "financial"): 15, ("military", "financial"): 20,
-            ("military", "de-escalation"): -30, ("financial", "de-escalation"): -20,
+            ("diplomatic", "sanction"): 10,
+            ("diplomatic", "military"): 25,
+            ("diplomatic", "economic"): 8,
+            ("sanction", "military"): 25,
+            ("sanction", "economic"): 10,
+            ("economic", "military"): 25,
+            ("economic", "financial"): 15,
+            ("military", "financial"): 20,
+            ("military", "de-escalation"): -30,
+            ("financial", "de-escalation"): -20,
             ("de-escalation", "diplomatic"): -15,
         }
 
@@ -67,9 +71,11 @@ TIME_DECAY_HALF_LIFE_DAYS = 14  # 14天半衰期
 # 数据结构
 # ─────────────────────────────────────────────────
 
+
 @dataclass
 class PhaseRecord:
     """阶段记录"""
+
     date: str
     phase_type: str
     description: str
@@ -83,6 +89,7 @@ class PhaseRecord:
 @dataclass
 class EventEvolution:
     """单个事件的演化轨迹"""
+
     event_id: str
     title: str
     current_phase: str = "diplomatic"
@@ -94,14 +101,15 @@ class EventEvolution:
     last_updated: str = ""
 
     def to_dict(self) -> dict:
+        self.phases = [p.to_dict() if isinstance(p, PhaseRecord) else p for p in self.phases]
         d = asdict(self)
-        d["phases"] = [p.to_dict() if isinstance(p, PhaseRecord) else p for p in self.phases]
         return d
 
 
 @dataclass
 class DailyEvolutionReport:
     """每日演化报告"""
+
     date: str
     schema_version: str = SCHEMA_VERSION
     evolutions: list[EventEvolution] = field(default_factory=list)
@@ -109,14 +117,17 @@ class DailyEvolutionReport:
     phase_transitions_today: list[dict] = field(default_factory=list)
 
     def to_dict(self) -> dict:
+        self.evolutions = [
+            e.to_dict() if isinstance(e, EventEvolution) else e for e in self.evolutions
+        ]
         d = asdict(self)
-        d["evolutions"] = [e.to_dict() if isinstance(e, EventEvolution) else e for e in self.evolutions]
         return d
 
 
 # ─────────────────────────────────────────────────
 # 演化追踪器
 # ─────────────────────────────────────────────────
+
 
 class EvolutionTracker:
     """事件演化追踪器"""
@@ -146,7 +157,11 @@ class EvolutionTracker:
             eid = event.event_id if hasattr(event, "event_id") else event.get("event_id", "")
             title = event.title if hasattr(event, "title") else event.get("title", "")
             phase = event.phase if hasattr(event, "phase") else event.get("phase", "diplomatic")
-            signal = event.signal_level if hasattr(event, "signal_level") else event.get("signal_level", "C")
+            signal = (
+                event.signal_level
+                if hasattr(event, "signal_level")
+                else event.get("signal_level", "C")
+            )
             actors = event.actors if hasattr(event, "actors") else event.get("actors", [])
             summary = event.summary if hasattr(event, "summary") else event.get("summary", "")
 
@@ -174,23 +189,27 @@ class EvolutionTracker:
                 }
                 transitions_today.append(transition)
 
-                evolution.phases.append(PhaseRecord(
-                    date=date_str,
-                    phase_type=phase,
-                    description=summary[:200],
-                    signal_level=signal,
-                    risk_delta=risk_delta,
-                ))
+                evolution.phases.append(
+                    PhaseRecord(
+                        date=date_str,
+                        phase_type=phase,
+                        description=summary[:200],
+                        signal_level=signal,
+                        risk_delta=risk_delta,
+                    )
+                )
                 evolution.current_phase = phase
                 evolution.current_risk = max(0, min(100, evolution.current_risk + risk_delta))
 
             # 更新参与者
             new_actors = [a for a in actors if a not in self._get_all_actors(evolution)]
             if new_actors:
-                evolution.participants_timeline.append({
-                    "date": date_str,
-                    "new_actors": new_actors,
-                })
+                evolution.participants_timeline.append(
+                    {
+                        "date": date_str,
+                        "new_actors": new_actors,
+                    }
+                )
 
             evolution.last_updated = date_str
 
@@ -204,7 +223,11 @@ class EvolutionTracker:
         self._save_master(master)
 
         # 构建报告
-        active = [e for e in master.values() if e.last_updated >= (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")]
+        active = [
+            e
+            for e in master.values()
+            if e.last_updated >= (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+        ]
         report = DailyEvolutionReport(
             date=date_str,
             evolutions=active,
@@ -232,7 +255,7 @@ class EvolutionTracker:
         today = datetime.strptime(date_str, "%Y-%m-%d")
         import math
 
-        for eid, evolution in master.items():
+        for _eid, evolution in master.items():
             if not evolution.last_updated:
                 continue
             try:
@@ -249,14 +272,14 @@ class EvolutionTracker:
         if not self.master_file.exists():
             return {}
         try:
-            with open(self.master_file, "r", encoding="utf-8") as f:
+            with open(self.master_file, encoding="utf-8") as f:
                 data = json.load(f)
         except json.JSONDecodeError:
             # 尝试读取 .tmp 备份
             tmp_file = self.master_file.with_suffix(".json.tmp")
             if tmp_file.exists():
                 try:
-                    with open(tmp_file, "r", encoding="utf-8") as f:
+                    with open(tmp_file, encoding="utf-8") as f:
                         data = json.load(f)
                     logger.info("从 .tmp 备份恢复演化主数据库")
                 except Exception as e:
@@ -295,6 +318,7 @@ class EvolutionTracker:
     def _save_master(self, master: dict[str, EventEvolution]) -> None:
         """保存主演化数据库（原子写入：先写 .tmp 再 rename）"""
         import os
+
         data = {eid: e.to_dict() for eid, e in master.items()}
         tmp_file = self.master_file.with_suffix(".json.tmp")
         try:
@@ -305,8 +329,9 @@ class EvolutionTracker:
             logger.error(f"保存演化主数据库失败: {e}")
             raise
 
-    def _prune_inactive(self, master: dict[str, EventEvolution], date_str: str,
-                        inactive_days: int = 60) -> int:
+    def _prune_inactive(
+        self, master: dict[str, EventEvolution], date_str: str, inactive_days: int = 60
+    ) -> int:
         """
         归档长期不活跃的事件
 

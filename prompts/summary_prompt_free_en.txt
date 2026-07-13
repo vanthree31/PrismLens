@@ -32,7 +32,9 @@ Your task is not to repeat the news, but to:
 **Prohibited Behaviors**:
 - Background padding and common-knowledge descriptions
 - Repeating news facts
-- Vague assessments ("significant", "worth watching", etc.)
+- Vague assessments ("significant", "worth watching", "worth monitoring", "room for cooperation remains", etc.)
+- Vague data descriptions ("expected to hold steady", "approaching range", "nearly 5%" — must give exact numbers)
+- Universal statements ("structural opportunities better than systemic", "short-term range-bound trading")
 - Moral judgments and emotional language
 
 **Output Language**: Entirely in English. Do not paste Chinese headlines directly — must re-summarize in English.
@@ -48,6 +50,10 @@ Your task is not to repeat the news, but to:
 Please output strictly according to the following structure.
 
 # Global Intelligence Briefing
+
+**Data Cutoff Time**: [YYYY-MM-DD HH:MM UTC+8]
+**News Collection Window**: Past 24 hours
+**Source Coverage**: [X] news sources, [Y] articles
 
 ## I. Executive Summary
 
@@ -81,9 +87,12 @@ Overall Rating uses only: Extreme / High / Medium-High / Medium / Low
 List the 3-5 most important signals to monitor. Each item format (not table):
 
 **Watch Item**: [Name]
-**Current Status**: [One sentence]
-**Escalation Trigger**: [No more than 15 words, use "If..." format]
-**De-escalation Trigger**: [No more than 15 words, use "If..." format]
+**Current Status**: [One sentence, must include specific numbers]
+**Escalation Trigger**: [Must include quantitative threshold, e.g., "If Brent breaks $100/bbl, escalate to S-level"]
+**De-escalation Trigger**: [Must include quantitative threshold, e.g., "If attack frequency drops to 0/24h, de-escalate"]
+**Monitoring Method**: [Specific data source]
+
+Triggers must contain quantifiable thresholds — vague triggers prohibited.
 
 ## III. Core International Event Analysis
 
@@ -98,9 +107,10 @@ Structure for each event:
 
 **Event Summary**: 2-3 sentence high-density summary. No Chinese headlines — must summarize in English.
 
-**Narrative Comparison**:
-- Media A: what is emphasized / what is downplayed
-- Media B: what is emphasized / what is downplayed
+**Narrative Comparison** (A-level events must compare at least 3 camps, B-level at least 2):
+- Media A (camp label): what is emphasized / what is downplayed
+- Media B (camp label): what is emphasized / what is downplayed
+- If a camp did not cover the event today, must state and analyze the significance of their silence
 
 **Escalation Risk**: High/Medium/Low + brief reasoning
 
@@ -108,4 +118,24 @@ Structure for each event:
 
 Below are {news_count} important news articles collected today from {source_count} global sources:
 
-{news_content}
+## Regional Distribution
+
+{region_distribution}
+
+{region_balance_directive}
+
+## Event Clustering Results
+
+{stage2_clusters}
+
+## Full Event List
+
+{stage1_events}
+
+## Real-time Market Data
+
+{market_data_reference}
+
+## Source News Links
+
+{news_links}

@@ -50,6 +50,7 @@ sources:
     signal_weight: 6
     bias_score: 5
     weight: 8
+    tier: 1
 
   # 欧洲
   - name: "BBC"
@@ -82,15 +83,16 @@ sources:
     type: rss
     region: "中东"
     media_type: mainstream_media
-    narrative_alignment: anti_western
+    narrative_alignment: gulf_monarchy
     credibility: 6
     signal_weight: 7
     bias_score: 6
     weight: 7
+    tier: 1
 
   # 亚洲
   - name: "Nikkei Asia"
-    url: "https://asia.nikkei.com/rss"
+    url: "https://news.google.com/rss/search?q=site:asia.nikkei.com&hl=en&gl=US&ceid=US:en"
     type: rss
     region: "亚洲"
     media_type: financial_media
@@ -112,6 +114,7 @@ sources:
     signal_weight: 7
     bias_score: 7
     weight: 6
+    tier: 1
 
   - name: "CGTN"
     url: "https://news.google.com/rss/search?q=site:cgtn.com&hl=en&gl=US&ceid=US:en"
@@ -123,6 +126,7 @@ sources:
     signal_weight: 6
     bias_score: 8
     weight: 5
+    tier: 1
 
   # 俄罗斯
   - name: "RT"
@@ -135,6 +139,7 @@ sources:
     signal_weight: 6
     bias_score: 9
     weight: 4
+    tier: 1
 
   # 大洋洲
   - name: "ABC Australia"
@@ -147,3 +152,138 @@ sources:
     signal_weight: 5
     bias_score: 2
     weight: 7
+    tier: 1
+
+  # ═══════════════════════════════════════════════
+  # v2.3 新增：10 个区域/话题补充源
+  # ═══════════════════════════════════════════════
+
+  # 能源/大宗商品
+  - name: "OilPrice"
+    url: "https://oilprice.com/rss/main"
+    type: rss
+    region: "全球"
+    media_type: energy_media
+    narrative_alignment: neutral
+    credibility: 7
+    signal_weight: 8
+    bias_score: 2
+    weight: 8
+    tier: 1
+
+  # 亚太安全/科技竞争
+  - name: "The Diplomat"
+    url: "https://thediplomat.com/feed/"
+    type: rss
+    region: "亚洲"
+    media_type: security_analysis
+    narrative_alignment: neutral
+    credibility: 8
+    signal_weight: 8
+    bias_score: 3
+    weight: 8
+    tier: 1
+
+  # 智库/战略分析
+  - name: "Atlantic Council"
+    url: "https://www.atlanticcouncil.org/feed/"
+    type: rss
+    region: "北美"
+    media_type: think_tank
+    narrative_alignment: western_liberal
+    credibility: 8
+    signal_weight: 7
+    bias_score: 5
+    weight: 7
+    tier: 2
+
+  # 国防/军事分析
+  - name: "War on the Rocks"
+    url: "https://warontherocks.com/feed/"
+    type: rss
+    region: "北美"
+    media_type: military_analysis
+    narrative_alignment: neutral
+    credibility: 8
+    signal_weight: 7
+    bias_score: 3
+    weight: 7
+    tier: 2
+
+  # 印度/南亚
+  - name: "The Hindu"
+    url: "https://www.thehindu.com/news/international/feeder/default.rss"
+    type: rss
+    region: "南亚"
+    media_type: mainstream_media
+    narrative_alignment: neutral
+    credibility: 8
+    signal_weight: 7
+    bias_score: 3
+    weight: 7
+    tier: 1
+
+  # 东盟/东南亚
+  - name: "CNA"
+    url: "https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml"
+    type: rss
+    region: "东南亚"
+    media_type: mainstream_media
+    narrative_alignment: neutral
+    credibility: 8
+    signal_weight: 7
+    bias_score: 3
+    weight: 7
+    tier: 1
+
+  # 韩国/朝鲜半岛
+  - name: "Yonhap"
+    url: "https://en.yna.co.kr/RSS/news.xml"
+    type: rss
+    region: "东亚"
+    media_type: mainstream_media
+    narrative_alignment: neutral
+    credibility: 7
+    signal_weight: 6
+    bias_score: 4
+    weight: 6
+    tier: 2
+
+  # 中东深度分析
+  - name: "Al-Monitor"
+    url: "https://www.al-monitor.com/rss"
+    type: rss
+    region: "中东"
+    media_type: security_analysis
+    narrative_alignment: neutral
+    credibility: 7
+    signal_weight: 7
+    bias_score: 4
+    weight: 7
+    tier: 2
+
+  # 非洲大陆
+  - name: "AllAfrica"
+    url: "https://news.google.com/rss/search?q=site:allafrica.com&hl=en&gl=US&ceid=US:en"
+    type: rss
+    region: "非洲"
+    media_type: mainstream_media
+    narrative_alignment: neutral
+    credibility: 6
+    signal_weight: 5
+    bias_score: 3
+    weight: 5
+    tier: 2
+
+  # 航运/供应链
+  - name: "FreightWaves"
+    url: "https://news.google.com/rss/search?q=site:freightwaves.com&hl=en&gl=US&ceid=US:en"
+    type: rss
+    region: "全球"
+    media_type: logistics_media
+    narrative_alignment: neutral
+    credibility: 6
+    signal_weight: 5
+    bias_score: 2
+    weight: 5
+    tier: 2

@@ -1,0 +1,140 @@
+# 阶段转换规则 (Phase Transition Rules)
+# 统一 risk_scorer.py 和 evolution_tracker.py 的阶段转换定义
+#
+# risk_delta: 转换时的风险分数变化
+# description: 转换描述（用于日志和报告）
+
+phase_transitions:
+  # ─── 升级路径 ───
+  diplomatic_sanction:
+    from: diplomatic
+    to: sanction
+    risk_delta: 10
+    description: "外交摩擦升级为制裁"
+
+  diplomatic_military:
+    from: diplomatic
+    to: military
+    risk_delta: 25
+    description: "外交摩擦升级为军事行动"
+
+  diplomatic_economic:
+    from: diplomatic
+    to: economic
+    risk_delta: 8
+    description: "外交摩擦扩展为经济对抗"
+
+  sanction_military:
+    from: sanction
+    to: military
+    risk_delta: 25
+    description: "制裁升级为军事行动"
+
+  sanction_economic:
+    from: sanction
+    to: economic
+    risk_delta: 10
+    description: "制裁扩展为经济对抗"
+
+  economic_military:
+    from: economic
+    to: military
+    risk_delta: 25
+    description: "经济对抗升级为军事行动"
+
+  economic_financial:
+    from: economic
+    to: financial
+    risk_delta: 15
+    description: "经济对抗传导至金融市场"
+
+  military_financial:
+    from: military
+    to: financial
+    risk_delta: 20
+    description: "军事冲突传导至金融市场"
+
+  # ─── 降温路径 ───
+  military_de-escalation:
+    from: military
+    to: de-escalation
+    risk_delta: -30
+    description: "军事冲突降温"
+
+  financial_de-escalation:
+    from: financial
+    to: de-escalation
+    risk_delta: -20
+    description: "金融风险缓解"
+
+  de-escalation_diplomatic:
+    from: de-escalation
+    to: diplomatic
+    risk_delta: -15
+    description: "降温恢复外交"
+
+# ─────────────────────────────────────────────────
+# 阶段类型定义
+# ─────────────────────────────────────────────────
+phase_types:
+  diplomatic:
+    label: "外交阶段"
+    risk_base: 20
+  economic:
+    label: "经济阶段"
+    risk_base: 40
+  sanction:
+    label: "制裁阶段"
+    risk_base: 55
+  military:
+    label: "军事阶段"
+    risk_base: 75
+  financial:
+    label: "金融传导"
+    risk_base: 65
+  de-escalation:
+    label: "降温阶段"
+    risk_base: 15
+
+# ─────────────────────────────────────────────────
+# 阶段检测关键词
+# ─────────────────────────────────────────────────
+phase_keywords:
+  sanction:
+    - "制裁"
+    - "sanction"
+    - "禁运"
+    - "embargo"
+    - "出口管制"
+    - "export control"
+    - "实体清单"
+    - "entity list"
+  military:
+    - "军演"
+    - "military"
+    - "部署"
+    - "deployment"
+    - "导弹"
+    - "航母"
+    - "carrier"
+    - "missile"
+    - "封锁"
+    - "blockade"
+  financial:
+    - "债券"
+    - "抛售"
+    - "收益率"
+    - "汇率"
+    - "资本外流"
+    - "bond"
+    - "selloff"
+    - "yield"
+    - "default"
+  de-escalation:
+    - "停火"
+    - "谈判"
+    - "缓和"
+    - "ceasefire"
+    - "negotiation"
+    - "dialogue"
+    - "对话"

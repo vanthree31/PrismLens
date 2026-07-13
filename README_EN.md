@@ -184,8 +184,7 @@ Premium features (`src/premium/`) are commercially licensed. See [COMMERCIAL.md]
 
 ## Contributors
 
-- PrismLens Team - Creator & Maintainer
-- Claude - AI Assistant (Code Review & Architecture)
+- vanthree31 - Creator & Maintainer
 
 ---
 

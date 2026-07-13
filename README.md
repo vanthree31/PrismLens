@@ -35,8 +35,8 @@ PrismLens 是一个基于 AI 的全球战略情报系统，每日自动聚合 10
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourusername/prism-lens.git
-cd prism-lens
+git clone https://github.com/vanthree31/PrismLens.git
+cd PrismLens
 
 # 创建虚拟环境
 python -m venv venv
@@ -83,23 +83,35 @@ python run.py
 ## 📁 项目结构
 
 ```
-prism-lens/
-├── src/                    # 源代码
-│   ├── fetcher.py         # RSS 新闻抓取器
-│   ├── summarizer.py      # AI 三阶段 Pipeline
-│   ├── generator.py       # HTML 报告生成
-│   ├── market_data.py     # 市场数据获取
-│   ├── risk_scorer.py     # 风险评分
-│   ├── event_graph.py     # 事件图谱
-│   ├── premium/           # 高级功能（付费）
-│   └── utils.py           # 工具函数
-├── config/                 # 配置文件
-│   ├── sources.yaml       # 新闻源配置
-│   └── importance_keywords.yaml  # 评分规则
-├── prompts/                # AI 提示词
-├── output/                 # 生成的报告
-├── data/                   # 运行时数据
-└── run.py                  # 主入口
+PrismLens/
+├── src/                        # 源代码
+│   ├── __init__.py
+│   ├── main.py                # 主流程编排
+│   ├── fetcher.py             # RSS 新闻抓取器
+│   ├── structured_extractor.py # 结构化事件提取
+│   ├── summarizer.py          # AI 三阶段 Pipeline
+│   ├── generator.py           # HTML 报告生成
+│   ├── mailer.py              # 邮件推送
+│   ├── market_data.py         # 市场数据获取
+│   ├── risk_scorer.py         # 风险评分
+│   ├── event_graph.py         # 事件图谱
+│   ├── evolution_tracker.py   # 趋势演化追踪
+│   ├── history_manager.py     # 历史数据管理
+│   ├── utils.py               # 工具函数
+│   └── premium/               # 高级功能（付费）
+│       ├── __init__.py
+│       ├── alert_system.py    # 实时预警
+│       ├── multi_camp_compare.py # 多阵营对比
+│       └── transmission_chain.py # 传导链验证
+├── config/                     # 配置文件
+│   ├── sources.yaml           # 付费版新闻源（101+）
+│   ├── sources_free.yaml      # 免费版新闻源（10）
+│   └── importance_keywords.yaml # 评分规则
+├── prompts/                    # AI 提示词（中/英文）
+├── output/                     # 生成的报告
+├── data/                       # 运行时数据
+├── memory/                     # 项目记忆
+└── run.py                      # 主入口
 ```
 
 ---
@@ -187,8 +199,7 @@ event_graph + risk_scorer + evolution_tracker
 
 ## Contributors
 
-- PrismLens Team - Creator & Maintainer
-- Claude - AI Assistant (Code Review & Architecture)
+- vanthree31 - Creator & Maintainer
 
 ---
 

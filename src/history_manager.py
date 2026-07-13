@@ -15,7 +15,6 @@ import re
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional
 
 from src.utils import get_history_dir, get_today_str
 
@@ -26,9 +25,11 @@ logger = logging.getLogger("global_news.history")
 # 历史数据模型
 # ─────────────────────────────────────────────────
 
+
 @dataclass
 class DailyHistory:
     """每日历史数据"""
+
     date: str
     clusters: list[str] = field(default_factory=list)
     signals: list[str] = field(default_factory=list)
@@ -49,17 +50,18 @@ class DailyHistory:
 # AI 输出解析器
 # ─────────────────────────────────────────────────
 
+
 def _extract_list_items(lines: list[str], start_idx: int, max_items: int = 15) -> list[str]:
     """从指定位置开始提取列表项，遇到下一个标题停止"""
     items = []
     for line in lines[start_idx:]:
         stripped = line.strip()
         # 遇到下一个标题停止（## 或 ###）
-        if re.match(r'^#{2,3}\s+', stripped) and items:
+        if re.match(r"^#{2,3}\s+", stripped) and items:
             break
         # 提取列表项（- 或 * 开头）
-        if re.match(r'^[-*]\s+', stripped):
-            item = re.sub(r'^[-*]\s+', '', stripped).strip()
+        if re.match(r"^[-*]\s+", stripped):
+            item = re.sub(r"^[-*]\s+", "", stripped).strip()
             if item and len(item) > 3:
                 items.append(item)
             if len(items) >= max_items:
@@ -74,7 +76,7 @@ def extract_signals_from_summary(summary: str) -> list[str]:
     查找包含 "信号"/"风险"/"观察哨" 的章节下的列表项
     """
     lines = summary.split("\n")
-    signal_pattern = re.compile(r'#{2,3}\s+.*?(?:信号|风险|观察哨)', re.IGNORECASE)
+    signal_pattern = re.compile(r"#{2,3}\s+.*?(?:信号|风险|观察哨)", re.IGNORECASE)
 
     for i, line in enumerate(lines):
         stripped = line.strip()
@@ -87,8 +89,8 @@ def extract_signals_from_summary(summary: str) -> list[str]:
     fallback = []
     for line in lines:
         stripped = line.strip()
-        if re.match(r'^[-*]\s+', stripped) and "风险" in stripped:
-            item = re.sub(r'^[-*]\s+', '', stripped).strip()
+        if re.match(r"^[-*]\s+", stripped) and "风险" in stripped:
+            item = re.sub(r"^[-*]\s+", "", stripped).strip()
             if item and len(item) > 5:
                 fallback.append(item)
             if len(fallback) >= 5:
@@ -103,7 +105,7 @@ def extract_clusters_from_summary(summary: str) -> list[str]:
     查找包含 "聚类"/"事件" 的章节下的列表项
     """
     lines = summary.split("\n")
-    cluster_pattern = re.compile(r'#{2,3}\s+.*?(?:聚类|事件聚类)', re.IGNORECASE)
+    cluster_pattern = re.compile(r"#{2,3}\s+.*?(?:聚类|事件聚类)", re.IGNORECASE)
 
     for i, line in enumerate(lines):
         stripped = line.strip()
@@ -116,8 +118,8 @@ def extract_clusters_from_summary(summary: str) -> list[str]:
     fallback = []
     for line in lines:
         stripped = line.strip()
-        if re.match(r'^###\s+', stripped):
-            title = re.sub(r'^###\s+', '', stripped).strip()
+        if re.match(r"^###\s+", stripped):
+            title = re.sub(r"^###\s+", "", stripped).strip()
             if title and len(title) > 3:
                 fallback.append(title)
             if len(fallback) >= 10:
@@ -135,17 +137,17 @@ def extract_regions_from_summary(summary: str) -> dict[str, list[str]]:
     lines = summary.split("\n")
 
     region_map = {
-        "北美": re.compile(r'北美|美国|加拿大', re.IGNORECASE),
-        "欧洲": re.compile(r'欧洲|欧盟|英国|德国|法国', re.IGNORECASE),
-        "俄罗斯/中东": re.compile(r'俄罗斯|中东|伊朗|以色列', re.IGNORECASE),
-        "亚洲": re.compile(r'亚洲|日本|韩国|印度', re.IGNORECASE),
-        "中国": re.compile(r'中国|新华社|CGTN', re.IGNORECASE),
-        "南美": re.compile(r'南美|巴西|阿根廷|智利|秘鲁|委内瑞拉|哥伦比亚|拉丁美洲', re.IGNORECASE),
-        "非洲": re.compile(r'非洲|南非|尼日利亚|肯尼亚|刚果|埃塞俄比亚|非盟', re.IGNORECASE),
-        "大洋洲": re.compile(r'大洋洲|澳大利亚|澳洲|新西兰|太平洋岛国|斐济|巴新', re.IGNORECASE),
+        "北美": re.compile(r"北美|美国|加拿大", re.IGNORECASE),
+        "欧洲": re.compile(r"欧洲|欧盟|英国|德国|法国", re.IGNORECASE),
+        "俄罗斯/中东": re.compile(r"俄罗斯|中东|伊朗|以色列", re.IGNORECASE),
+        "亚洲": re.compile(r"亚洲|日本|韩国|印度", re.IGNORECASE),
+        "中国": re.compile(r"中国|新华社|CGTN", re.IGNORECASE),
+        "南美": re.compile(r"南美|巴西|阿根廷|智利|秘鲁|委内瑞拉|哥伦比亚|拉丁美洲", re.IGNORECASE),
+        "非洲": re.compile(r"非洲|南非|尼日利亚|肯尼亚|刚果|埃塞俄比亚|非盟", re.IGNORECASE),
+        "大洋洲": re.compile(r"大洋洲|澳大利亚|澳洲|新西兰|太平洋岛国|斐济|巴新", re.IGNORECASE),
     }
 
-    heading_pattern = re.compile(r'^#{2,3}\s+(.+)')
+    heading_pattern = re.compile(r"^#{2,3}\s+(.+)")
 
     for i, line in enumerate(lines):
         stripped = line.strip()
@@ -174,6 +176,7 @@ def extract_regions_from_summary(summary: str) -> dict[str, list[str]]:
 # ─────────────────────────────────────────────────
 # 历史管理器
 # ─────────────────────────────────────────────────
+
 
 class HistoryManager:
     """历史数据管理器"""
@@ -260,7 +263,7 @@ class HistoryManager:
 
             if file_path.exists():
                 try:
-                    with open(file_path, "r", encoding="utf-8") as f:
+                    with open(file_path, encoding="utf-8") as f:
                         data = json.load(f)
                     histories.append(DailyHistory(**data))
                 except (json.JSONDecodeError, KeyError, TypeError) as e:
@@ -315,7 +318,7 @@ class HistoryManager:
             return
 
         try:
-            with open(json_path, "r", encoding="utf-8") as f:
+            with open(json_path, encoding="utf-8") as f:
                 data = json.load(f)
 
             # 只保留关键字段

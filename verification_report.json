@@ -1,0 +1,56 @@
+{
+  "timestamp": "2026-07-07T00:00:00",
+  "overall_status": "PASS_WITH_WARNINGS",
+  "checks": {
+    "ruff_lint": {
+      "status": "WARN",
+      "tool": "ruff",
+      "files_scanned": ["src/", "run.py"],
+      "errors": 0,
+      "warnings": 2,
+      "fixable": 1,
+      "details": [
+        {
+          "code": "F841",
+          "message": "Local variable `chapter_limit` is assigned to but never used",
+          "file": "src/summarizer.py",
+          "line": 383,
+          "severity": "warning",
+          "fixable": false
+        },
+        {
+          "code": "UP024",
+          "message": "Replace aliased errors with `OSError`",
+          "file": "src/utils.py",
+          "line": 429,
+          "severity": "warning",
+          "fixable": true
+        }
+      ]
+    },
+    "pytest": {
+      "status": "PASS",
+      "tool": "pytest",
+      "total": 84,
+      "passed": 84,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "duration_seconds": 0.41
+    },
+    "syntax_check": {
+      "status": "PASS",
+      "tool": "py_compile",
+      "files_checked": 18,
+      "src_files": 17,
+      "entry_point": "run.py",
+      "errors": []
+    }
+  },
+  "summary": {
+    "lint_issues": 2,
+    "test_pass_rate": "100%",
+    "syntax_errors": 0,
+    "recommendation": "2 ruff warnings non-blocking; 1 fixable via `ruff check --fix`"
+  }
+}

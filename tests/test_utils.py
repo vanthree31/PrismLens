@@ -21,7 +21,8 @@ def test_config_dir():
     from src.utils import get_config_dir
     config_dir = get_config_dir()
     assert config_dir.exists()
-    assert (config_dir / "sources.yaml").exists()
+    # 免费版或完整版配置文件存在即可
+    assert (config_dir / "sources.yaml").exists() or (config_dir / "sources_free.yaml").exists()
 
 
 def test_prompts_dir():
@@ -29,7 +30,8 @@ def test_prompts_dir():
     from src.utils import get_prompts_dir
     prompts_dir = get_prompts_dir()
     assert prompts_dir.exists()
-    assert (prompts_dir / "summary_prompt.txt").exists()
+    # 免费版或完整版 prompt 存在即可
+    assert (prompts_dir / "summary_prompt.txt").exists() or (prompts_dir / "summary_prompt_free.txt").exists()
 
 
 def test_import_fetcher():

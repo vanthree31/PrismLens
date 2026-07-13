@@ -1,0 +1,220 @@
+# 实体注册表 (Entities Registry)
+# 用于事件 ID 生成、实体提取、参与者追踪
+#
+# 格式: code -> {names: [别名列表], type, alliances, risk_domains}
+# names 中第一个为主名，其余为别名（中英文均可）
+
+entities:
+  # ─── 国家 ───
+  US:
+    names: ["美国", "United States", "US", "America", "Washington"]
+    type: country
+    alliances: ["NATO", "五眼联盟"]
+    risk_domains: ["军事", "金融", "科技"]
+
+  CN:
+    names: ["中国", "China", "Beijing"]
+    type: country
+    alliances: ["BRICS"]
+    risk_domains: ["台海", "科技", "贸易"]
+
+  RU:
+    names: ["俄罗斯", "Russia", "Moscow"]
+    type: country
+    alliances: ["CSTO"]
+    risk_domains: ["能源", "军事", "核"]
+
+  IR:
+    names: ["伊朗", "Iran", "Tehran"]
+    type: country
+    alliances: ["抵抗轴心"]
+    risk_domains: ["中东", "能源", "核"]
+
+  IL:
+    names: ["以色列", "Israel"]
+    type: country
+    alliances: ["美国"]
+    risk_domains: ["中东", "军事"]
+
+  JP:
+    names: ["日本", "Japan"]
+    type: country
+    alliances: ["NATO伙伴", "五眼联盟"]
+    risk_domains: ["半导体", "亚太"]
+
+  KR:
+    names: ["韩国", "South Korea", "Korea"]
+    type: country
+    alliances: ["美国"]
+    risk_domains: ["半导体", "亚太"]
+
+  IN:
+    names: ["印度", "India"]
+    type: country
+    alliances: ["BRICS", "QUAD"]
+    risk_domains: ["能源", "贸易"]
+
+  EU:
+    names: ["欧盟", "European Union", "EU"]
+    type: organization
+    alliances: ["NATO"]
+    risk_domains: ["金融", "贸易", "气候"]
+
+  UK:
+    names: ["英国", "Britain", "United Kingdom", "UK"]
+    type: country
+    alliances: ["NATO", "五眼联盟"]
+    risk_domains: ["金融", "军事"]
+
+  DE:
+    names: ["德国", "Germany"]
+    type: country
+    alliances: ["NATO", "EU"]
+    risk_domains: ["能源", "工业"]
+
+  FR:
+    names: ["法国", "France"]
+    type: country
+    alliances: ["NATO", "EU"]
+    risk_domains: ["军事", "核"]
+
+  UA:
+    names: ["乌克兰", "Ukraine"]
+    type: country
+    alliances: []
+    risk_domains: ["俄乌", "能源", "粮食"]
+
+  KP:
+    names: ["朝鲜", "North Korea"]
+    type: country
+    alliances: []
+    risk_domains: ["核", "导弹"]
+
+  SA:
+    names: ["沙特", "Saudi"]
+    type: country
+    alliances: ["OPEC"]
+    risk_domains: ["能源", "中东"]
+
+  TR:
+    names: ["土耳其", "Turkey"]
+    type: country
+    alliances: ["NATO"]
+    risk_domains: ["中东", "航运"]
+
+  AU:
+    names: ["澳大利亚", "Australia"]
+    type: country
+    alliances: ["NATO伙伴", "五眼联盟", "QUAD"]
+    risk_domains: ["稀土", "亚太"]
+
+  CA:
+    names: ["加拿大", "Canada"]
+    type: country
+    alliances: ["NATO", "五眼联盟"]
+    risk_domains: ["能源", "贸易"]
+
+  BR:
+    names: ["巴西", "Brazil"]
+    type: country
+    alliances: ["BRICS"]
+    risk_domains: ["粮食", "气候"]
+
+  TW:
+    names: ["台湾", "Taiwan"]
+    type: country
+    alliances: []
+    risk_domains: ["半导体", "台海"]
+
+  # ─── 组织 ───
+  NATO:
+    names: ["NATO", "北约"]
+    type: military_alliance
+    risk_domains: ["军事", "欧洲安全"]
+
+  OPEC:
+    names: ["OPEC", "欧佩克"]
+    type: economic_org
+    risk_domains: ["能源", "油价"]
+
+  BRICS_org:
+    names: ["BRICS", "金砖"]
+    type: economic_org
+    risk_domains: ["去美元化", "金融架构"]
+
+  IMF_org:
+    names: ["IMF", "国际货币基金"]
+    type: financial_org
+    risk_domains: ["金融", "债务"]
+
+  UN:
+    names: ["联合国", "United Nations", "UN"]
+    type: international_org
+    risk_domains: ["外交", "人权"]
+
+  ASEAN:
+    names: ["ASEAN", "东盟"]
+    type: regional_org
+    risk_domains: ["亚太", "贸易"]
+
+  # ─── 非国家行为体 ───
+  Hezbollah:
+    names: ["真主党", "Hezbollah"]
+    type: non_state_actor
+    risk_domains: ["中东", "军事"]
+
+  Houthi:
+    names: ["胡塞", "Houthi", "胡塞武装"]
+    type: non_state_actor
+    risk_domains: ["红海", "航运"]
+
+  Hamas:
+    names: ["哈马斯", "Hamas"]
+    type: non_state_actor
+    risk_domains: ["加沙", "中东"]
+
+  # ─── 公司 ───
+  NVDA:
+    names: ["NVIDIA", "英伟达"]
+    type: corporation
+    risk_domains: ["AI芯片", "半导体"]
+
+  TSMC:
+    names: ["TSMC", "台积电"]
+    type: corporation
+    risk_domains: ["半导体", "台海"]
+
+  Huawei:
+    names: ["华为", "Huawei"]
+    type: corporation
+    risk_domains: ["科技战", "5G"]
+
+  Samsung:
+    names: ["Samsung", "三星"]
+    type: corporation
+    risk_domains: ["半导体", "存储"]
+
+  ASML:
+    names: ["ASML"]
+    type: corporation
+    risk_domains: ["半导体设备", "光刻机"]
+
+  Intel:
+    names: ["Intel", "英特尔"]
+    type: corporation
+    risk_domains: ["半导体", "CPU"]
+
+  Apple:
+    names: ["Apple", "苹果"]
+    type: corporation
+    risk_domains: ["消费电子", "供应链"]
+
+  Google:
+    names: ["Google", "谷歌"]
+    type: corporation
+    risk_domains: ["AI", "云计算"]
+
+  Microsoft:
+    names: ["Microsoft", "微软"]
+    type: corporation
+    risk_domains: ["AI", "云计算"]
