@@ -695,6 +695,47 @@ def run(
         telemetry.save(t)
         logger.info(f"  遥测已记录: quality_score={t.quality_score()}/100")
 
+        # 生产指标自动记录 (data/runs.db)
+        try:
+            from src.production_metrics import RunRecord, record
+
+            run_record = RunRecord(
+                run_id=state.run_id,
+                pipeline=pipeline,
+                date=today,
+                started_at=state.data.get("started_at", ""),
+                fetch_seconds=fetch_elapsed,
+                ai_seconds=summary_elapsed,
+                total_seconds=pipeline_elapsed,
+                input_tokens=t.input_tokens,
+                output_tokens=t.output_tokens,
+                estimated_cost=t.estimated_cost_usd,
+                news_count=len(news_items),
+                source_count=len({n.source for n in news_items}) if news_items else 0,
+                source_success_rate=(
+                    metrics.data["fetch"]["success_sources"] / max(metrics.data["fetch"]["total_sources"], 1)
+                    if metrics.data["fetch"]["total_sources"] > 0 else 0
+                ),
+                output_chars=len(summary),
+                h2_chapters=t.h2_chapters,
+                events_count=t.events_count,
+                regions_covered=t.regions_covered,
+                json_valid=t.json_parse_success,
+                html_generated=report_path is not None,
+                finish_reason=t.finish_reason if hasattr(t, 'finish_reason') else "",
+                quality_score=t.quality_score(),
+                placeholder_count=t.placeholder_count,
+                had_fallback=(
+                    bool(getattr(summarizer_v3, '_fallback_used', False))
+                    if v3_result else False
+                ),
+                had_error=(report_path is None),
+            )
+            record(run_record)
+            logger.info("  生产指标已写入 data/runs.db")
+        except Exception as e:
+            logger.debug(f"  生产指标记录失败: {e}")
+
         # Shadow Run: 如果 pipeline=shadow，额外跑 v2 并对比
         if pipeline == "shadow":
             logger.info("  [Shadow] 运行 v2 对比...")
