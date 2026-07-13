@@ -1,0 +1,91 @@
+# 动作词表 (Actions Dictionary)
+# 用于事件 ID 生成、动作提取、阶段检测
+#
+# 格式: code -> {names: [别名列表], category}
+# names 中包含中英文变体
+
+actions:
+  # ─── 制裁/封锁 ───
+  sanction:
+    names: ["制裁", "sanction", "sanctions"]
+    category: economic
+
+  embargo:
+    names: ["禁运", "embargo"]
+    category: economic
+
+  export-ctrl:
+    names: ["出口管制", "export control", "export controls", "芯片禁令", "chip ban", "chip restriction", "chip restrictions", "AI芯片限制", "AI chip restriction"]
+    category: economic
+
+  entity-list:
+    names: ["实体清单", "entity list"]
+    category: economic
+
+  tariff:
+    names: ["关税", "tariff", "tariffs"]
+    category: trade
+
+  # ─── 军事 ───
+  drill:
+    names: ["军演", "军事演习", "military drill", "military exercise", "联合演习", "joint drill"]
+    category: military
+
+  live-fire:
+    names: ["实弹演习", "live fire exercise", "live fire"]
+    category: military
+
+  missile-test:
+    names: ["导弹试射", "missile test", "导弹发射"]
+    category: military
+
+  deploy:
+    names: ["军队部署", "troop deployment", "军事集结", "military buildup"]
+    category: military
+
+  blockade:
+    names: ["封锁", "blockade", "海上封锁", "naval blockade"]
+    category: military
+
+  strike:
+    names: ["打击", "strike", "空袭", "airstrike", "报复性打击", "retaliatory strike"]
+    category: military
+
+  invasion:
+    names: ["入侵", "invasion", "地面入侵", "ground invasion"]
+    category: military
+
+  # ─── 外交 ───
+  ceasefire:
+    names: ["停火", "ceasefire", "停战"]
+    category: diplomatic
+
+  summit:
+    names: ["峰会", "summit", "bilateral summit"]
+    category: diplomatic
+
+  talks:
+    names: ["会谈", "谈判", "talks", "negotiation", "对话", "dialogue"]
+    category: diplomatic
+
+  # ─── 金融 ───
+  selloff:
+    names: ["抛售", "selloff", "债券抛售", "bond selloff"]
+    category: financial
+
+  default:
+    names: ["违约", "default", "主权违约", "sovereign default"]
+    category: financial
+
+  rate-hike:
+    names: ["加息", "rate hike", "利率上调"]
+    category: financial
+
+  # ─── 趋势 ───
+  escalation:
+    names: ["升级", "escalation", "军事升级", "military escalation"]
+    category: trend
+
+  de-escalation:
+    names: ["降温", "de-escalation", "缓和", "de-escalation"]
+    category: trend

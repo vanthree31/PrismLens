@@ -9,17 +9,16 @@
 - Actor Registry
 """
 
-import json
 import hashlib
+import json
 import logging
 import re
-from dataclasses import dataclass, field, asdict
+import threading
+from dataclasses import asdict, dataclass, field, fields
 from datetime import datetime
-from difflib import SequenceMatcher
 from pathlib import Path
-from typing import Optional
 
-from src.utils import get_data_dir, get_today_str
+from src.utils import get_data_dir
 
 logger = logging.getLogger("global_news.event_graph")
 
@@ -30,15 +29,27 @@ SCHEMA_VERSION = "1.0"
 # ─────────────────────────────────────────────────
 
 ACTOR_REGISTRY: dict[str, dict] = {
-    "美国": {"type": "country", "alliances": ["NATO", "五眼联盟"], "risk_domains": ["金融", "科技", "军事"]},
+    "美国": {
+        "type": "country",
+        "alliances": ["NATO", "五眼联盟"],
+        "risk_domains": ["金融", "科技", "军事"],
+    },
     "中国": {"type": "country", "alliances": ["金砖"], "risk_domains": ["科技", "贸易", "台海"]},
     "俄罗斯": {"type": "country", "alliances": ["CSTO"], "risk_domains": ["军事", "能源", "核"]},
     "伊朗": {"type": "country", "alliances": ["抵抗轴心"], "risk_domains": ["能源", "核", "中东"]},
     "以色列": {"type": "country", "alliances": ["美国盟友"], "risk_domains": ["中东", "军事"]},
-    "日本": {"type": "country", "alliances": ["美日同盟"], "risk_domains": ["科技", "台海", "供应链"]},
+    "日本": {
+        "type": "country",
+        "alliances": ["美日同盟"],
+        "risk_domains": ["科技", "台海", "供应链"],
+    },
     "韩国": {"type": "country", "alliances": ["美韩同盟"], "risk_domains": ["半导体", "朝鲜"]},
     "印度": {"type": "country", "alliances": ["金砖", "QUAD"], "risk_domains": ["能源", "贸易"]},
-    "欧盟": {"type": "organization", "alliances": ["NATO"], "risk_domains": ["金融", "能源", "防务"]},
+    "欧盟": {
+        "type": "organization",
+        "alliances": ["NATO"],
+        "risk_domains": ["金融", "能源", "防务"],
+    },
     "北约": {"type": "organization", "alliances": [], "risk_domains": ["军事", "防务"]},
     "OPEC": {"type": "organization", "alliances": [], "risk_domains": ["能源", "石油"]},
     "IMF": {"type": "organization", "alliances": [], "risk_domains": ["金融", "债务"]},
@@ -53,22 +64,24 @@ ACTOR_REGISTRY: dict[str, dict] = {
 # 数据结构
 # ─────────────────────────────────────────────────
 
+
 @dataclass
 class Event:
     """单个国际事件"""
+
     event_id: str
     title: str
-    signal_level: str           # S/A/B/C
-    confidence: str             # 高/中/低
+    signal_level: str  # S/A/B/C
+    confidence: str  # 高/中/低
     actors: list[str] = field(default_factory=list)
     domains: list[str] = field(default_factory=list)
-    trend: str = "stable"       # up/down/stable
+    trend: str = "stable"  # up/down/stable
     summary: str = ""
     sources: list[str] = field(default_factory=list)
     related_events: list[str] = field(default_factory=list)
-    phase: str = "diplomatic"   # diplomatic/economic/military/financial/de-escalation
-    source_lean: str = "中立"   # 亲西方/亲中方/亲俄方/中立/混合
-    lean_reasoning: str = ""    # 判断依据
+    phase: str = "diplomatic"  # diplomatic/economic/military/financial/de-escalation
+    source_lean: str = "中立"  # 亲西方/亲中方/亲俄方/中立/混合
+    lean_reasoning: str = ""  # 判断依据
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -77,6 +90,7 @@ class Event:
 @dataclass
 class DailyEventGraph:
     """每日事件图谱"""
+
     date: str
     schema_version: str = SCHEMA_VERSION
     events: list[Event] = field(default_factory=list)
@@ -85,14 +99,15 @@ class DailyEventGraph:
     actor_mentions: dict[str, int] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
+        self.events = [e.to_dict() if isinstance(e, Event) else e for e in self.events]
         d = asdict(self)
-        d["events"] = [e.to_dict() if isinstance(e, Event) else e for e in self.events]
         return d
 
 
 # ─────────────────────────────────────────────────
 # 事件归一化（Event Canonicalization）
 # ─────────────────────────────────────────────────
+
 
 def _load_aliases_from_config() -> list[dict]:
     """
@@ -107,14 +122,24 @@ def _load_aliases_from_config() -> list[dict]:
     """
     try:
         from src.utils import load_event_aliases_config
+
         config = load_event_aliases_config()
         raw = config.get("event_aliases", {})
-    except Exception:
+    except Exception as e:
+        logger.warning(f"加载事件别名配置失败，使用硬编码 fallback: {e}")
         # Fallback: 硬编码的基本别名
         raw = {
-            "中东航运风险": {"keywords": ["霍尔木兹", "红海", "胡塞"], "priority": 10, "exclude": []},
+            "中东航运风险": {
+                "keywords": ["霍尔木兹", "红海", "胡塞"],
+                "priority": 10,
+                "exclude": [],
+            },
             "台海局势": {"keywords": ["台湾", "台海"], "priority": 10, "exclude": []},
-            "AI芯片出口管制": {"keywords": ["芯片禁令", "出口管制", "NVIDIA"], "priority": 9, "exclude": []},
+            "AI芯片出口管制": {
+                "keywords": ["芯片禁令", "出口管制", "NVIDIA"],
+                "priority": 9,
+                "exclude": [],
+            },
             "俄乌冲突": {"keywords": ["乌克兰", "俄乌"], "priority": 8, "exclude": []},
             "中东冲突": {"keywords": ["加沙", "以色列", "伊朗"], "priority": 8, "exclude": []},
         }
@@ -122,20 +147,24 @@ def _load_aliases_from_config() -> list[dict]:
     aliases = []
     for canonical, cfg in raw.items():
         if isinstance(cfg, dict):
-            aliases.append({
-                "canonical": canonical,
-                "keywords": cfg.get("keywords", []),
-                "exclude": cfg.get("exclude", []),
-                "priority": cfg.get("priority", 5),
-            })
+            aliases.append(
+                {
+                    "canonical": canonical,
+                    "keywords": cfg.get("keywords", []),
+                    "exclude": cfg.get("exclude", []),
+                    "priority": cfg.get("priority", 5),
+                }
+            )
         elif isinstance(cfg, list):
             # 兼容旧格式（纯列表）
-            aliases.append({
-                "canonical": canonical,
-                "keywords": cfg,
-                "exclude": [],
-                "priority": 5,
-            })
+            aliases.append(
+                {
+                    "canonical": canonical,
+                    "keywords": cfg,
+                    "exclude": [],
+                    "priority": 5,
+                }
+            )
 
     # 按 priority 降序排列（高优先级先匹配）
     aliases.sort(key=lambda x: x["priority"], reverse=True)
@@ -146,24 +175,40 @@ def _load_aliases_from_config() -> list[dict]:
 # 实体+动作+主题 识别表（从配置文件加载）
 # ─────────────────────────────────────────────────
 
+
 def _load_entities_from_config() -> dict[str, str]:
     """从 config/entities.yaml 加载实体名称→代码映射"""
     try:
         from src.utils import load_entities_config
+
         config = load_entities_config()
         result = {}
         for code, info in config.get("entities", {}).items():
             for name in info.get("names", []):
                 result[name] = code
         return result
-    except Exception:
+    except Exception as e:
+        logger.warning(f"加载实体配置失败，使用硬编码 fallback: {e}")
         # Fallback: 最小化硬编码
         return {
-            "美国": "US", "US": "US", "中国": "CN", "China": "CN",
-            "俄罗斯": "RU", "Russia": "RU", "伊朗": "IR", "Iran": "IR",
-            "以色列": "IL", "日本": "JP", "韩国": "KR", "印度": "IN",
-            "欧盟": "EU", "NATO": "NATO", "北约": "NATO",
-            "NVIDIA": "NVDA", "TSMC": "TSMC", "华为": "Huawei",
+            "美国": "US",
+            "US": "US",
+            "中国": "CN",
+            "China": "CN",
+            "俄罗斯": "RU",
+            "Russia": "RU",
+            "伊朗": "IR",
+            "Iran": "IR",
+            "以色列": "IL",
+            "日本": "JP",
+            "韩国": "KR",
+            "印度": "IN",
+            "欧盟": "EU",
+            "NATO": "NATO",
+            "北约": "NATO",
+            "NVIDIA": "NVDA",
+            "TSMC": "TSMC",
+            "华为": "Huawei",
         }
 
 
@@ -171,17 +216,22 @@ def _load_actions_from_config() -> dict[str, str]:
     """从 config/actions.yaml 加载动作名称→代码映射"""
     try:
         from src.utils import load_actions_config
+
         config = load_actions_config()
         result = {}
         for code, info in config.get("actions", {}).items():
             for name in info.get("names", []):
                 result[name] = code
         return result
-    except Exception:
+    except Exception as e:
+        logger.warning(f"加载动作配置失败，使用硬编码 fallback: {e}")
         return {
-            "制裁": "sanction", "sanction": "sanction",
-            "军演": "drill", "封锁": "blockade",
-            "停火": "ceasefire", "峰会": "summit",
+            "制裁": "sanction",
+            "sanction": "sanction",
+            "军演": "drill",
+            "封锁": "blockade",
+            "停火": "ceasefire",
+            "峰会": "summit",
         }
 
 
@@ -189,44 +239,56 @@ def _load_topics_from_config() -> dict[str, str]:
     """从 config/topics.yaml 加载主题名称→代码映射"""
     try:
         from src.utils import load_topics_config
+
         config = load_topics_config()
         result = {}
         for code, info in config.get("topics", {}).items():
             for name in info.get("names", []):
                 result[name] = code
         return result
-    except Exception:
+    except Exception as e:
+        logger.warning(f"加载主题配置失败，使用硬编码 fallback: {e}")
         return {
-            "台海": "taiwan-strait", "台湾": "taiwan-strait",
-            "霍尔木兹": "hormuz", "红海": "red-sea",
-            "AI芯片": "ai-chip", "半导体": "semiconductor",
+            "台海": "taiwan-strait",
+            "台湾": "taiwan-strait",
+            "霍尔木兹": "hormuz",
+            "红海": "red-sea",
+            "AI芯片": "ai-chip",
+            "半导体": "semiconductor",
         }
 
 
-# 模块级缓存
+# 模块级缓存（线程安全）
 _entities_cache = None
 _actions_cache = None
 _topics_cache = None
+_cache_lock = threading.Lock()
 
 
 def _get_entities() -> dict[str, str]:
     global _entities_cache
     if _entities_cache is None:
-        _entities_cache = _load_entities_from_config()
+        with _cache_lock:
+            if _entities_cache is None:
+                _entities_cache = _load_entities_from_config()
     return _entities_cache
 
 
 def _get_actions() -> dict[str, str]:
     global _actions_cache
     if _actions_cache is None:
-        _actions_cache = _load_actions_from_config()
+        with _cache_lock:
+            if _actions_cache is None:
+                _actions_cache = _load_actions_from_config()
     return _actions_cache
 
 
 def _get_topics() -> dict[str, str]:
     global _topics_cache
     if _topics_cache is None:
-        _topics_cache = _load_topics_from_config()
+        with _cache_lock:
+            if _topics_cache is None:
+                _topics_cache = _load_topics_from_config()
     return _topics_cache
 
 
@@ -239,7 +301,7 @@ def _extract_entities(title: str) -> list[str]:
             continue
 
         # 检查是否包含中文字符
-        has_cjk = any('一' <= c <= '鿿' for c in name)
+        has_cjk = any("一" <= c <= "鿿" for c in name)
 
         if has_cjk:
             # 中文实体：直接子串匹配
@@ -254,7 +316,7 @@ def _extract_entities(title: str) -> list[str]:
             idx = title.lower().find(name.lower())
             while idx != -1:
                 # 检查前面的字符
-                before_ok = (idx == 0) or (not title[idx-1].isalpha())
+                before_ok = (idx == 0) or (not title[idx - 1].isalpha())
                 # 检查后面的字符
                 after_pos = idx + len(name)
                 after_ok = (after_pos >= len(title)) or (not title[after_pos].isalpha())
@@ -278,9 +340,12 @@ def _extract_actions(title: str) -> list[str]:
     return found[:2]
 
 
-def _extract_topics(title: str, exclude_codes: list[str] = None,
-                     entity_codes: list[str] = None,
-                     action_names: list[str] = None) -> list[str]:
+def _extract_topics(
+    title: str,
+    exclude_codes: list[str] = None,
+    entity_codes: list[str] = None,
+    action_names: list[str] = None,
+) -> list[str]:
     """从标题中提取主题（排除已匹配的动作代码、实体名称子串、动作名称子串）"""
     topics = _get_topics()
     entities = _get_entities()
@@ -334,17 +399,18 @@ def canonicalize_event_id(title: str) -> str:
         if code in actions and name.lower() in title_lower:
             matched_action_names.append(name)
 
-    topics = _extract_topics(title, exclude_codes=actions, entity_codes=entities,
-                              action_names=matched_action_names)
+    topics = _extract_topics(
+        title, exclude_codes=actions, entity_codes=entities, action_names=matched_action_names
+    )
 
     # 如果能组合出有意义的 ID，直接返回
     parts = []
     if entities:
         parts.extend(entities[:2])  # 最多2个实体
     if actions:
-        parts.append(actions[0])    # 1个动作
+        parts.append(actions[0])  # 1个动作
     if topics:
-        parts.append(topics[0])     # 1个主题
+        parts.append(topics[0])  # 1个主题
 
     if len(parts) >= 2:
         return "-".join(parts).lower()
@@ -368,12 +434,12 @@ def canonicalize_event_id(title: str) -> str:
                 break
 
         if matched:
-            slug = re.sub(r'[^\w]+', '-', canonical).strip('-').lower()
+            slug = re.sub(r"[^\w]+", "-", canonical).strip("-").lower()
             return slug
 
     # 3. 最后手段: 标题哈希
     h = hashlib.md5(title.encode()).hexdigest()[:8]
-    slug = re.sub(r'[^\w一-鿿]+', '-', title).strip('-')[:30].lower()
+    slug = re.sub(r"[^\w一-鿿]+", "-", title).strip("-")[:30].lower()
     return f"{slug}-{h}"
 
 
@@ -411,6 +477,18 @@ def merge_events(events: list[Event]) -> list[Event]:
             existing.phase = event.phase
             existing.trend = event.trend
             existing.confidence = event.confidence
+            # 合并 source_lean（不同则标记为混合）
+            if event.source_lean and event.source_lean != "中立":
+                if existing.source_lean == "中立" or existing.source_lean == event.source_lean:
+                    existing.source_lean = event.source_lean
+                elif existing.source_lean != event.source_lean:
+                    existing.source_lean = "混合"
+                if event.lean_reasoning and event.lean_reasoning != existing.lean_reasoning:
+                    existing.lean_reasoning = (
+                        f"{existing.lean_reasoning}; {event.lean_reasoning}"
+                        if existing.lean_reasoning
+                        else event.lean_reasoning
+                    )
             # 合并 domains 和 related_events（并集）
             for d in event.domains:
                 if d not in existing.domains:
@@ -431,6 +509,8 @@ def merge_events(events: list[Event]) -> list[Event]:
                 sources=list(event.sources),
                 related_events=list(event.related_events),
                 phase=event.phase,
+                source_lean=event.source_lean,
+                lean_reasoning=event.lean_reasoning,
             )
     return list(merged.values())
 
@@ -438,6 +518,7 @@ def merge_events(events: list[Event]) -> list[Event]:
 # ─────────────────────────────────────────────────
 # 存储
 # ─────────────────────────────────────────────────
+
 
 def get_events_dir() -> Path:
     d = get_data_dir() / "events"
@@ -454,15 +535,22 @@ def save_event_graph(graph: DailyEventGraph) -> Path:
     return file_path
 
 
-def load_event_graph(date_str: str) -> Optional[DailyEventGraph]:
+def load_event_graph(date_str: str) -> DailyEventGraph | None:
     """加载指定日期的事件图谱"""
     file_path = get_events_dir() / f"events_{date_str}.json"
     if not file_path.exists():
         return None
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             data = json.load(f)
-        events = [Event(**e) for e in data.get("events", [])]
+        events = []
+        valid_field_names = {f.name for f in fields(Event)}
+        for e in data.get("events", []):
+            try:
+                filtered = {k: v for k, v in e.items() if k in valid_field_names}
+                events.append(Event(**filtered))
+            except Exception as ev_err:
+                logger.warning(f"跳过损坏事件数据: {ev_err}")
         return DailyEventGraph(
             date=data["date"],
             schema_version=data.get("schema_version", "1.0"),
@@ -479,6 +567,7 @@ def load_event_graph(date_str: str) -> Optional[DailyEventGraph]:
 def load_recent_events(days: int = 7) -> list[DailyEventGraph]:
     """加载最近 N 天的事件图谱"""
     from datetime import timedelta
+
     graphs = []
     today = datetime.now()
     for i in range(days):

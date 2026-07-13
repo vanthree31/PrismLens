@@ -49,6 +49,7 @@ select = [
 ]
 ignore = [
     "E501",  # line too long (handled by formatter)
+    "UP036", # version block is outdated (intentional runtime check)
 ]
 
 [tool.ruff.lint.isort]

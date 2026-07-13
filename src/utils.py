@@ -6,13 +6,11 @@ import json
 import logging
 import os
 import sys
-import time
 from datetime import datetime
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Optional
 
 import yaml
-
 
 # ─────────────────────────────────────────────────
 # 项目根目录
@@ -75,6 +73,7 @@ def get_metrics_dir() -> Path:
 # 目录初始化
 # ─────────────────────────────────────────────────
 
+
 def ensure_directories() -> None:
     """确保所有必需目录存在"""
     for dir_func in [
@@ -92,6 +91,7 @@ def ensure_directories() -> None:
 # ─────────────────────────────────────────────────
 # 日志配置
 # ─────────────────────────────────────────────────
+
 
 def setup_logging(level: int = logging.INFO) -> logging.Logger:
     """
@@ -118,8 +118,7 @@ def setup_logging(level: int = logging.INFO) -> logging.Logger:
 
     # 日志格式
     formatter = logging.Formatter(
-        fmt="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
+        fmt="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
     )
 
     # 控制台 handler
@@ -128,13 +127,11 @@ def setup_logging(level: int = logging.INFO) -> logging.Logger:
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    # 文件 handler
-    file_handler = logging.FileHandler(
-        str(log_file),
-        encoding="utf-8",
-        mode="a"
+    # 文件 handler (RotatingFileHandler, 最大 5MB, 保留 3 个备份)
+    file_handler = RotatingFileHandler(
+        str(log_file), encoding="utf-8", mode="a", maxBytes=5 * 1024 * 1024, backupCount=3
     )
-    file_handler.setLevel(logging.DEBUG)
+    file_handler.setLevel(level)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
@@ -145,12 +142,14 @@ def setup_logging(level: int = logging.INFO) -> logging.Logger:
 # 配置加载
 # ─────────────────────────────────────────────────
 
+
 def load_yaml_config(filename: str) -> dict:
     """
     加载 YAML 配置文件
 
-    优先加载完整版，不存在时回退到免费版（_free 后缀）。
-    例如：sources.yaml → sources_free.yaml
+    免费版优先加载 _free 后缀配置（如 sources_free.yaml），
+    不存在时回退到完整版。
+    付费版直接加载完整版。
 
     Args:
         filename: 配置文件名 (不含路径)
@@ -158,19 +157,38 @@ def load_yaml_config(filename: str) -> dict:
     Returns:
         解析后的字典
     """
-    config_path = get_config_dir() / filename
-    if not config_path.exists():
-        # 回退到免费版
-        name, ext = filename.rsplit(".", 1)
-        free_filename = f"{name}_free.{ext}"
-        free_path = get_config_dir() / free_filename
-        if free_path.exists():
-            config_path = free_path
-        else:
-            raise FileNotFoundError(f"配置文件不存在: {config_path}")
+    try:
+        from src.premium import is_premium_enabled
+    except ImportError:
 
-    with open(config_path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        def is_premium_enabled() -> bool:
+            return False
+
+    config_dir = get_config_dir()
+    name, ext = filename.rsplit(".", 1)
+    free_filename = f"{name}_free.{ext}"
+    free_path = config_dir / free_filename
+    full_path = config_dir / filename
+
+    if not is_premium_enabled() and free_path.exists():
+        config_path = free_path
+    elif full_path.exists():
+        config_path = full_path
+    elif free_path.exists():
+        config_path = free_path
+    else:
+        raise FileNotFoundError(
+            f"配置文件不存在: {full_path.name}。请确保 config/ 目录下存在该文件，或检查文件名是否正确。"
+        )
+
+    try:
+        with open(config_path, encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        raise ValueError(f"YAML 语法错误 ({config_path.name}): {e}") from e
+    if config is None:
+        return {}
+    return config
 
 
 def load_sources_config() -> list[dict]:
@@ -227,13 +245,14 @@ def load_prompt_template(lang: str = "zh") -> str:
         else:
             raise FileNotFoundError(f"提示词模板不存在: {prompt_path}")
 
-    with open(prompt_path, "r", encoding="utf-8") as f:
+    with open(prompt_path, encoding="utf-8") as f:
         return f.read()
 
 
 # ─────────────────────────────────────────────────
 # 环境变量加载
 # ─────────────────────────────────────────────────
+
 
 def load_env() -> dict[str, str]:
     """
@@ -246,25 +265,47 @@ def load_env() -> dict[str, str]:
 
     env_path = PROJECT_ROOT / ".env"
     if not env_path.exists():
-        raise FileNotFoundError(
-            f".env 文件不存在，请复制 .env.example 并填写配置: {env_path}"
-        )
+        raise FileNotFoundError(".env 文件不存在，请复制 .env.example 并填写配置")
 
     load_dotenv(env_path, override=True)
 
-    import os
+    api_key = os.getenv("API_KEY", "")
+    if api_key == "your_api_key_here" or not api_key:
+        raise ValueError("API_KEY 未配置或仍为占位符值，请在 .env 文件中填写真实的 API 密钥")
+
+    try:
+        smtp_port = int(os.getenv("SMTP_PORT", "465"))
+    except ValueError:
+        smtp_port = 465
+        logging.getLogger("global_news").warning(
+            "SMTP_PORT 环境变量值无效 (应为 1-65535 的整数)，使用默认端口 465"
+        )
+
+    try:
+        market_data_timeout = int(os.getenv("MARKET_DATA_TIMEOUT", "30"))
+    except ValueError:
+        market_data_timeout = 30
+
+    try:
+        market_data_retry_count = int(os.getenv("MARKET_DATA_RETRY_COUNT", "2"))
+    except ValueError:
+        market_data_retry_count = 2
+
     return {
         "api_url": os.getenv("API_URL", "https://api.deepseek.com/v1/chat/completions"),
-        "api_key": os.getenv("API_KEY", ""),
+        "api_key": api_key,
         "model_name": os.getenv("MODEL_NAME", "deepseek-chat"),
         "https_proxy": os.getenv("HTTPS_PROXY", ""),
         "ssl_verify": os.getenv("SSL_VERIFY", "true").lower() == "true",
         "smtp_enabled": os.getenv("SMTP_ENABLED", "false").lower() == "true",
         "smtp_host": os.getenv("SMTP_HOST", "smtp.qq.com"),
-        "smtp_port": int(os.getenv("SMTP_PORT", "465")),
+        "smtp_port": smtp_port,
         "smtp_user": os.getenv("SMTP_USER", ""),
         "smtp_pass": os.getenv("SMTP_PASS", ""),
         "smtp_to": os.getenv("SMTP_TO", ""),
+        "market_data_cache_ttl": int(os.getenv("MARKET_DATA_CACHE_TTL", "30")),
+        "market_data_timeout": market_data_timeout,
+        "market_data_retry_count": market_data_retry_count,
     }
 
 
@@ -272,23 +313,31 @@ def load_env() -> dict[str, str]:
 # 日期工具
 # ─────────────────────────────────────────────────
 
+
 def get_today_str() -> str:
     """获取今日日期字符串 YYYY-MM-DD"""
     return datetime.now().strftime("%Y-%m-%d")
 
 
-def get_today_filename(prefix: str = "每日简报", ext: str = "html", output_dir: str = "", lang: str = "zh") -> str:
-    """生成按日期命名的文件名，如已存在则自动追加编号"""
+def get_today_filename(
+    prefix: str = "每日简报", ext: str = "html", output_dir: str = "", lang: str = "zh"
+) -> str:
+    """生成按日期命名的文件名，如已存在则自动追加编号（含微秒戳防竞态）"""
     if lang == "en" and prefix == "每日简报":
         prefix = "DailyBriefing"
     base = f"{prefix}-{get_today_str()}"
     name = f"{base}.{ext}"
     if output_dir:
         n = 2
-        suffix = "-第{n}次" if lang == "zh" else f"-{n}"
+        suffix = "-第{n}次" if lang == "zh" else "-{n}"
         while os.path.exists(os.path.join(output_dir, name)):
             name = f"{base}{suffix.format(n=n)}.{ext}"
             n += 1
+        # 防 TOCTOU 竞态：追加微秒级时间戳确保唯一性
+        if n > 2:
+            us = datetime.now().strftime("%f")[:3]
+            name_parts = name.rsplit(".", 1)
+            name = f"{name_parts[0]}-{us}.{name_parts[1]}"
     return name
 
 
@@ -296,12 +345,13 @@ def get_today_filename(prefix: str = "每日简报", ext: str = "html", output_d
 # URL 去重工具
 # ─────────────────────────────────────────────────
 
+
 def normalize_url(url: str) -> str:
     """
     标准化 URL 用于去重
     去除尾部斜杠、UTM 参数、查询参数等差异
     """
-    from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
+    from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
     parsed = urlparse(url.strip())
     # 去除尾部斜杠
@@ -311,27 +361,34 @@ def normalize_url(url: str) -> str:
     if parsed.query:
         params = parse_qs(parsed.query, keep_blank_values=True)
         filtered = {
-            k: v for k, v in params.items()
+            k: v
+            for k, v in params.items()
             if not k.lower().startswith(("utm_", "ceid", "hl", "gl", "fbclid", "gclid"))
         }
         query = urlencode(filtered, doseq=True) if filtered else ""
     else:
         query = ""
 
-    normalized = urlunparse((
-        parsed.scheme,
-        parsed.netloc,
-        path,
-        "",  # params
-        query,
-        ""   # fragment
-    ))
+    normalized = urlunparse(
+        (
+            parsed.scheme,
+            parsed.netloc,
+            path,
+            "",  # params
+            query,
+            "",  # fragment
+        )
+    )
+    # 移除仅含追踪参数时残留的 '?'
+    if normalized.endswith("?"):
+        normalized = normalized[:-1]
     return normalized
 
 
 # ─────────────────────────────────────────────────
 # 运行状态管理 (State Layer)
 # ─────────────────────────────────────────────────
+
 
 class RunState:
     """
@@ -363,13 +420,19 @@ class RunState:
         try:
             with open(tmp, "w", encoding="utf-8") as f:
                 json.dump(self.data, f, ensure_ascii=False, indent=2)
-            import os
             os.replace(str(tmp), str(self.state_file))
-        except Exception:
-            pass
+        except Exception as e:
+            logging.getLogger("global_news").warning("运行状态保存失败: %s", e)
 
     def mark_step(self, step: str, status: str, detail: str = ""):
         """标记步骤状态: completed / failed / skipped"""
+        valid_statuses = {"completed", "failed", "skipped"}
+        if status not in valid_statuses:
+            logging.getLogger("global_news").warning(
+                "步骤 '%s' 的状态值 '%s' 无效 (应为 completed/failed/skipped)，已忽略", step, status
+            )
+            return
+
         entry = {"step": step, "status": status, "time": datetime.now().isoformat()}
         if detail:
             entry["detail"] = detail
@@ -391,20 +454,24 @@ class RunState:
         """检查某步骤是否已完成"""
         return any(e["step"] == step for e in self.data["completed_steps"])
 
-    def get_last_run_state(self) -> Optional[dict]:
+    def get_last_run_state(self) -> dict | None:
         """获取上次运行状态（用于断点恢复判断）"""
         if self.state_file.exists():
             try:
-                with open(self.state_file, "r", encoding="utf-8") as f:
+                with open(self.state_file, encoding="utf-8") as f:
                     return json.load(f)
-            except Exception:
-                pass
+            except (OSError, json.JSONDecodeError) as e:
+                logging.getLogger("global_news").warning(
+                    "运行状态文件读取失败 (%s): %s", self.state_file.name, e
+                )
+                return None
         return None
 
 
 # ─────────────────────────────────────────────────
 # 可观测性指标 (Observability)
 # ─────────────────────────────────────────────────
+
 
 class MetricsCollector:
     """
@@ -452,20 +519,30 @@ class MetricsCollector:
             },
         }
 
-    def record_fetch(self, total_sources: int, success: int, failed: int,
-                     total_news: int, duplicates: int, repeats: int,
-                     elapsed: float, failed_names: list[str]):
+    def record_fetch(
+        self,
+        total_sources: int,
+        success: int,
+        failed: int,
+        total_news: int,
+        duplicates: int,
+        repeats: int,
+        elapsed: float,
+        failed_names: list[str],
+    ):
         """记录抓取指标"""
-        self.data["fetch"].update({
-            "total_sources": total_sources,
-            "success_sources": success,
-            "failed_sources": failed,
-            "total_news": total_news,
-            "duplicate_count": duplicates,
-            "repeat_count": repeats,
-            "fetch_time_seconds": round(elapsed, 1),
-            "failed_source_names": failed_names,
-        })
+        self.data["fetch"].update(
+            {
+                "total_sources": total_sources,
+                "success_sources": success,
+                "failed_sources": failed,
+                "total_news": total_news,
+                "duplicate_count": duplicates,
+                "repeat_count": repeats,
+                "fetch_time_seconds": round(elapsed, 1),
+                "failed_source_names": failed_names,
+            }
+        )
 
     def record_ai_summary(self, tokens: int, elapsed: float):
         """记录 AI 摘要指标"""
@@ -478,26 +555,35 @@ class MetricsCollector:
         self.data["ai"]["extraction_latency_seconds"] = round(elapsed, 1)
         self.data["ai"]["extraction_success"] = success
 
-    def record_output(self, html_size: int = 0, events: int = 0,
-                      risk_themes: int = 0, evolution_active: int = 0,
-                      phase_transitions: int = 0):
+    def record_output(
+        self,
+        html_size: int = 0,
+        events: int = 0,
+        risk_themes: int = 0,
+        evolution_active: int = 0,
+        phase_transitions: int = 0,
+    ):
         """记录输出指标"""
-        self.data["output"].update({
-            "html_size_bytes": html_size,
-            "events_count": events,
-            "risk_themes_count": risk_themes,
-            "evolution_active_events": evolution_active,
-            "phase_transitions": phase_transitions,
-        })
+        self.data["output"].update(
+            {
+                "html_size_bytes": html_size,
+                "events_count": events,
+                "risk_themes_count": risk_themes,
+                "evolution_active_events": evolution_active,
+                "phase_transitions": phase_transitions,
+            }
+        )
 
     def record_pipeline(self, total_time: float, completed: int, failed: int, skipped: int):
         """记录 pipeline 整体指标"""
-        self.data["pipeline"].update({
-            "total_time_seconds": round(total_time, 1),
-            "steps_completed": completed,
-            "steps_failed": failed,
-            "steps_skipped": skipped,
-        })
+        self.data["pipeline"].update(
+            {
+                "total_time_seconds": round(total_time, 1),
+                "steps_completed": completed,
+                "steps_failed": failed,
+                "steps_skipped": skipped,
+            }
+        )
 
     def save(self):
         """保存指标到文件"""
@@ -506,5 +592,7 @@ class MetricsCollector:
         try:
             with open(metrics_file, "w", encoding="utf-8") as f:
                 json.dump(self.data, f, ensure_ascii=False, indent=2)
-        except Exception:
-            pass
+        except Exception as e:
+            logging.getLogger("global_news").warning(
+                "指标文件保存失败 (%s): %s", metrics_file.name, e
+            )

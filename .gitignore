@@ -42,7 +42,7 @@ Desktop.ini
 # macOS
 .DS_Store
 
-# Claude Code (开发工具)
+# 开发工具本地配置
 .claude/
 CLAUDE.md
 *.claude
@@ -68,10 +68,6 @@ src/premium/
 # 付费版配置 (含完整评分算法和101源)
 config/importance_keywords.yaml
 config/sources.yaml
-config/phase_transitions.yaml
-config/entities.yaml
-config/actions.yaml
-config/topics.yaml
 
 # 付费版 prompt (含10章完整模板)
 prompts/summary_prompt.txt
@@ -97,3 +93,5 @@ COMMERCIAL_EN.md
 
 # pytest
 .pytest_cache/
+experiments/
+test_review_writer.py

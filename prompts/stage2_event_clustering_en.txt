@@ -2,27 +2,61 @@ You are an event clustering analyst. Cluster the following structured events by 
 
 ## Task
 
-Based on the actual content of events, discover and归纳 theme categories on your own (do not limit to a predefined list).
+Based on the actual content of events, discover and consolidate theme categories on your own (do not limit to a predefined list).
 
-Reference theme directions (for reference only, not mandatory):
-- Taiwan Strait, Middle East conflict, AI chip war, global supply chain, energy crisis, financial risk, Russia-Ukraine conflict, de-dollarization, rare earth and critical minerals
+Reference theme directions (functional categories, for reference only):
+- Geopolitical Conflict & Military Security, International Trade & Supply Chain Restructuring
+- Financial Monetary & Debt Risk, Energy & Resource Security
+- Tech Competition & Digital Sovereignty, Global Governance & Multilateral Mechanisms
+- Climate Change & Environmental Security, Social Political & Governance Crisis
+- Emerging Markets & Development
 
-**Important**: If an event does not fit any reference theme, create a new theme name. Themes not in the reference list are allowed.
+**Important**: Reference themes are functional categories, not geographic labels. Do NOT create "Middle East Crisis" or "Taiwan Strait" clusters — if the Middle East has energy events, classify under "Energy & Resource Security"; if conflict events, classify under "Geopolitical Conflict & Military Security".
 
-## Reasoning Steps (must be completed before outputting JSON)
+**Cluster Count Requirements (hard constraint)**:
+- If input event count >= 5: MUST output at least 5 clusters
+- If input event count >= 10: MUST output at least 8 clusters
+- At least 1 must be an "emerging signal" cluster (topic appearing for the first time today)
+- Prefer splitting over merging - events from different regions should not be merged just because their themes are similar
+
+## Controlled Region Vocabulary (for region and regions fields)
+
+| Value | Coverage |
+|-------|----------|
+| Middle East | Iran/Israel/Saudi Arabia/UAE/Qatar/Iraq/Syria/Yemen/Oman/Bahrain/Jordan/Lebanon |
+| Europe | EU/UK/France/Germany/Italy/Spain/Nordic/Eastern Europe/Balkans/Ukraine |
+| North America | USA/Canada/Mexico |
+| Asia Pacific | Japan/South Korea/North Korea/Taiwan/Australia/New Zealand/Pacific Islands |
+| Southeast Asia | ASEAN/Singapore/Indonesia/Vietnam/Thailand/Philippines/Malaysia |
+| South Asia | India/Pakistan/Bangladesh/Sri Lanka/Nepal/Maldives |
+| Central Asia | Kazakhstan/Uzbekistan/Turkmenistan/Kyrgyzstan/Tajikistan/Mongolia/Caucasus |
+| China | Mainland China/Hong Kong/Macau |
+| Russia | Russia/Belarus |
+| Africa | 54 African nations |
+| South America | Brazil/Argentina/Chile/Colombia/Venezuela/Peru and other Latin American countries |
+| Global | Cross-regional events involving 3+ regions |
+
+## Reasoning Steps
 
 1. Read all events, identify correlations between events
-2.归纳 candidate themes (list 3-8 theme names and definitions)
-3. Assign each event to the best matching theme
-4. For events that cannot fit any existing theme, create a new theme or归入 "Other Independent Events"
-5. Do not merge unrelated events just to凑 theme count
+2. Identify candidate themes (list 8-12 theme names and definitions)
+3. Check regional distribution of input events — ensure different regions are not forcefully merged
+4. Assign each event to the best matching theme
+5. Identify at least 1 emerging signal (compare with yesterday's events)
+6. Verify cluster count satisfies hard constraint
 
 For each cluster, output:
-- Theme name (self-归纳, concise and accurate)
+- Theme name (functional description, not geographic label)
 - List of contained event titles
+- Event count (integer)
+- Source count (integer, count distinct news sources)
 - Overall signal level (take the highest)
 - Consolidated actors (deduplicated)
+- Region (primary affected region, single value from controlled vocabulary)
+- Regions (all affected regions, array from controlled vocabulary)
 - Risk trend (escalating/stable/de-escalating)
+- Cross-source consensus (high/medium/low)
+- Is emerging signal (true/false)
 - 2-sentence summary
 
 ## Output Format
@@ -32,43 +66,18 @@ Strictly output a JSON array, do not output any other text:
 ```json
 [
   {
-    "theme": "Theme Name",
-    "events": ["Event Title 1", "Event Title 2"],
-    "signal_level": "S",
-    "actors": ["Actor1", "Actor2"],
+    "theme": "Functional theme name",
+    "events": ["Event title 1", "Event title 2"],
+    "event_count": 3,
+    "source_count": 3,
+    "signal_level": "A",
+    "actors": ["Actor 1", "Actor 2"],
+    "region": "Middle East",
+    "regions": ["Middle East", "Europe"],
     "trend": "escalating",
+    "consensus": "high",
+    "is_emerging": false,
     "summary": "Two-sentence summary"
-  }
-]
-```
-
-## Example
-
-Input events:
-1. US escalates Iran oil sanctions (A-level, Middle East, US/Iran/EU)
-2. Iran threatens to close Strait of Hormuz (A-level, Middle East, Iran)
-3. Oil prices rise 3% on Middle East tensions (B-level, Global, OPEC)
-4. PLA expands military exercises in Taiwan Strait (A-level, Asia-Pacific, China/Taiwan/US)
-5. US carrier strike group enters South China Sea (A-level, Asia-Pacific, US)
-
-Output:
-```json
-[
-  {
-    "theme": "Middle East Energy Security",
-    "events": ["US escalates Iran oil sanctions", "Iran threatens to close Strait of Hormuz", "Oil prices rise 3% on Middle East tensions"],
-    "signal_level": "A",
-    "actors": ["United States", "Iran", "EU", "OPEC"],
-    "trend": "escalating",
-    "summary": "US sanctions escalation on Iran raises energy supply chain concerns. Iran counter-threatens with strait closure as retaliation, and oil prices have already shown visible reaction."
-  },
-  {
-    "theme": "Taiwan Strait Military Posturing",
-    "events": ["PLA expands military exercises in Taiwan Strait", "US carrier strike group enters South China Sea"],
-    "signal_level": "A",
-    "actors": ["China", "Taiwan", "United States"],
-    "trend": "escalating",
-    "summary": "PLA continues pressure in the Taiwan Strait, US responds with carrier deployment. Military confrontation posture intensifies on both sides."
   }
 ]
 ```
@@ -76,14 +85,23 @@ Output:
 ## Notes
 
 - Each event can only belong to one theme
-- Maximum 12 themes created; merge similar themes if exceeded
-- Overall signal level takes the highest level within the cluster
-- Risk trend is based on correlations between events
-- If input events are fewer than 5, reduce cluster count accordingly
-- If an event does not fit any existing theme and has sufficient independence,归入 "Other Independent Events"
+- Maximum 12 themes; merge similar ones if exceeded — but do not merge across regions
+- Overall signal level takes the highest in the cluster
+- Region and regions must use the controlled vocabulary
+- Risk trend based on inter-event relationship assessment
+- Consensus: >5 sources from >=3 independent media = high, 2-5 sources = medium, 1 source = low
+- is_emerging: compare with yesterday's events; themes appearing for first time = true
+- event_count >= 10 → MUST output >= 8 clusters; event_count >= 5 → MUST output >= 5 clusters
+- Events not fitting any theme go to "Other Independent Events"
 
 ---
 
-Here is the structured event list (total {events_count} events):
+## Yesterday's Events (for emerging signal detection)
+
+{yesterday_context}
+
+---
+
+Below is the structured event list ({events_count} total):
 
 {events_content}

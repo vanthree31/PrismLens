@@ -49,7 +49,7 @@ Extraction rules:
 1. events: Maximum 10 most important events
 2. top_risks: Maximum 3
 3. watchpoints: Maximum 5
-4.各类 signals: Extract raw text fragments of the corresponding type from the briefing
+4. Each category of signals: Extract raw text fragments of the corresponding type from the briefing
 5. actor_mentions: Count mentions of each country/organization in the briefing
 6. signal_level must be one of S/A/B/C
 7. confidence must be one of high/medium/low
