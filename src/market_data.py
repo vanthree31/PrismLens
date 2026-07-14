@@ -57,7 +57,9 @@ except ImportError:
 # ── 配置 ────────────────────────────────────────
 MARKET_DATA_TIMEOUT = _safe_int("MARKET_DATA_TIMEOUT", 30)
 MARKET_DATA_RETRY_COUNT = _safe_int("MARKET_DATA_RETRY_COUNT", 2)
-FRED_API_KEY = os.getenv("FRED_API_KEY", "")  # 可选，用于美债交叉验证
+def _get_fred_api_key() -> str:
+    """延迟读取 FRED_API_KEY，确保 .env 已加载"""
+    return os.getenv("FRED_API_KEY", "")
 
 
 # ── Sina Finance API（新浪财经，中国数据主源）───
@@ -451,7 +453,7 @@ def _fetch_fred_treasury(series_id: str, timeout: int = 15) -> float | None:
     import urllib.request
 
     url = "https://api.stlouisfed.org/fred/series/observations"
-    params = f"series_id={series_id}&api_key={FRED_API_KEY or 'not_set'}&sort_order=desc&limit=2&file_type=json"
+    params = f"series_id={series_id}&api_key={_get_fred_api_key() or 'not_set'}&sort_order=desc&limit=2&file_type=json"
     full_url = f"{url}?{params}"
 
     try:
@@ -915,16 +917,16 @@ class MarketDataProvider:
 
     def _cross_validate_fred(self, data: dict, report: DataQualityReport) -> None:
         """使用 FRED 数据对美债进行交叉验证"""
-        if not FRED_API_KEY:
+        if not _get_fred_api_key():
             # 无 FRED API key，仅标记为单源
-            for key in ("us5y", "us10y", "us30y"):
+            for key in ("us2y", "us3m", "us5y", "us10y", "us30y"):
                 if key in data:
                     data[key]["quality_note"] = (
                         data[key].get("quality_note", "") + " 仅单源(yfinance)"
                     )
             return
 
-        for key in ("us5y", "us10y", "us30y"):
+        for key in ("us2y", "us3m", "us5y", "us10y", "us30y"):
             if key not in data:
                 continue
 
@@ -993,8 +995,9 @@ class MarketDataProvider:
         for _key, item in data.items():
             fh = item.get("freshness_hours")
             if fh is not None and fh > DATA_FRESHNESS_MAX_HOURS:
-                if item["quality"] in (DataQuality.VERIFIED, DataQuality.UNVERIFIED):
+                if item["quality"] == DataQuality.UNVERIFIED:
                     item["quality"] = DataQuality.STALE
+                # VERIFIED 保持不变（交叉验证过的数据即使稍旧也比单源新鲜数据可靠）
                 item["quality_note"] = (
                     item.get("quality_note", "")
                     + f" 数据过期({fh:.0f}h>{DATA_FRESHNESS_MAX_HOURS:.0f}h)"
