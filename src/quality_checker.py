@@ -120,7 +120,7 @@ class QualityChecker:
     REQUIRED_MARKET_INDICATORS_ZH = [
         "标普500",
         "纳斯达克",
-        "布伦特",
+        "Brent",
         "WTI",
         "黄金",
         "VIX",
