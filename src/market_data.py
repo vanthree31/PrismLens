@@ -57,6 +57,8 @@ except ImportError:
 # ── 配置 ────────────────────────────────────────
 MARKET_DATA_TIMEOUT = _safe_int("MARKET_DATA_TIMEOUT", 30)
 MARKET_DATA_RETRY_COUNT = _safe_int("MARKET_DATA_RETRY_COUNT", 2)
+
+
 def _get_fred_api_key() -> str:
     """延迟读取 FRED_API_KEY，确保 .env 已加载"""
     return os.getenv("FRED_API_KEY", "")
@@ -240,7 +242,8 @@ ANOMALY_Z_THRESHOLD = float(os.getenv("MARKET_ANOMALY_Z", "3.0"))
 ANOMALY_WARN_Z = float(os.getenv("MARKET_ANOMALY_WARN_Z", "2.0"))
 
 # 新鲜度: 数据时间戳必须 < 此阈值（小时）
-DATA_FRESHNESS_MAX_HOURS = float(os.getenv("MARKET_FRESHNESS_HOURS", "24"))
+# 默认 72h：跨周末（周五→周一）约 52-60h，24h 太严格会导致周一全 STALE
+DATA_FRESHNESS_MAX_HOURS = float(os.getenv("MARKET_FRESHNESS_HOURS", "72"))
 
 # 最小数据点: yfinance 返回数据点少于此数 → 警告
 MIN_DATA_POINTS_PER_TICKER = 4
