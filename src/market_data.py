@@ -94,6 +94,7 @@ SINA_CV_FUTURES: dict[str, dict] = {
     "heating_oil": {"symbol": "hf_HO", "name": "取暖油", "factor": 1.0},
     "coffee": {"symbol": "hf_KC", "name": "咖啡", "factor": 1.0},
     "cotton": {"symbol": "hf_CT", "name": "棉花", "factor": 1.0},
+    "orange_juice": {"symbol": "hf_OJ", "name": "橙汁", "factor": 1.0},
 }
 
 SINA_CV_FOREX: dict[str, dict] = {
@@ -208,6 +209,9 @@ def _fetch_sina_realtime(symbols: list[str] | None = None) -> dict[str, dict]:
                 "source": "sina",
                 "unit": cfg.get("unit", ""),
                 "data_time": data_time,
+                "quality": DataQuality.UNVERIFIED,
+                "source_count": 1,
+                "quality_note": "单源(Sina)未交叉验证，请自行判断",
             }
         except (ValueError, IndexError, KeyError) as e:
             logger.debug(f"Sina 解析失败 {symbol}: {e}")
@@ -361,6 +365,68 @@ def _fetch_ecb_rates() -> dict[str, float]:
         return {}
 
 
+def _get_twelvedata_api_key() -> str:
+    """延迟读取 TWELVE_DATA_API_KEY"""
+    return os.getenv("TWELVE_DATA_API_KEY", "")
+
+
+def _fetch_twelvedata_prices() -> dict[str, float]:
+    """从 Twelve Data 免费 API 获取价格（需注册 twelvedata.com，免费 800 次/天）。
+
+    一次调用获取多个 symbol，用于股票指数/农产品/贵金属交叉验证。
+    仅当 TWELVE_DATA_API_KEY 环境变量设置时生效。
+    """
+    api_key = _get_twelvedata_api_key()
+    if not api_key:
+        return {}
+
+    mapping: dict[str, str] = {
+        "sp500": "SPX",
+        "dow": "DJI",
+        "nasdaq": "IXIC",
+        "vix": "VIX",
+        "ftse100": "FTSE",
+        "dax": "DAX",
+        "cac40": "FCHI",
+        "nikkei": "N225",
+        "kospi": "KS11",
+        "wheat": "WHEAT",
+        "corn": "CORN",
+        "soybeans": "SOYB",
+        "sugar": "SUGAR",
+        "platinum": "PLAT",
+        "palladium": "PALL",
+    }
+
+    symbol_str = ",".join(mapping.values())
+    url = f"https://api.twelvedata.com/quote?symbol={symbol_str}&apikey={api_key}"
+
+    try:
+        import json as _json
+        import urllib.request as _req
+
+        req = _req.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with _req.urlopen(req, timeout=15) as resp:
+            data = _json.loads(resp.read())
+    except Exception as e:
+        logger.debug(f"Twelve Data 请求失败: {e}")
+        return {}
+
+    reverse_map = {v: k for k, v in mapping.items()}
+    result: dict[str, float] = {}
+    if isinstance(data, dict):
+        for sym, info in data.items():
+            key = reverse_map.get(sym)
+            if key and isinstance(info, dict):
+                price = info.get("close") or info.get("price")
+                if price:
+                    try:
+                        result[key] = float(price)
+                    except (ValueError, TypeError):
+                        pass
+    return result
+
+
 # ── 交叉验证阈值表 ──────────────────────────────
 # 同一指标两个数据源的偏差超过此阈值 → 标记为 DISPUTED
 CROSS_VALIDATION_THRESHOLDS: dict[str, float] = {
@@ -414,6 +480,7 @@ CROSS_VALIDATION_THRESHOLDS: dict[str, float] = {
     "coffee": 2.0,
     "sugar": 2.0,
     "cotton": 2.0,
+    "orange_juice": 2.0,
     "ftse100": 1.5,
     "dax": 1.5,
     "cac40": 1.5,
@@ -546,6 +613,7 @@ MARKET_TICKERS: dict[str, dict] = {
     "coffee": {"ticker": "KC=F", "name": "咖啡", "category": "软商品", "unit": "美分/磅"},
     "sugar": {"ticker": "SB=F", "name": "11号糖", "category": "软商品", "unit": "美分/磅"},
     "cotton": {"ticker": "CT=F", "name": "棉花", "category": "软商品", "unit": "美分/磅"},
+    "orange_juice": {"ticker": "OJ=F", "name": "橙汁", "category": "软商品", "unit": "美分/磅"},
     # ── 汇率 ──
     "dxy": {"ticker": "DX-Y.NYB", "name": "美元指数", "category": "汇率", "unit": ""},
     "eurusd": {"ticker": "EURUSD=X", "name": "欧元/美元", "category": "汇率", "unit": ""},
@@ -824,10 +892,31 @@ class DataQualityReport:
             dp = str(info["data_points"])
             z = f"{info['anomaly_z']:.1f}σ" if info["anomaly_z"] is not None else "—"
             sc = str(info["source_count"])
-            notes = info["notes"][:60] if info["notes"] else "—"
+            notes = info["notes"][:80] if info["notes"] else "—"
             lines.append(
                 f"| {info['name']} | {price_str} | {quality_icon} | {freshness} | {dp} | {z} | {sc} | {notes} |"
             )
+
+        lines.extend(
+            [
+                "",
+                "---",
+                "",
+                "### 质量等级说明",
+                "",
+                "| 图标 | 含义 | 数据准确性 |",
+                "|------|------|-----------|",
+                "| ✅ 已验证 | 2个以上独立数据源交叉验证通过，偏差在阈值内 | 高 — 可放心使用 |",
+                "| ⚠️ 单源未验证 | 仅1个数据源，无法独立验证 | 中 — 数据可用但请自行判断 |",
+                "| 🕐 数据过期 | 最新数据超过72小时未更新 | 低 — 价格可能已变化 |",
+                "| 🔴 偏差超标 | 双源数据偏差超过阈值 | 需核实 — 两个源至少一个有问题 |",
+                "| ❌ 不可用 | 所有数据源均失败 | 无 — 该指标当前不可用 |",
+                "",
+                "**数据源**: yfinance(主源) · Sina新浪财经 · FRED美联储 · CoinGecko · ECB欧洲央行 · TwelveData(可选)",
+                "",
+                '> ⚠️ 标注为"单源未验证"的指标请自行判断准确性。本系统不构成投资建议。',
+            ]
+        )
 
         return "\n".join(lines)
 
@@ -1016,6 +1105,9 @@ class MarketDataProvider:
         # 辅助源: ECB 央行参考汇率（每日）
         self._cross_validate_ecb(data, report)
 
+        # 辅助源: Twelve Data 多资产交叉验证（可选，需 API key）
+        self._cross_validate_twelvedata(data, report)
+
         # 异常检测
         self._detect_anomalies(data, report)
 
@@ -1110,7 +1202,7 @@ class MarketDataProvider:
                     "freshness_hours": freshness_hours,
                     "quality": DataQuality.UNVERIFIED,
                     "source_count": 1,
-                    "quality_note": "",
+                    "quality_note": "单源(yfinance)未交叉验证，请自行判断",
                     "anomaly_z": None,
                     "unit": config.get("unit", ""),
                     "data_time": data_time,
@@ -1308,6 +1400,44 @@ class MarketDataProvider:
                         data[key].get("quality_note", "")
                         + f"; ECB={ecb_price:.4f}偏差{diff:.4f}>{threshold:.3f}(未升级)"
                     )
+
+    # ── 交叉验证: Twelve Data ──
+
+    def _cross_validate_twelvedata(self, data: dict, report: DataQualityReport) -> None:
+        """使用 Twelve Data 免费 API 对股票指数/农产品/贵金属交叉验证。
+
+        仅当 TWELVE_DATA_API_KEY 环境变量设置时生效。
+        免费注册: https://twelvedata.com/（800 次/天）
+        """
+        if not _get_twelvedata_api_key():
+            return
+
+        td_prices = _fetch_twelvedata_prices()
+        if not td_prices:
+            return
+
+        for key, td_price in td_prices.items():
+            if key not in data:
+                continue
+
+            yf_value = data[key]["price"]
+            threshold = CROSS_VALIDATION_THRESHOLDS.get(key, 1.5)
+            diff = abs(yf_value - td_price)
+
+            if diff <= threshold:
+                prev = data[key].get("quality") == DataQuality.VERIFIED
+                data[key]["quality"] = DataQuality.VERIFIED
+                data[key]["source_count"] = 2 if not prev else data[key].get("source_count", 1) + 1
+                prev_note = data[key].get("quality_note", "")
+                data[key]["quality_note"] = (
+                    f"yfinance={yf_value:.2f}, TwelveData={td_price:.2f}, diff={diff:.3f}"
+                    + (f"; {prev_note}" if prev_note and "单源" not in prev_note else "")
+                )
+            else:
+                data[key]["quality_note"] = (
+                    data[key].get("quality_note", "")
+                    + f"; TwelveData偏差{diff:.2f}>{threshold:.2f}(未升级)"
+                )
 
     # ── 异常检测 ──
 
