@@ -815,13 +815,14 @@ class MarketDataProvider:
             if item is not None:
                 data[key] = item
 
-        # FRED-only 指标（如 us2y）
+        # FRED-only 指标（如 us2y，无 yfinance ticker）
         for key, config in MARKET_TICKERS.items():
             if config.get("fred_only") and key not in data:
                 fred_series = config.get("fred_series")
                 if fred_series:
                     val = _fetch_fred_treasury(fred_series)
                     if val is not None:
+                        # FRED 数据为最近观测日收盘，非实时
                         data[key] = {
                             "name": config["name"],
                             "category": config["category"],
@@ -830,7 +831,10 @@ class MarketDataProvider:
                             "trend": "→",
                             "source": "fred",
                             "unit": config.get("unit", ""),
-                            "data_time": datetime.now().strftime("%m-%d"),
+                            "data_time": datetime.now().strftime("%m-%d") + " FRED观测",
+                            "quality": DataQuality.UNVERIFIED,
+                            "quality_note": "FRED单源(无yfinance ticker)",
+                            "source_count": 1,
                         }
 
         # 辅助源: FRED (仅美债交叉验证)
@@ -982,6 +986,9 @@ class MarketDataProvider:
                 continue
 
             config = MARKET_TICKERS.get(key, {})
+            # FRED-only 指标无 yfinance 源，已在 fetch 阶段标记，跳过交叉验证
+            if config.get("fred_only"):
+                continue
             series_id = config.get("fred_series", "")
             if not series_id:
                 continue
