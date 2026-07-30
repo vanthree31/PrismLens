@@ -81,37 +81,6 @@ def _get_market_data_for_chains() -> dict:
         return {}
 
 
-# 输出文件保留天数
-OUTPUT_RETENTION_DAYS = 7
-
-
-# ─────────────────────────────────────────────────
-# 主流程
-# ─────────────────────────────────────────────────
-
-
-def _cleanup_old_output(retention_days: int = OUTPUT_RETENTION_DAYS) -> int:
-    """清理超过保留天数的旧输出文件，返回删除数量"""
-    from datetime import datetime
-
-    output_dir = get_output_dir()
-    if not output_dir.exists():
-        return 0
-
-    cutoff = datetime.now().timestamp() - retention_days * 86400
-    removed = 0
-    for f in output_dir.glob("*.html"):
-        try:
-            if f.stat().st_mtime < cutoff:
-                f.unlink()
-                removed += 1
-        except Exception:
-            pass
-    if removed:
-        logger.info(f"  → 清理旧报告: 删除 {removed} 个超过 {retention_days} 天的文件")
-    return removed
-
-
 def run(
     skip_fetch: bool = False,
     skip_ai: bool = False,
@@ -145,7 +114,6 @@ def run(
     setup_logging()  # 配置 root logger，模块级 logger (global_news.main) 自动继承 handlers
 
     logger.info("正在加载配置...")
-    _cleanup_old_output()
 
     logger.info("=" * 60)
     logger.info("Global News Briefing 启动")
