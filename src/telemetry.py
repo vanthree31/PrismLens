@@ -25,6 +25,7 @@ logger = logging.getLogger("global_news.telemetry")
 # Data Model
 # ═══════════════════════════════════════════════════
 
+
 @dataclass
 class PipelineTelemetry:
     """单次 Pipeline 运行的完整遥测数据"""
@@ -73,6 +74,9 @@ class PipelineTelemetry:
     # ── 市场数据 ──
     market_indicators: int = 0
     market_quality: str = ""
+
+    # ── API 响应 ──
+    finish_reason: str = ""
 
     # ── 质量自评 ──
     quality_self_assessment: str = ""
@@ -130,12 +134,14 @@ class PipelineTelemetry:
 # Telemetry Engine
 # ═══════════════════════════════════════════════════
 
+
 class Telemetry:
     """运行遥测记录器"""
 
     def __init__(self, data_dir: Path | None = None):
         if data_dir is None:
             from src.utils import get_data_dir
+
             self.base_dir = get_data_dir() / "telemetry"
         else:
             self.base_dir = Path(data_dir)
@@ -166,7 +172,9 @@ class Telemetry:
                 data = json.loads(f.read_text(encoding="utf-8"))
                 if pipeline and data.get("pipeline_version") != pipeline:
                     continue
-                t = PipelineTelemetry(**{k: v for k, v in data.items() if k in PipelineTelemetry.__dataclass_fields__})
+                t = PipelineTelemetry(
+                    **{k: v for k, v in data.items() if k in PipelineTelemetry.__dataclass_fields__}
+                )
                 results.append(t)
             except Exception:
                 continue
@@ -209,9 +217,7 @@ class Telemetry:
             "values": values,
             "mean": round(mean, 2),
             "trend": trend,
-            "pct_change": round(
-                (second_half_avg / max(first_half_avg, 0.01) - 1) * 100, 1
-            ),
+            "pct_change": round((second_half_avg / max(first_half_avg, 0.01) - 1) * 100, 1),
             "n": len(values),
         }
 
@@ -226,10 +232,12 @@ class Telemetry:
         v3_data = json.loads(v3_files[0].read_text(encoding="utf-8"))
         v2_data = json.loads(v2_files[0].read_text(encoding="utf-8"))
 
-        v3_score = PipelineTelemetry(**{k: v for k, v in v3_data.items()
-                                        if k in PipelineTelemetry.__dataclass_fields__}).quality_score()
-        v2_score = PipelineTelemetry(**{k: v for k, v in v2_data.items()
-                                        if k in PipelineTelemetry.__dataclass_fields__}).quality_score()
+        v3_score = PipelineTelemetry(
+            **{k: v for k, v in v3_data.items() if k in PipelineTelemetry.__dataclass_fields__}
+        ).quality_score()
+        v2_score = PipelineTelemetry(
+            **{k: v for k, v in v2_data.items() if k in PipelineTelemetry.__dataclass_fields__}
+        ).quality_score()
 
         return {
             "date": date,
@@ -262,7 +270,7 @@ class Telemetry:
 
 # DeepSeek API pricing (USD per 1M tokens, estimated)
 # Adjust based on actual pricing
-COST_PER_1M_INPUT = float(os.getenv("TELEMETRY_COST_INPUT", "0.27"))   # $0.27/1M input
+COST_PER_1M_INPUT = float(os.getenv("TELEMETRY_COST_INPUT", "0.27"))  # $0.27/1M input
 COST_PER_1M_OUTPUT = float(os.getenv("TELEMETRY_COST_OUTPUT", "1.10"))  # $1.10/1M output
 
 
@@ -280,8 +288,9 @@ def get_cost_trend(days: int = 30, pipeline: str | None = None) -> dict:
     if not records:
         return {"daily_avg_cost": 0, "monthly_est": 0, "n": 0}
 
-    costs = [(r.estimated_cost_usd or estimate_cost(r.input_tokens, r.output_tokens))
-             for r in records]
+    costs = [
+        (r.estimated_cost_usd or estimate_cost(r.input_tokens, r.output_tokens)) for r in records
+    ]
     daily_avg = statistics.mean(costs) if costs else 0
     return {
         "daily_avg_cost": round(daily_avg, 4),

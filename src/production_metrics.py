@@ -31,6 +31,7 @@ def _get_db() -> Path:
     global DB_PATH
     if DB_PATH is None:
         from src.utils import get_data_dir
+
         DB_PATH = get_data_dir() / "runs.db"
     return DB_PATH
 
@@ -101,6 +102,7 @@ def init_db() -> None:
 @dataclass
 class RunRecord:
     """单次运行记录"""
+
     run_id: str = ""
     pipeline: str = "v3"
     date: str = ""
@@ -141,7 +143,8 @@ def record(r: RunRecord) -> None:
     """写入一条运行记录"""
     init_db()
     conn = sqlite3.connect(str(_get_db()))
-    conn.execute("""
+    conn.execute(
+        """
         INSERT INTO runs (
             run_id, pipeline, date, started_at, finished_at,
             fetch_seconds, ai_seconds, total_seconds,
@@ -152,16 +155,38 @@ def record(r: RunRecord) -> None:
             email_sent, email_success,
             had_fallback, had_error, error_message
         ) VALUES (?,?,?,?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?,?, ?,?,?,?,?, ?,?, ?,?,?)
-    """, (
-        r.run_id, r.pipeline, r.date, r.started_at, r.finished_at,
-        r.fetch_seconds, r.ai_seconds, r.total_seconds,
-        r.input_tokens, r.output_tokens, r.estimated_cost,
-        r.news_count, r.source_count, r.source_success_rate,
-        r.output_chars, r.h2_chapters, r.events_count, r.regions_covered,
-        int(r.json_valid), int(r.html_generated), r.finish_reason, r.quality_score, r.placeholder_count,
-        int(r.email_sent), int(r.email_success),
-        int(r.had_fallback), int(r.had_error), r.error_message,
-    ))
+    """,
+        (
+            r.run_id,
+            r.pipeline,
+            r.date,
+            r.started_at,
+            r.finished_at,
+            r.fetch_seconds,
+            r.ai_seconds,
+            r.total_seconds,
+            r.input_tokens,
+            r.output_tokens,
+            r.estimated_cost,
+            r.news_count,
+            r.source_count,
+            r.source_success_rate,
+            r.output_chars,
+            r.h2_chapters,
+            r.events_count,
+            r.regions_covered,
+            int(r.json_valid),
+            int(r.html_generated),
+            r.finish_reason,
+            r.quality_score,
+            r.placeholder_count,
+            int(r.email_sent),
+            int(r.email_success),
+            int(r.had_fallback),
+            int(r.had_error),
+            r.error_message,
+        ),
+    )
     conn.commit()
     conn.close()
 
@@ -178,9 +203,9 @@ def get_recent(days: int = 14, pipeline: str | None = None) -> list[dict]:
         params.append(pipeline)
     query += " ORDER BY date DESC"
     rows = conn.execute(query, params).fetchall()
+    cols = [d[1] for d in conn.execute("PRAGMA table_info(runs)").fetchall()]
     conn.close()
 
-    cols = [d[0] for d in conn.execute("PRAGMA table_info(runs)").fetchall()]
     return [dict(zip(cols, row, strict=True)) for row in rows]
 
 
@@ -250,7 +275,7 @@ def release_gate(days: int = 14) -> dict:
     avg_latency = sum(latencies) / n
     if avg_latency > 0:
         variance = sum((val - avg_latency) ** 2 for val in latencies) / n
-        std_dev = variance ** 0.5
+        std_dev = variance**0.5
         cv = std_dev / avg_latency * 100
     else:
         cv = 0
@@ -265,7 +290,7 @@ def release_gate(days: int = 14) -> dict:
     avg_tokens = sum(tokens) / n
     if avg_tokens > 0:
         token_variance = sum((val - avg_tokens) ** 2 for val in tokens) / n
-        token_cv = token_variance ** 0.5 / avg_tokens * 100
+        token_cv = token_variance**0.5 / avg_tokens * 100
     else:
         token_cv = 0
     checks["token_stability"] = {

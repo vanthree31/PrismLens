@@ -647,6 +647,12 @@ def run(
     try:
         from src.telemetry import PipelineTelemetry, Telemetry, estimate_cost
 
+        # 从 v3_result 提取 API 用量和 finish_reason
+        v3_usage = v3_result.get("usage", {}) if v3_result else {}
+        v3_finish_reason = v3_result.get("finish_reason", "") if v3_result else ""
+        input_tokens = v3_usage.get("prompt_tokens", 0)
+        output_tokens = v3_usage.get("completion_tokens", 0)
+
         t = PipelineTelemetry(
             run_id=state.run_id,
             date=today,
@@ -656,21 +662,30 @@ def run(
             ai_seconds=summary_elapsed,
             total_seconds=pipeline_elapsed,
             api_calls=1 if pipeline == "v3" else 4,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            total_tokens=input_tokens + output_tokens,
+            finish_reason=v3_finish_reason,
             news_count=len(news_items),
             source_count=len({n.source for n in news_items}) if news_items else 0,
             source_success_rate=(
-                metrics.data["fetch"]["success_sources"] / max(metrics.data["fetch"]["total_sources"], 1)
-                if metrics.data["fetch"]["total_sources"] > 0 else 0
+                metrics.data["fetch"]["success_sources"]
+                / max(metrics.data["fetch"]["total_sources"], 1)
+                if metrics.data["fetch"]["total_sources"] > 0
+                else 0
             ),
             output_chars=len(summary),
-            json_parse_success=v3_result is not None and v3_result.get("structured_data") is not None,
+            json_parse_success=v3_result is not None
+            and v3_result.get("structured_data") is not None,
             citation_density=(
                 v3_result.get("citations", {}).get("citation_density", 0)
-                if v3_result and v3_result.get("citations") else 0
+                if v3_result and v3_result.get("citations")
+                else 0
             ),
             citation_count=(
                 len(v3_result.get("citations", {}).get("claims", []))
-                if v3_result and v3_result.get("citations") else 0
+                if v3_result and v3_result.get("citations")
+                else 0
             ),
         )
         # 从 v3 structured_data 提取更多质量指标
@@ -683,8 +698,16 @@ def run(
                     regions_set.add(e["region"])
             t.regions_covered = len(regions_set)
             t.region_names = list(regions_set)
-            t.s_level_count = sum(1 for e in sd.get("events", []) if isinstance(e, dict) and e.get("signal_level") == "S")
-            t.a_level_count = sum(1 for e in sd.get("events", []) if isinstance(e, dict) and e.get("signal_level") == "A")
+            t.s_level_count = sum(
+                1
+                for e in sd.get("events", [])
+                if isinstance(e, dict) and e.get("signal_level") == "S"
+            )
+            t.a_level_count = sum(
+                1
+                for e in sd.get("events", [])
+                if isinstance(e, dict) and e.get("signal_level") == "A"
+            )
         if v3_result and v3_result.get("metadata"):
             t.quality_self_assessment = v3_result["metadata"].get("quality_self_assessment", "")
             t.hallucination_risk = v3_result["metadata"].get("hallucination_risk", "")
@@ -713,8 +736,10 @@ def run(
                 news_count=len(news_items),
                 source_count=len({n.source for n in news_items}) if news_items else 0,
                 source_success_rate=(
-                    metrics.data["fetch"]["success_sources"] / max(metrics.data["fetch"]["total_sources"], 1)
-                    if metrics.data["fetch"]["total_sources"] > 0 else 0
+                    metrics.data["fetch"]["success_sources"]
+                    / max(metrics.data["fetch"]["total_sources"], 1)
+                    if metrics.data["fetch"]["total_sources"] > 0
+                    else 0
                 ),
                 output_chars=len(summary),
                 h2_chapters=t.h2_chapters,
@@ -722,12 +747,11 @@ def run(
                 regions_covered=t.regions_covered,
                 json_valid=t.json_parse_success,
                 html_generated=report_path is not None,
-                finish_reason=t.finish_reason if hasattr(t, 'finish_reason') else "",
+                finish_reason=t.finish_reason,
                 quality_score=t.quality_score(),
                 placeholder_count=t.placeholder_count,
                 had_fallback=(
-                    bool(getattr(summarizer_v3, '_fallback_used', False))
-                    if v3_result else False
+                    bool(getattr(summarizer_v3, "_fallback_used", False)) if v3_result else False
                 ),
                 had_error=(report_path is None),
             )
@@ -742,17 +766,22 @@ def run(
             try:
                 v2_start = time.time()
                 v2_summarizer = NewsSummarizer(
-                    api_url=env["api_url"], api_key=env["api_key"],
+                    api_url=env["api_url"],
+                    api_key=env["api_key"],
                     model_name=env["model_name"],
                     proxy=env.get("https_proxy", ""),
-                    ssl_verify=env.get("ssl_verify", True), lang=lang,
+                    ssl_verify=env.get("ssl_verify", True),
+                    lang=lang,
                 )
                 v2_summary = v2_summarizer.summarize(news_items)
                 v2_elapsed = time.time() - v2_start
 
                 v2_t = PipelineTelemetry(
-                    run_id=f"{state.run_id}_v2", date=today, pipeline_version="v2",
-                    total_seconds=v2_elapsed, api_calls=3,
+                    run_id=f"{state.run_id}_v2",
+                    date=today,
+                    pipeline_version="v2",
+                    total_seconds=v2_elapsed,
+                    api_calls=3,
                     news_count=len(news_items),
                     output_chars=len(v2_summary),
                 )

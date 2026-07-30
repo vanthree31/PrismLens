@@ -122,7 +122,7 @@ class NewsSummarizerV3:
 
         # 3. API 调用
         start_time = time.time()
-        raw_output = self._call_api(system_msg, user_prompt)
+        raw_output, usage, finish_reason = self._call_api(system_msg, user_prompt)
         elapsed = time.time() - start_time
 
         if not raw_output:
@@ -145,6 +145,8 @@ class NewsSummarizerV3:
             "structured_data": parsed["structured_data"],
             "raw_output": raw_output,
             "elapsed": elapsed,
+            "usage": usage,
+            "finish_reason": finish_reason,
             "context_stats": ctx_stats,
         }
 
@@ -158,8 +160,12 @@ class NewsSummarizerV3:
         retry=_is_retryable_api_error,
         reraise=True,
     )
-    def _call_api(self, system_msg: str, user_prompt: str) -> str:
-        """调用 OpenAI 兼容 API"""
+    def _call_api(self, system_msg: str, user_prompt: str) -> tuple[str, dict, str]:
+        """调用 OpenAI 兼容 API
+
+        Returns:
+            (content, usage_dict, finish_reason)
+        """
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}",
@@ -202,4 +208,4 @@ class NewsSummarizerV3:
         if finish_reason == "length":
             logger.warning("v3 API 输出被截断！考虑增加 max_tokens")
 
-        return content
+        return content, usage, finish_reason
