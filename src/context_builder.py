@@ -35,6 +35,7 @@ logger = logging.getLogger("global_news.context_builder")
 @dataclass
 class ContextSection:
     """上下文的一个数据段"""
+
     name: str
     content: str
     priority: int = 5  # 1-10, 越高越优先保留
@@ -83,22 +84,23 @@ class ContextBuilder:
                 counter += 1
                 score = getattr(item, "importance_score", 0)
                 score_str = f" [imp:{score:.0f}]" if score else ""
-                lines.append(
-                    f"{counter}. [{item.source}] ({region}){score_str} {item.title}"
-                )
+                lines.append(f"{counter}. [{item.source}] ({region}){score_str} {item.title}")
                 if item.summary:
                     lines.append(f"   {item.summary[:200]}")
             queues = {r: q for r, q in queues.items() if q}
 
         content = "\n".join(lines)
         est_tokens = len(content) // 2  # 中文约 2 chars/token
-        self.sections.append(ContextSection("news", content, priority=10, estimated_tokens=est_tokens))
+        self.sections.append(
+            ContextSection("news", content, priority=10, estimated_tokens=est_tokens)
+        )
         return self
 
     def add_market_data(self) -> "ContextBuilder":
         """添加实时市场数据"""
         try:
             from src.market_data import get_market_provider
+
             market_text = get_market_provider().get_data_for_prompt()
         except Exception as e:
             logger.debug(f"市场数据加载失败: {e}")
@@ -107,13 +109,16 @@ class ContextBuilder:
         if market_text and "暂未接入" not in market_text:
             content = f"### 实时市场数据\n{market_text}\n"
             est_tokens = len(content) // 3
-            self.sections.append(ContextSection("market", content, priority=9, estimated_tokens=est_tokens))
+            self.sections.append(
+                ContextSection("market", content, priority=9, estimated_tokens=est_tokens)
+            )
         return self
 
     def add_history(self, days: int = 90) -> "ContextBuilder":
         """添加历史趋势仪表盘"""
         try:
             from src.history_analyzer import HistoryAnalyzer
+
             history_text = HistoryAnalyzer(max_days=days).render_for_prompt(lang=self.lang)
         except Exception as e:
             logger.debug(f"历史分析加载失败: {e}")
@@ -122,30 +127,40 @@ class ContextBuilder:
         if history_text and "暂无" not in history_text:
             content = f"### 历史趋势仪表盘\n{history_text}\n"
             est_tokens = len(content) // 3
-            self.sections.append(ContextSection("history", content, priority=7, estimated_tokens=est_tokens))
+            self.sections.append(
+                ContextSection("history", content, priority=7, estimated_tokens=est_tokens)
+            )
         return self
 
     def add_evolution(self) -> "ContextBuilder":
         """添加活跃事件演化追踪"""
         try:
             from src.evolution_tracker import EvolutionTracker
+
             tracker = EvolutionTracker()
-            master = tracker._load_master() if hasattr(tracker, '_load_master') else {}
+            master = tracker._load_master() if hasattr(tracker, "_load_master") else {}
             if master:
                 active = [
-                    v for v in master.values()
+                    v
+                    for v in master.values()
                     if isinstance(v, dict) and v.get("current_risk", 0) > 0
                 ]
                 if active:
                     lines = ["**活跃演化事件**:"]
-                    for evt in sorted(active, key=lambda x: x.get("current_risk", 0), reverse=True)[:10]:
+                    for evt in sorted(active, key=lambda x: x.get("current_risk", 0), reverse=True)[
+                        :10
+                    ]:
                         title = evt.get("title", evt.get("event_id", ""))
                         phase = evt.get("current_phase", "")
                         risk = evt.get("current_risk", "")
                         lines.append(f"- {title} (阶段:{phase}, 风险:{risk})")
                     content = "\n".join(lines)
                     est_tokens = len(content) // 3
-                    self.sections.append(ContextSection("evolution", content, priority=6, estimated_tokens=est_tokens))
+                    self.sections.append(
+                        ContextSection(
+                            "evolution", content, priority=6, estimated_tokens=est_tokens
+                        )
+                    )
         except Exception as e:
             logger.debug(f"演化追踪加载失败: {e}")
         return self
@@ -162,7 +177,9 @@ class ContextBuilder:
                 f"区域分布: " + ", ".join(f"{r}:{c}" for r, c in region_counts.most_common())
             )
             est_tokens = len(content) // 3
-            self.sections.append(ContextSection("source_health", content, priority=8, estimated_tokens=est_tokens))
+            self.sections.append(
+                ContextSection("source_health", content, priority=8, estimated_tokens=est_tokens)
+            )
         except Exception:
             pass
         return self
@@ -182,7 +199,11 @@ class ContextBuilder:
                         "则该聚类不是新兴信号）:\n" + "\n".join(f"- {t}" for t in titles)
                     )
                     est_tokens = len(content) // 3
-                    self.sections.append(ContextSection("yesterday_events", content, priority=5, estimated_tokens=est_tokens))
+                    self.sections.append(
+                        ContextSection(
+                            "yesterday_events", content, priority=5, estimated_tokens=est_tokens
+                        )
+                    )
         except Exception:
             pass
         return self
@@ -190,7 +211,9 @@ class ContextBuilder:
     def add_section(self, name: str, content: str, priority: int = 5) -> "ContextBuilder":
         """手动添加自定义数据段"""
         est_tokens = len(content) // 2
-        self.sections.append(ContextSection(name, content, priority=priority, estimated_tokens=est_tokens))
+        self.sections.append(
+            ContextSection(name, content, priority=priority, estimated_tokens=est_tokens)
+        )
         return self
 
     # ═══════════════════════════════════════════════

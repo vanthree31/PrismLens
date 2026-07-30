@@ -26,6 +26,7 @@ logger = logging.getLogger("global_news.prompt_manager")
 @dataclass
 class PromptVersion:
     """Prompt 版本记录"""
+
     version: str
     timestamp: str
     reason: str = ""
@@ -44,6 +45,7 @@ class PromptManager:
     def __init__(self, base_dir: Path | None = None):
         if base_dir is None:
             from src.utils import get_prompts_dir
+
             base_dir = get_prompts_dir()
         self.prompts_dir = base_dir
         self.version_path = base_dir / self.VERSION_FILE
@@ -60,9 +62,7 @@ class PromptManager:
         if self.version_path.exists():
             try:
                 data = json.loads(self.version_path.read_text(encoding="utf-8"))
-                self._history = [
-                    PromptVersion(**v) for v in data.get("history", [])
-                ]
+                self._history = [PromptVersion(**v) for v in data.get("history", [])]
             except Exception as e:
                 logger.warning(f"Prompt 版本文件加载失败: {e}")
 
@@ -80,11 +80,13 @@ class PromptManager:
         """计算当前 Prompt 文件的 SHA256 checksum"""
         if layers is None:
             from src.prompt_builder import LAYER_FILES
+
             layers = list(LAYER_FILES.keys())
 
         hasher = hashlib.sha256()
         for layer_name in sorted(layers):
             from src.prompt_builder import LAYER_FILES
+
             filename = LAYER_FILES.get(layer_name)
             if filename:
                 v3_path = self.prompts_dir / "v3" / "zh" / filename
