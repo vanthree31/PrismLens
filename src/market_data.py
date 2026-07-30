@@ -403,7 +403,13 @@ MARKET_TICKERS: dict[str, dict] = {
     "usdcad": {"ticker": "CAD=X", "name": "美元/加元", "category": "汇率", "unit": ""},
     "audusd": {"ticker": "AUDUSD=X", "name": "澳元/美元", "category": "汇率", "unit": ""},
     # ── 债券波动率 ──
-    "move": {"ticker": "^MOVE", "name": "MOVE债券波动率", "category": "波动率", "unit": ""},
+    "move": {
+        "ticker": "^MOVE",
+        "name": "MOVE债券波动率",
+        "category": "波动率",
+        "unit": "",
+        "period": "1mo",
+    },
     # ── 信用利差 ──
     "hyg": {"ticker": "HYG", "name": "高收益债ETF", "category": "信用", "unit": "USD"},
     "lqd": {"ticker": "LQD", "name": "投资级债ETF", "category": "信用", "unit": "USD"},
@@ -875,7 +881,9 @@ class MarketDataProvider:
                 if ticker is None:
                     ticker = yf.Ticker(config["ticker"])
 
-                hist = _fetch_history_with_timeout(ticker, "5d", MARKET_DATA_TIMEOUT)
+                hist = _fetch_history_with_timeout(
+                    ticker, config.get("period", "5d"), MARKET_DATA_TIMEOUT
+                )
 
                 if hist is None or len(hist) == 0:
                     logger.debug(f"{config['name']} 无数据返回")
