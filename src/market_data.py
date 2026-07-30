@@ -82,6 +82,28 @@ SINA_SYMBOLS: dict[str, dict] = {
     "fx_susdkrw": {"key": "krwusd", "name": "美元/韩元", "category": "汇率", "unit": ""},
 }
 
+# ── Sina 交叉验证符号 ──────────────────────────
+# 新浪期货/汇率数据作为第二数据源，与 yfinance 交叉验证
+SINA_CV_FUTURES: dict[str, dict] = {
+    # key → {sina_symbol, unit_conversion}
+    "wti": {"symbol": "hf_CL", "name": "WTI原油", "factor": 1.0},
+    "gold": {"symbol": "hf_GC", "name": "黄金", "factor": 1.0},
+    "silver": {"symbol": "hf_SI", "name": "白银", "factor": 1.0},
+    "copper": {"symbol": "hf_HG", "name": "铜", "factor": 0.01},  # Sina 美分/磅 → USD/磅
+    "natgas": {"symbol": "hf_NG", "name": "天然气", "factor": 1.0},
+    "heating_oil": {"symbol": "hf_HO", "name": "取暖油", "factor": 1.0},
+    "coffee": {"symbol": "hf_KC", "name": "咖啡", "factor": 1.0},
+    "cotton": {"symbol": "hf_CT", "name": "棉花", "factor": 1.0},
+}
+
+SINA_CV_FOREX: dict[str, dict] = {
+    "eurusd": {"symbol": "fx_seurusd", "name": "欧元/美元"},
+    "gbpusd": {"symbol": "fx_sgbpusd", "name": "英镑/美元"},
+    "usdjpy": {"symbol": "fx_susdjpy", "name": "美元/日元"},
+    "usdcad": {"symbol": "fx_susdcad", "name": "美元/加元"},
+    "audusd": {"symbol": "fx_saudusd", "name": "澳元/美元"},
+}
+
 
 def _fetch_sina_realtime(symbols: list[str] | None = None) -> dict[str, dict]:
     """从新浪财经获取实时行情数据。
@@ -194,6 +216,104 @@ def _fetch_sina_realtime(symbols: list[str] | None = None) -> dict[str, dict]:
     return result
 
 
+def _fetch_sina_cross_validation() -> dict[str, float]:
+    """从新浪获取期货+汇率数据，用于与 yfinance 交叉验证。
+
+    Returns:
+        {internal_key: price_in_standard_units}
+    """
+    result: dict[str, float] = {}
+    all_symbols: dict[str, tuple[str, float]] = {}
+
+    for key, cfg in {**SINA_CV_FUTURES, **SINA_CV_FOREX}.items():
+        all_symbols[cfg["symbol"]] = (key, cfg.get("factor", 1.0))
+
+    if not all_symbols:
+        return result
+
+    try:
+        import requests as _req
+
+        url = SINA_BASE_URL + ",".join(all_symbols.keys())
+        resp = _req.get(url, headers=SINA_HEADERS, timeout=SINA_TIMEOUT)
+        resp.encoding = "gbk"
+        text = resp.text
+    except Exception as e:
+        logger.debug(f"Sina 交叉验证请求失败: {e}")
+        return result
+
+    for line in text.strip().split("\n"):
+        if not line.strip() or "=" not in line:
+            continue
+        try:
+            raw_key, raw_val = line.split("=", 1)
+            symbol = raw_key.replace("var hq_str_", "").strip()
+            value_str = raw_val.strip().strip('";')
+            fields = value_str.split(",")
+
+            match = all_symbols.get(symbol)
+            if not match:
+                continue
+            internal_key, factor = match
+
+            if symbol.startswith("fx_"):
+                # 汇率格式: [0]=时间, [1]=最新价, ...
+                if len(fields) > 1 and fields[1]:
+                    price = float(fields[1]) * factor
+                else:
+                    continue
+            else:
+                # 期货格式: [0]=最新价, ...
+                if len(fields) > 0 and fields[0]:
+                    price = float(fields[0]) * factor
+                else:
+                    continue
+
+            if price > 0:
+                result[internal_key] = price
+        except (ValueError, IndexError) as e:
+            logger.debug(f"Sina CV 解析失败 {symbol}: {e}")
+            continue
+
+    return result
+
+
+def _fetch_coingecko_prices(coins: list[str] | None = None) -> dict[str, float]:
+    """从 CoinGecko 免费 API 获取加密货币价格（无需 API key）。
+
+    Returns:
+        {internal_key: price_in_usd}
+    """
+    if coins is None:
+        coins = ["bitcoin", "ethereum"]
+
+    coin_map = {"bitcoin": "bitcoin", "ethereum": "ethereum"}
+    ids = ",".join(coin_map[c] for c in coins if c in coin_map)
+    if not ids:
+        return {}
+
+    try:
+        import json as _json
+        import urllib.request as _req
+
+        url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids}&vs_currencies=usd"
+        req = _req.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with _req.urlopen(req, timeout=10) as resp:
+            data = _json.loads(resp.read())
+    except Exception as e:
+        logger.debug(f"CoinGecko 请求失败: {e}")
+        return {}
+
+    result: dict[str, float] = {}
+    reverse = {v: k for k, v in coin_map.items()}
+    for coin_id, prices in data.items():
+        key = reverse.get(coin_id)
+        if key and "usd" in prices:
+            result[key] = float(prices["usd"])
+
+    return result
+
+
 # ── 交叉验证阈值表 ──────────────────────────────
 # 同一指标两个数据源的偏差超过此阈值 → 标记为 DISPUTED
 CROSS_VALIDATION_THRESHOLDS: dict[str, float] = {
@@ -218,7 +338,7 @@ CROSS_VALIDATION_THRESHOLDS: dict[str, float] = {
     "wti": 1.0,
     "brent": 1.0,
     "natgas": 2.0,
-    "gold": 1.0,
+    "gold": 10.0,  # ~0.25% of $4000+ price, Sina vs COMEX tick difference
     "silver": 1.0,
     "copper": 1.0,
     "aluminum": 1.5,
@@ -226,7 +346,7 @@ CROSS_VALIDATION_THRESHOLDS: dict[str, float] = {
     "wheat": 2.0,
     "corn": 2.0,
     "dxy": 0.5,
-    "eurusd": 0.005,
+    "eurusd": 0.008,  # ~0.7% of ~1.15 rate, Sina vs yfinance minor tick diff
     "usdjpy": 0.5,
     "krwusd": 5.0,
     "move": 2.0,
@@ -840,6 +960,12 @@ class MarketDataProvider:
         # 辅助源: FRED (仅美债交叉验证)
         self._cross_validate_fred(data, report)
 
+        # 辅助源: Sina 期货/汇率交叉验证
+        self._cross_validate_sina(data, report)
+
+        # 辅助源: CoinGecko 加密货币交叉验证
+        self._cross_validate_coingecko(data, report)
+
         # 异常检测
         self._detect_anomalies(data, report)
 
@@ -1016,6 +1142,72 @@ class MarketDataProvider:
                     f"yfinance={yf_value:.2f} vs FRED={fred_value:.2f}"
                 )
                 logger.warning(f"{config['name']} 交叉验证失败: {data[key]['quality_note']}")
+
+    # ── 交叉验证: Sina ──
+
+    def _cross_validate_sina(self, data: dict, report: DataQualityReport) -> None:
+        """使用新浪期货/汇率数据对标的大宗商品和汇率进行交叉验证"""
+        sina_prices = _fetch_sina_cross_validation()
+        if not sina_prices:
+            logger.debug("Sina 交叉验证数据为空，跳过")
+            return
+
+        for key, sina_price in sina_prices.items():
+            if key not in data:
+                continue
+
+            yf_value = data[key]["price"]
+            threshold = CROSS_VALIDATION_THRESHOLDS.get(key, 1.0)
+            diff = abs(yf_value - sina_price)
+
+            if diff <= threshold:
+                data[key]["quality"] = DataQuality.VERIFIED
+                data[key]["source_count"] = 2
+                data[key]["quality_note"] = (
+                    f"yfinance={yf_value:.2f}, Sina={sina_price:.2f}, diff={diff:.3f}"
+                )
+            else:
+                data[key]["quality"] = DataQuality.DISPUTED
+                data[key]["source_count"] = 2
+                data[key]["quality_note"] = (
+                    f"偏差{diff:.3f}>{threshold:.3f}阈值! "
+                    f"yfinance={yf_value:.2f} vs Sina={sina_price:.2f}"
+                )
+                logger.warning(f"{data[key]['name']} Sina交叉验证失败: {data[key]['quality_note']}")
+
+    # ── 交叉验证: CoinGecko ──
+
+    def _cross_validate_coingecko(self, data: dict, report: DataQualityReport) -> None:
+        """使用 CoinGecko API 对比特币/以太坊进行交叉验证"""
+        cg_prices = _fetch_coingecko_prices()
+        if not cg_prices:
+            logger.debug("CoinGecko 数据为空，跳过")
+            return
+
+        for key, cg_price in cg_prices.items():
+            if key not in data:
+                continue
+
+            yf_value = data[key]["price"]
+            threshold = CROSS_VALIDATION_THRESHOLDS.get(key, 100.0)
+            diff = abs(yf_value - cg_price)
+
+            if diff <= threshold:
+                data[key]["quality"] = DataQuality.VERIFIED
+                data[key]["source_count"] = 2
+                data[key]["quality_note"] = (
+                    f"yfinance={yf_value:.2f}, CoinGecko={cg_price:.2f}, diff={diff:.2f}"
+                )
+            else:
+                data[key]["quality"] = DataQuality.DISPUTED
+                data[key]["source_count"] = 2
+                data[key]["quality_note"] = (
+                    f"偏差{diff:.2f}>{threshold:.2f}阈值! "
+                    f"yfinance={yf_value:.2f} vs CoinGecko={cg_price:.2f}"
+                )
+                logger.warning(
+                    f"{data[key]['name']} CoinGecko交叉验证失败: {data[key]['quality_note']}"
+                )
 
     # ── 异常检测 ──
 
