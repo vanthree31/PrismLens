@@ -235,6 +235,24 @@ CROSS_VALIDATION_THRESHOLDS: dict[str, float] = {
     "emeq": 1.0,
     "bund": 1.0,
     "bitcoin": 100.0,
+    "ethereum": 200.0,
+    # ── 新增指标阈值（单源，保守值）──
+    "platinum": 1.5,
+    "palladium": 2.0,
+    "heating_oil": 1.5,
+    "gasoline": 1.5,
+    "soybeans": 2.0,
+    "soymeal": 2.0,
+    "soyoil": 2.0,
+    "coffee": 2.0,
+    "sugar": 2.0,
+    "cotton": 2.0,
+    "ftse100": 1.5,
+    "dax": 1.5,
+    "cac40": 1.5,
+    "gbpusd": 0.01,
+    "usdcad": 0.01,
+    "audusd": 0.01,
 }
 
 # 异常检测: z-score 阈值
@@ -293,6 +311,9 @@ MARKET_TICKERS: dict[str, dict] = {
     "nifty": {"ticker": "^NSEI", "name": "印度Nifty50", "category": "亚太股市", "unit": "点"},
     # ── 欧洲 ──
     "stoxx": {"ticker": "^STOXX", "name": "欧洲Stoxx600", "category": "欧洲股市", "unit": "点"},
+    "ftse100": {"ticker": "^FTSE", "name": "英国富时100", "category": "欧洲股市", "unit": "点"},
+    "dax": {"ticker": "^GDAXI", "name": "德国DAX", "category": "欧洲股市", "unit": "点"},
+    "cac40": {"ticker": "^FCHI", "name": "法国CAC40", "category": "欧洲股市", "unit": "点"},
     # ── 美股小盘 ──
     "russell": {"ticker": "^RUT", "name": "罗素2000(小盘)", "category": "美股", "unit": "点"},
     # ── 美债 ──
@@ -333,17 +354,31 @@ MARKET_TICKERS: dict[str, dict] = {
         "fred_only": True,
         "unit": "%",
     },
-    # ── 大宗商品 ──
-    "wti": {"ticker": "CL=F", "name": "WTI原油", "category": "大宗商品", "unit": "USD/桶"},
-    "brent": {"ticker": "BZ=F", "name": "Brent原油", "category": "大宗商品", "unit": "USD/桶"},
-    "natgas": {"ticker": "NG=F", "name": "天然气", "category": "大宗商品", "unit": "USD/MMBtu"},
-    "gold": {"ticker": "GC=F", "name": "黄金", "category": "大宗商品", "unit": "USD/盎司"},
-    "silver": {"ticker": "SI=F", "name": "白银", "category": "大宗商品", "unit": "USD/盎司"},
-    "copper": {"ticker": "HG=F", "name": "铜", "category": "大宗商品", "unit": "USD/磅"},
-    "aluminum": {"ticker": "ALI=F", "name": "铝", "category": "大宗商品", "unit": "USD/吨"},
-    "ironore": {"ticker": "TIO=F", "name": "铁矿石", "category": "大宗商品", "unit": "USD/吨"},
+    # ── 贵金属 ──
+    "gold": {"ticker": "GC=F", "name": "黄金", "category": "贵金属", "unit": "USD/盎司"},
+    "silver": {"ticker": "SI=F", "name": "白银", "category": "贵金属", "unit": "USD/盎司"},
+    "platinum": {"ticker": "PL=F", "name": "铂金", "category": "贵金属", "unit": "USD/盎司"},
+    "palladium": {"ticker": "PA=F", "name": "钯金", "category": "贵金属", "unit": "USD/盎司"},
+    # ── 能源 ──
+    "wti": {"ticker": "CL=F", "name": "WTI原油", "category": "能源", "unit": "USD/桶"},
+    "brent": {"ticker": "BZ=F", "name": "Brent原油", "category": "能源", "unit": "USD/桶"},
+    "natgas": {"ticker": "NG=F", "name": "天然气", "category": "能源", "unit": "USD/MMBtu"},
+    "heating_oil": {"ticker": "HO=F", "name": "取暖油", "category": "能源", "unit": "USD/加仑"},
+    "gasoline": {"ticker": "RB=F", "name": "RBOB汽油", "category": "能源", "unit": "USD/加仑"},
+    # ── 工业金属 ──
+    "copper": {"ticker": "HG=F", "name": "铜", "category": "工业金属", "unit": "USD/磅"},
+    "aluminum": {"ticker": "ALI=F", "name": "铝", "category": "工业金属", "unit": "USD/吨"},
+    "ironore": {"ticker": "TIO=F", "name": "铁矿石", "category": "工业金属", "unit": "USD/吨"},
+    # ── 农产品 ──
     "wheat": {"ticker": "ZW=F", "name": "小麦", "category": "农产品", "unit": "美分/蒲式耳"},
     "corn": {"ticker": "ZC=F", "name": "玉米", "category": "农产品", "unit": "美分/蒲式耳"},
+    "soybeans": {"ticker": "ZS=F", "name": "大豆", "category": "农产品", "unit": "美分/蒲式耳"},
+    "soymeal": {"ticker": "ZM=F", "name": "豆粕", "category": "农产品", "unit": "USD/短吨"},
+    "soyoil": {"ticker": "ZL=F", "name": "豆油", "category": "农产品", "unit": "美分/磅"},
+    # ── 软商品 ──
+    "coffee": {"ticker": "KC=F", "name": "咖啡", "category": "软商品", "unit": "美分/磅"},
+    "sugar": {"ticker": "SB=F", "name": "11号糖", "category": "软商品", "unit": "美分/磅"},
+    "cotton": {"ticker": "CT=F", "name": "棉花", "category": "软商品", "unit": "美分/磅"},
     # ── 汇率 ──
     "dxy": {"ticker": "DX-Y.NYB", "name": "美元指数", "category": "汇率", "unit": ""},
     "eurusd": {"ticker": "EURUSD=X", "name": "欧元/美元", "category": "汇率", "unit": ""},
@@ -363,6 +398,10 @@ MARKET_TICKERS: dict[str, dict] = {
         "unit": "",
     },
     # CNH 数据现在从 Sina Finance 获取（实时、完整OHLC）
+    # ── 主要货币对 ──
+    "gbpusd": {"ticker": "GBPUSD=X", "name": "英镑/美元", "category": "汇率", "unit": ""},
+    "usdcad": {"ticker": "CAD=X", "name": "美元/加元", "category": "汇率", "unit": ""},
+    "audusd": {"ticker": "AUDUSD=X", "name": "澳元/美元", "category": "汇率", "unit": ""},
     # ── 债券波动率 ──
     "move": {"ticker": "^MOVE", "name": "MOVE债券波动率", "category": "波动率", "unit": ""},
     # ── 信用利差 ──
@@ -377,6 +416,7 @@ MARKET_TICKERS: dict[str, dict] = {
         "unit": "EUR",
     },
     "bitcoin": {"ticker": "BTC-USD", "name": "比特币", "category": "另类资产", "unit": "USD"},
+    "ethereum": {"ticker": "ETH-USD", "name": "以太坊", "category": "另类资产", "unit": "USD"},
     # 注: BDI(波罗的海干散货指数)在yfinance无对应ticker,需Baltic Exchange或tradingeconomics API。
     #      SCFI(集装箱运价指数)需上海航运交易所数据,当前不可用。
 }
