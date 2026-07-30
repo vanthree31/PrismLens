@@ -314,6 +314,53 @@ def _fetch_coingecko_prices(coins: list[str] | None = None) -> dict[str, float]:
     return result
 
 
+def _fetch_ecb_rates() -> dict[str, float]:
+    """从 ECB (欧洲央行) 获取每日参考汇率。免费、无需 API key、央行官方数据。
+
+    ECB 每日约 16:00 CET 更新。返回 EUR/XXX 格式，需转换为标准对。
+
+    Returns:
+        {internal_key: price} — 支持 eurusd, gbpusd, usdjpy
+    """
+    try:
+        import urllib.request as _req
+        import xml.etree.ElementTree as _ET
+
+        url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
+        req = _req.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with _req.urlopen(req, timeout=10) as resp:
+            xml_text = resp.read().decode()
+
+        root = _ET.fromstring(xml_text)
+        ns = {"eurofxref": "http://www.ecb.int/vocabulary/2002-08-01/eurofxref"}
+        cube = root.find(".//eurofxref:Cube[@time]", ns)
+        if cube is None:
+            return {}
+
+        rates = {}
+        for c in cube.findall("eurofxref:Cube[@currency]", ns):
+            curr = c.get("currency")
+            rate = c.get("rate")
+            if curr and rate:
+                rates[curr] = float(rate)
+
+        usd = rates.get("USD")
+        if not usd:
+            return {}
+
+        result: dict[str, float] = {}
+        if usd:
+            result["eurusd"] = round(usd, 5)
+        if "GBP" in rates:
+            result["gbpusd"] = round(usd / rates["GBP"], 5)
+        if "JPY" in rates:
+            result["usdjpy"] = round(rates["JPY"] / usd, 2)
+        return result
+    except Exception as e:
+        logger.debug(f"ECB 汇率获取失败: {e}")
+        return {}
+
+
 # ── 交叉验证阈值表 ──────────────────────────────
 # 同一指标两个数据源的偏差超过此阈值 → 标记为 DISPUTED
 CROSS_VALIDATION_THRESHOLDS: dict[str, float] = {
@@ -966,6 +1013,9 @@ class MarketDataProvider:
         # 辅助源: CoinGecko 加密货币交叉验证
         self._cross_validate_coingecko(data, report)
 
+        # 辅助源: ECB 央行参考汇率（每日）
+        self._cross_validate_ecb(data, report)
+
         # 异常检测
         self._detect_anomalies(data, report)
 
@@ -1208,6 +1258,56 @@ class MarketDataProvider:
                 logger.warning(
                     f"{data[key]['name']} CoinGecko交叉验证失败: {data[key]['quality_note']}"
                 )
+
+    # ── 交叉验证: ECB ──
+
+    def _cross_validate_ecb(self, data: dict, report: DataQualityReport) -> None:
+        """使用 ECB 央行每日参考汇率进行交叉验证。
+
+        ECB 每日 16:00 CET 更新，为官方基准汇率。
+        当 yfinance 和 Sina 不一致时，ECB 作为权威第三方仲裁。
+        """
+        ecb_rates = _fetch_ecb_rates()
+        if not ecb_rates:
+            logger.debug("ECB 汇率数据为空，跳过")
+            return
+
+        for key, ecb_price in ecb_rates.items():
+            if key not in data:
+                continue
+
+            # ECB 为每日参考汇率（非实时），阈值放宽以容纳日内波动
+            ecb_thresholds = {"eurusd": 0.02, "gbpusd": 0.02, "usdjpy": 1.0}
+            threshold = ecb_thresholds.get(key, 0.02)
+            yf_value = data[key]["price"]
+            diff = abs(yf_value - ecb_price)
+
+            prev_verified = data[key].get("quality") == DataQuality.VERIFIED
+            prev_note = data[key].get("quality_note", "")
+
+            if diff <= threshold:
+                if prev_verified:
+                    # 已有第二源验证通过，ECB 作为第三源确认
+                    data[key]["source_count"] = 3
+                    data[key]["quality_note"] = (
+                        prev_note + f"; ECB={ecb_price:.4f}, diff={diff:.4f}"
+                    )
+                else:
+                    data[key]["quality"] = DataQuality.VERIFIED
+                    data[key]["source_count"] = 2
+                    data[key]["quality_note"] = (
+                        f"yfinance={yf_value:.4f}, ECB={ecb_price:.4f}, diff={diff:.4f}"
+                    )
+            else:
+                if prev_verified:
+                    # 已有第二源通过，但 ECB 不同意 → 保留 VERIFIED 但标记差异
+                    data[key]["quality_note"] = prev_note + f"; ECB偏移{diff:.4f}>{threshold:.3f}"
+                else:
+                    # 单源 vs ECB 不同意 → 不升级
+                    data[key]["quality_note"] = (
+                        data[key].get("quality_note", "")
+                        + f"; ECB={ecb_price:.4f}偏差{diff:.4f}>{threshold:.3f}(未升级)"
+                    )
 
     # ── 异常检测 ──
 
