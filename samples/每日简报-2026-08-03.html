@@ -1,0 +1,2440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+    <title>国际局势日报 - 2026-08-03 上午版</title>
+    <style>
+        /* ═══════════════════════════════════════════
+           Design System v6 — PaperLens Inspired
+           白色背景 · 圆角卡片 · 柔和阴影 · 蓝色渐变强调色
+           ═══════════════════════════════════════════ */
+
+        :root {
+            --bg: #FFFFFF;
+            --surface: #F5F5F7;
+            --surface-elevated: #FFFFFF;
+            --ink: #1D1D1F;
+            --ink-sec: #515154;
+            --ink-muted: #86868B;
+            --primary: #007AFF;
+            --primary-hover: #0051D5;
+            --primary-light: rgba(0, 122, 255, 0.08);
+            --cta-gradient: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+            --red: #FF3B30;
+            --amber: #FF9500;
+            --blue: #007AFF;
+            --green: #34C759;
+            --border: rgba(0, 0, 0, 0.06);
+            --border-strong: rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --glass-bg: rgba(255, 255, 255, 0.60);
+            --glass-blur: saturate(200%) blur(24px);
+            --glass-inner-glow: inset 0 0.5px 0 rgba(255,255,255,0.8), inset 0 -0.5px 0 rgba(0,0,0,0.04);
+            --glass-edge-border: 0.5px solid rgba(0,0,0,0.06);
+            --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+                    'Helvetica Neue', 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC',
+                    sans-serif;
+            --mono: 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition-fast: 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition-normal: 400ms cubic-bezier(0.25, 0.1, 0.25, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-spring-slow: cubic-bezier(0.25, 1.3, 0.5, 1);
+            --ease-spring-fast: cubic-bezier(0.34, 1.4, 0.64, 1);
+            --sidebar-w: 48px;
+            --sidebar-w-hover: 240px;
+            --content-max: 900px;
+        }
+
+        /* ═══════════════════════════════════════════
+           DARK MODE — 暗色模式（手动切换）
+           ═══════════════════════════════════════════ */
+        [data-theme="dark"] {
+            --bg: #1C1C1E;
+            --surface: #2C2C2E;
+            --surface-elevated: #3A3A3C;
+            --ink: #F5F5F7;
+            --ink-sec: #AEAEB2;
+            --ink-muted: #A0A0A5;
+            --primary: #0A84FF;
+            --primary-hover: #409CFF;
+            --primary-light: rgba(10, 132, 255, 0.15);
+            --cta-gradient: linear-gradient(135deg, #0A84FF 0%, #5E5CE6 100%);
+            --red: #FF453A;
+            --amber: #FF9F0A;
+            --blue: #0A84FF;
+            --green: #30D158;
+            --border: rgba(255, 255, 255, 0.1);
+            --border-strong: rgba(255, 255, 255, 0.15);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --glass-bg: rgba(28, 28, 30, 0.78);
+            --glass-blur: saturate(120%) blur(30px);
+            --glass-inner-glow: inset 0 0.5px 0 rgba(255,255,255,0.10), inset 0 -0.5px 0 rgba(0,0,0,0.25);
+            --glass-edge-border: 0.5px solid rgba(255,255,255,0.08);
+        }
+
+        /* 暗色模式组件覆盖 */
+        [data-theme="dark"] .wm-line {
+            color: rgba(255, 255, 255, 0.06);
+        }
+        [data-theme="dark"] .sig {
+            box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.08);
+        }
+        [data-theme="dark"] .sig-S {
+            color: #FF6961; background: rgba(255, 69, 58, 0.12);
+            border-color: rgba(255, 69, 58, 0.25);
+        }
+        [data-theme="dark"] .sig-S::before { background: #FF453A; box-shadow: 0 0 4px rgba(255,69,58,0.5); }
+        [data-theme="dark"] .sig-A {
+            color: #FFB340; background: rgba(255, 159, 10, 0.12);
+            border-color: rgba(255, 159, 10, 0.22);
+        }
+        [data-theme="dark"] .sig-A::before { background: #FF9F0A; box-shadow: 0 0 4px rgba(255,159,10,0.45); }
+        [data-theme="dark"] .sig-B {
+            color: #8B8AFA; background: rgba(123, 123, 247, 0.10);
+            border-color: rgba(123, 123, 247, 0.20);
+        }
+        [data-theme="dark"] .sig-B::before { background: #7B7BF7; box-shadow: 0 0 3px rgba(123,123,247,0.4); }
+        [data-theme="dark"] .sig-C {
+            color: #98989D; background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        [data-theme="dark"] .sig-C::before { background: #98989D; }
+        [data-theme="dark"] td .sig-S {
+            background: rgba(255, 69, 58, 0.10); color: #FF6961;
+        }
+        [data-theme="dark"] td .sig-S::before { background: #FF453A; }
+        [data-theme="dark"] td .sig-A {
+            background: rgba(255, 159, 10, 0.10); color: #FFB340;
+        }
+        [data-theme="dark"] td .sig-A::before { background: #FF9F0A; }
+        [data-theme="dark"] td .sig-B {
+            background: rgba(123, 123, 247, 0.08); color: #8B8AFA;
+        }
+        [data-theme="dark"] td .sig-B::before { background: #7B7BF7; }
+        [data-theme="dark"] td .sig-C {
+            background: rgba(255, 255, 255, 0.03); color: #98989D;
+        }
+        [data-theme="dark"] td .sig-C::before { background: #98989D; }
+        [data-theme="dark"] tbody tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+        [data-theme="dark"] .table-scroll tbody tr:nth-child(even) td:first-child { background: rgba(255,255,255,0.02); }
+        [data-theme="dark"] .trigger-box.escalation {
+            background: rgba(255, 69, 58, 0.06);
+            box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.06);
+        }
+        [data-theme="dark"] .trigger-box.escalation .trigger-label { color: #FF6961; }
+        [data-theme="dark"] .trigger-box.de-escalation {
+            background: rgba(48, 209, 88, 0.06);
+            box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.06);
+        }
+        [data-theme="dark"] .trigger-box.de-escalation .trigger-label { color: #30D158; }
+        [data-theme="dark"] .country-tag {
+            background: rgba(10, 132, 255, 0.10);
+            border-color: rgba(10, 132, 255, 0.15);
+            color: #70B5FF;
+        }
+        [data-theme="dark"] .country-tag.key-country {
+            background: rgba(255, 69, 58, 0.10);
+            border-color: rgba(255, 69, 58, 0.18);
+            color: #FF6961;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; scroll-padding-top: 16px; -webkit-text-size-adjust: 100%; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 1.7;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin-left: var(--sidebar-w);
+            overflow-x: hidden;
+        }
+
+        ::selection { background: rgba(0, 122, 255, 0.15); color: var(--ink); }
+
+        /* 可访问性：屏幕阅读器专用文本 */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* 可访问性：focus样式 */
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        .nav-item:focus-visible,
+        .theme-toggle:focus-visible,
+        .hamburger:focus-visible,
+        .back-to-top:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* ═══════════════════════════════════════════
+           SCROLL PROGRESS — 顶部渐变细线
+           ═══════════════════════════════════════════ */
+        .scroll-progress {
+            position: fixed;
+            top: 0; left: var(--sidebar-w); right: 0;
+            height: 2px;
+            z-index: 300;
+            background: transparent;
+        }
+        .scroll-progress-bar {
+            height: 100%;
+            background: var(--cta-gradient);
+            width: 100%;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.1s linear;
+            border-radius: 0 1px 1px 0;
+        }
+
+        /* ═══════════════════════════════════════════
+           SIDEBAR — 桌面端默认收起，hover展开
+           ═══════════════════════════════════════════ */
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0;
+            width: var(--sidebar-w);
+            height: 100vh;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-right: var(--glass-edge-border);
+            box-shadow: var(--glass-inner-glow), 2px 0 12px rgba(0,0,0,0.04);
+            transition: width 0.5s var(--ease-spring-slow),
+                        background 0.5s var(--ease-spring-slow);
+            border-right: 0.5px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: width 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) 0.3s;
+            will-change: width;
+            overflow: hidden;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        }
+
+        .sidebar:hover {
+            width: var(--sidebar-w-hover);
+            transition: width 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) 0s;
+        }
+
+        .sidebar-header {
+            padding: 16px 12px;
+            border-bottom: 0.5px solid var(--border);
+            flex-shrink: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-header .logo {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.3px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            transition: background var(--transition-fast);
+            line-height: 1;
+            min-width: 44px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .theme-toggle:hover {
+            background: var(--primary-light);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 8px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .sidebar-nav::-webkit-scrollbar { width: 0; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--ink-muted);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            transition: color 0.3s var(--ease-spring-fast),
+                        background 0.3s var(--ease-spring-fast),
+                        transform 0.3s var(--ease-spring-fast);
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            margin-right: 4px;
+        }
+
+        .nav-item:hover {
+            color: var(--ink);
+            background: var(--primary-light);
+            transform: translateX(2px);
+        }
+
+        .nav-item:active {
+            transform: translateX(1px) scale(0.98);
+            transition: transform 0.1s var(--ease-spring-fast);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: 600;
+            background: var(--primary-light);
+        }
+
+        .nav-idx {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--ink-muted);
+            min-width: 18px;
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .nav-item.active .nav-idx { color: var(--primary); }
+
+        .nav-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .mobile-topbar, .mobile-toc-overlay, .mobile-toc { display: none; }
+
+        /* ═══════════════════════════════════════════
+           CONTENT WRAPPER
+           ═══════════════════════════════════════════ */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: var(--content-max);
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* ═══════════════════════════════════════════
+           TITLE SLIDE — 白色封面 + 蓝色渐变
+           ═══════════════════════════════════════════ */
+        .title-slide {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 40px 80px;
+            background: var(--bg);
+        }
+
+        .title-slide .label {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 28px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: var(--primary-light);
+            border-radius: 20px;
+        }
+
+        .title-slide .label::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .title-slide h1 {
+            font-size: clamp(2em, 5vw, 3em);
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            line-height: 1.15;
+        }
+
+        .title-slide .subtitle {
+            font-size: 17px;
+            color: var(--ink-sec);
+            letter-spacing: 0.2px;
+            margin-bottom: 32px;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .title-slide .date {
+            font-size: 18px;
+            color: var(--ink);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .title-slide .meta {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--ink-muted);
+            letter-spacing: 0.2px;
+        }
+
+        .title-slide .accent-line {
+            width: 40px;
+            height: 3px;
+            background: var(--cta-gradient);
+            border-radius: 2px;
+            margin: 32px auto 0;
+        }
+
+        .signal-legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--ink-sec);
+            font-weight: 500;
+        }
+
+        .title-disclaimer {
+            margin-top: 32px;
+            font-size: 12px;
+            color: var(--ink-muted);
+            max-width: 440px;
+            line-height: 1.7;
+            letter-spacing: 0.2px;
+        }
+
+        /* ═══════════════════════════════════════════
+           CHAPTER TITLE — 大号标题 + 淡色下划线
+           ═══════════════════════════════════════════ */
+        .chapter-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--ink);
+            margin: 0 0 6px;
+            padding: 48px 0 12px;
+            border-bottom: 2px solid var(--border);
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+        }
+
+        .ch-num {
+            font-family: var(--mono);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-right: 10px;
+            vertical-align: middle;
+            padding: 2px 8px;
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+        }
+
+        /* ═══════════════════════════════════════════
+           SLIDES — 滚动文档模式
+           ═══════════════════════════════════════════ */
+        .slide { position: static; }
+
+        .slide-inner {
+            min-width: 0;
+            padding: 0;
+            margin: 0 auto;
+        }
+
+        .slide-body {
+            padding: 8px 0 48px;
+        }
+
+        /* ═══════════════════════════════════════════
+           BACK TO TOP
+           ═══════════════════════════════════════════ */
+        .back-to-top {
+            position: fixed;
+            bottom: 28px; right: 28px;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--surface-elevated);
+            color: var(--ink-sec);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            opacity: 0; visibility: hidden;
+            transition: opacity var(--transition-fast), visibility var(--transition-fast),
+                        color var(--transition-fast), transform var(--transition-fast),
+                        border-color var(--transition-fast), box-shadow var(--transition-fast);
+            z-index: 200;
+            border: 0.5px solid var(--border);
+            font-size: 16px;
+            box-shadow: var(--shadow-md);
+        }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover { color: var(--primary); border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+        /* ═══════════════════════════════════════════
+           CONTENT — 排版
+           ═══════════════════════════════════════════ */
+        h3 {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--ink);
+            margin: 28px 0 10px;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ink-sec);
+            margin: 20px 0 6px;
+        }
+
+        p { margin: 8px 0; line-height: 1.75; color: var(--ink-sec); }
+        ul, ol { margin: 6px 0 12px 20px; }
+        li { margin: 3px 0; line-height: 1.7; color: var(--ink-sec); }
+        li p { margin: 0; }
+        strong { font-weight: 600; color: var(--ink); }
+        em { color: var(--ink-muted); font-style: normal; }
+        a { color: var(--primary); text-decoration: none; transition: color var(--transition-fast); }
+        a:hover { color: var(--primary-hover); }
+
+        hr { display: none; }
+        hr.section-sep {
+            display: block;
+            border: none;
+            height: 1px;
+            background: var(--border);
+            margin: 24px 0 20px;
+        }
+
+        /* ═══════════════════════════════════════════
+           TABLES — 简洁 · 有呼吸感 · hover高亮
+           ═══════════════════════════════════════════ */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 12px 0;
+            font-size: 14px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        thead {
+            background: var(--surface);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--ink-sec);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            background: var(--surface);
+        }
+
+        td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+            line-height: 1.6;
+            color: var(--ink-sec);
+        }
+
+        tbody tr:nth-child(even) { background: rgba(0,0,0,0.03); }
+        tbody tr:hover { background: var(--primary-light); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        td:empty { display: none; }
+
+        td .sig { font-size: 0.92em; }
+
+        /* ═══════════════════════════════════════════
+           RISK CARDS — 核心风险卡片样式
+           ═══════════════════════════════════════════ */
+        .risk-card {
+            padding: 16px 20px;
+            margin: 16px 0;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: var(--radius-md);
+            border: var(--glass-edge-border);
+            box-shadow: var(--glass-inner-glow), var(--shadow-sm);
+            transition: transform 0.4s var(--ease-spring), box-shadow 0.4s var(--ease-spring);
+        }
+        .risk-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .risk-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .risk-header .risk-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .risk-field {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 4px 16px;
+            margin: 6px 0;
+            align-items: baseline;
+        }
+        .risk-field .field-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-muted);
+            white-space: nowrap;
+        }
+        .risk-field .field-value {
+            font-size: 14px;
+            color: var(--ink-sec);
+            line-height: 1.6;
+        }
+
+        /* 升级/缓和触发对比 */
+        .risk-triggers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .trigger-box {
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            line-height: 1.6;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .trigger-box.escalation {
+            border-left: 2px solid var(--red);
+            background: rgba(255, 59, 48, 0.03);
+            box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.4);
+        }
+        .trigger-box.escalation .trigger-label {
+            color: #CC0000;
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        .trigger-box.de-escalation {
+            border-left: 2px solid var(--green);
+            background: rgba(52, 199, 89, 0.03);
+            box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.4);
+        }
+        .trigger-box.de-escalation .trigger-label {
+            color: #1B8C3A;
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        /* 国家标签 */
+        .country-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 4px 0;
+        }
+        .country-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(0, 122, 255, 0.06);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 0.5px solid rgba(0, 122, 255, 0.10);
+            border-radius: 20px;
+            font-size: 11px;
+            color: #0066D6;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+        }
+        .country-tag.key-country {
+            background: rgba(255, 59, 48, 0.06);
+            border-color: rgba(255, 59, 48, 0.12);
+            color: #CC0000;
+            font-weight: 600;
+        }
+
+        /* ═══════════════════════════════════════════
+           WATCH CARDS — 48h观察哨卡片网格
+           ═══════════════════════════════════════════ */
+        .watch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 12px 0;
+        }
+        .watch-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            border-left: 3px solid var(--primary);
+            border: var(--glass-edge-border);
+            border-left: 3px solid var(--primary);
+            box-shadow: var(--glass-inner-glow), var(--shadow-sm);
+            transition: transform 0.4s var(--ease-spring), box-shadow 0.4s var(--ease-spring);
+        }
+        .watch-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .watch-card:nth-child(1) { border-left-color: var(--red); }
+        .watch-card:nth-child(2) { border-left-color: var(--amber); }
+        .watch-card:nth-child(3) { border-left-color: var(--primary); }
+        .watch-card:nth-child(4) { border-left-color: var(--green); }
+        .watch-card:nth-child(5) { border-left-color: var(--amber); }
+        .watch-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 10px;
+        }
+        .watch-field {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 2px 12px;
+            margin: 5px 0;
+            align-items: baseline;
+        }
+        .watch-field .field-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ink-muted);
+            white-space: nowrap;
+        }
+        .watch-field .field-value {
+            font-size: 14px;
+            color: var(--ink-sec);
+            line-height: 1.5;
+        }
+        @media (max-width: 600px) {
+            .watch-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           SIGNAL — 小色块badge
+           ═══════════════════════════════════════════ */
+        .sig {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: var(--mono);
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.5;
+            vertical-align: middle;
+            white-space: nowrap;
+            padding: 3px 10px 3px 8px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            margin: 0 3px;
+        }
+
+        .sig::before {
+            content: "";
+            display: inline-block;
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sig {
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.6);
+        }
+        .sig-S {
+            color: #E60000; background: rgba(255, 59, 48, 0.08);
+            border: 0.5px solid rgba(255, 59, 48, 0.18);
+        }
+        .sig-S::before { background: #FF3B30; box-shadow: 0 0 3px rgba(255,59,48,0.4); }
+        .sig-A {
+            color: #B86800; background: rgba(255, 149, 0, 0.07);
+            border: 0.5px solid rgba(255, 149, 0, 0.16);
+        }
+        .sig-A::before { background: #FF9500; box-shadow: 0 0 3px rgba(255,149,0,0.35); }
+        .sig-B {
+            color: #4B49B8; background: rgba(88, 86, 214, 0.06);
+            border: 0.5px solid rgba(88, 86, 214, 0.14);
+        }
+        .sig-B::before { background: #5856D6; box-shadow: 0 0 2px rgba(88,86,214,0.3); }
+        .sig-C {
+            color: #8E8E93; background: rgba(0,0,0,0.03);
+            border: 0.5px solid rgba(0,0,0,0.08);
+        }
+        .sig-C::before { background: #8E8E93; }
+
+        /* 表格中的信号badge */
+        td .sig {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px 2px 6px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        td .sig::before {
+            width: 4px;
+            height: 14px;
+            border-radius: 2px;
+        }
+
+        td .sig-S { background: rgba(255, 59, 48, 0.08); color: var(--red); }
+        td .sig-S::before { background: var(--red); }
+        td .sig-A { background: rgba(255, 149, 0, 0.08); color: var(--amber); }
+        td .sig-A::before { background: var(--amber); }
+        td .sig-B { background: rgba(0, 122, 255, 0.08); color: var(--blue); }
+        td .sig-B::before { background: var(--blue); }
+        td .sig-C { background: rgba(0,0,0,0.04); color: var(--ink-muted); }
+        td .sig-C::before { background: var(--ink-muted); }
+
+        /* ═══════════════════════════════════════════
+           LISTS — 清爽列表
+           ═══════════════════════════════════════════ */
+        .slide-body ul { list-style: none; margin: 4px 0 14px 0; padding: 0; }
+        .slide-body ul li {
+            padding: 4px 0 4px 16px;
+            border-left: 2px solid var(--border);
+            line-height: 1.7;
+            font-size: 15px;
+            margin: 0;
+            transition: border-color var(--transition-fast);
+        }
+        .slide-body ul li:hover {
+            border-left-color: var(--primary);
+        }
+        .slide-body p + ul { margin-top: 4px; }
+        .slide-body p + p { margin-top: 14px; }
+        .slide-body ul + p { margin-top: 14px; }
+
+        /* ═══════════════════════════════════════════
+           DARK MODE TABLE BORDERS
+           ═══════════════════════════════════════════ */
+        [data-theme="dark"] th {
+            border-bottom-color: rgba(255, 255, 255, 0.15);
+        }
+        [data-theme="dark"] td {
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+        }
+
+        /* SIDEBAR EXPAND HINT */
+        .sidebar::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 40px;
+            background: var(--border-strong);
+            border-radius: 1px;
+            opacity: 0.6;
+            transition: opacity var(--transition-fast);
+        }
+        .sidebar:hover::after { opacity: 0; }
+
+        /* ═══════════════════════════════════════════
+           WATERMARK — 降低透明度到0.08
+           ═══════════════════════════════════════════ */
+        .watermark-strip {
+            position: fixed;
+            top: -120px;
+            bottom: -120px;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 100px;
+            user-select: none;
+        }
+        .watermark-strip.left {
+            left: var(--sidebar-w);
+            width: calc(50vw - var(--sidebar-w) / 2 - min(30vw, 500px));
+        }
+        .watermark-strip.right {
+            right: 0;
+            width: calc(50vw - var(--sidebar-w) / 2 - min(30vw, 500px));
+        }
+        .wm-line {
+            font-family: var(--font);
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 0.08);
+            white-space: nowrap;
+            transform: rotate(-22deg);
+            letter-spacing: 4px;
+        }
+
+        /* ═══════════════════════════════════════════
+           DISCLAIMER
+           ═══════════════════════════════════════════ */
+        .disclaimer-slide .slide-body { font-size: 14px; }
+        .disclaimer-content h3 {
+            font-size: 15px;
+            margin: 16px 0 6px;
+            color: var(--ink);
+        }
+        .disclaimer-content p { margin: 4px 0; line-height: 1.7; font-size: 14px; }
+        .disclaimer-update {
+            margin-top: 20px !important;
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--ink-muted);
+            letter-spacing: 0.3px;
+        }
+
+        /* ═══════════════════════════════════════════
+           UPGRADE NOTICE — 免费版升级提示
+           ═══════════════════════════════════════════ */
+        .upgrade-notice {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 32px;
+            background: linear-gradient(135deg, #1B2A4A 0%, #2D3748 100%);
+            color: white;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .upgrade-notice .upgrade-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        .upgrade-notice h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: white;
+        }
+        .upgrade-notice p {
+            font-size: 15px;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.6;
+            margin: 8px 0;
+        }
+        .upgrade-notice ul {
+            list-style: none;
+            text-align: left;
+            max-width: 400px;
+            margin: 16px auto;
+            padding: 0;
+        }
+        .upgrade-notice ul li {
+            padding: 6px 0;
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+        }
+        .upgrade-contact {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        .upgrade-contact p {
+            font-size: 14px;
+            margin: 4px 0;
+        }
+
+        [data-theme="dark"] .upgrade-notice {
+            background: var(--glass-bg);
+            color: var(--ink);
+            box-shadow: var(--shadow-lg);
+            border: 0.5px solid var(--border);
+        }
+        [data-theme="dark"] .upgrade-notice h3 {
+            color: var(--ink);
+        }
+        [data-theme="dark"] .upgrade-notice p {
+            color: var(--ink-sec);
+        }
+        [data-theme="dark"] .upgrade-notice ul li {
+            color: var(--ink);
+        }
+        [data-theme="dark"] .upgrade-contact {
+            border-top-color: var(--border);
+        }
+
+        /* ═══════════════════════════════════════════
+           LINK DATE
+           ═══════════════════════════════════════════ */
+        .link-date {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--ink-muted);
+        }
+        .link-action {
+            font-size: 14px;
+        }
+
+        /* ═══════════════════════════════════════════
+           SCROLL REVEAL ANIMATION
+           ═══════════════════════════════════════════ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            will-change: opacity, transform;
+            transition: opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1),
+                        transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 无障碍：减少动画 */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+            .title-slide .label::before {
+                animation: none;
+            }
+            html { scroll-behavior: auto; transition: none; }
+            .sidebar { transition: none; }
+            .nav-item { transition: none; }
+            .theme-toggle { transition: none; }
+            .back-to-top { transition: none; }
+            .scroll-progress-bar { transition: none; }
+            .risk-card { transition: none; }
+            .slide-body ul li { transition: none; }
+            a { transition: none; }
+            .hamburger span { transition: none; }
+            .mobile-toc-overlay { transition: none; }
+            .mobile-toc { transition: none; }
+            .mobile-toc-nav .toc-item { transition: none; }
+        }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE: MOBILE (<=900px)
+           ═══════════════════════════════════════════ */
+        /* 信号等级在平板及以下分行 */
+        @media (max-width: 1024px) {
+            .signal-legend {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .legend-item { width: 100%; }
+        }
+
+        @media (max-width: 900px) {
+            body { margin-left: 0; font-size: 16px; }
+
+            .sidebar, .watermark-strip {
+                display: none !important;
+            }
+
+            .scroll-progress { left: 0; }
+
+            /* ── 顶部导航条 (Glass morphism) ── */
+            .mobile-topbar {
+                position: fixed; top: 0; left: 0; right: 0;
+                z-index: 50;
+                height: 48px;
+                background: var(--glass-bg);
+                backdrop-filter: var(--glass-blur);
+                -webkit-backdrop-filter: var(--glass-blur);
+                border-bottom: 0.5px solid var(--border);
+                padding: 0 16px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .mobile-topbar .logo-text {
+                font-size: 14px;
+                font-weight: 700;
+                color: var(--ink);
+                letter-spacing: -0.01em;
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .mobile-topbar .page-badge {
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--ink-muted);
+                font-weight: 500;
+                white-space: nowrap;
+                padding: 2px 8px;
+                background: var(--surface);
+                border-radius: 6px;
+            }
+            .mobile-topbar .mobile-theme-toggle {
+                background: none;
+                border: none;
+                font-size: 18px;
+                cursor: pointer;
+                padding: 13px;
+                border-radius: var(--radius-sm);
+                line-height: 1;
+                min-width: 44px;
+                min-height: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            .mobile-topbar .hamburger {
+                width: 44px; height: 44px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 5px;
+                cursor: pointer;
+                flex-shrink: 0;
+                padding: 10px;
+            }
+            .mobile-topbar .hamburger span {
+                display: block;
+                height: 1.5px;
+                background: var(--ink-sec);
+                border-radius: 1px;
+                transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1),
+                            opacity 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+            }
+            .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+            .hamburger.open span:nth-child(2) { opacity: 0; }
+            .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+            /* ── 目录抽屉 ── */
+            .mobile-toc-overlay {
+                display: block;
+                position: fixed; inset: 0;
+                background: rgba(0,0,0,0.3);
+                z-index: 60;
+                opacity: 0; visibility: hidden;
+                transition: opacity 0.2s cubic-bezier(0.25, 0.1, 0.25, 1),
+                            visibility 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+            }
+            .mobile-toc-overlay.open { opacity: 1; visibility: visible; }
+            .mobile-toc {
+                display: flex;
+                position: fixed;
+                top: 0; bottom: 0; left: 0;
+                width: 72vw; max-width: 280px;
+                background: var(--surface-elevated);
+                z-index: 61;
+                transform: translateX(-100%);
+                transition: transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+                flex-direction: column;
+                box-shadow: var(--shadow-lg);
+                border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+            }
+            .mobile-toc.open { transform: translateX(0); }
+            .mobile-toc-header {
+                padding: 16px 20px;
+                border-bottom: 0.5px solid var(--border);
+                font-size: 15px;
+                font-weight: 700;
+                color: var(--ink);
+            }
+            .mobile-toc-nav {
+                flex: 1;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                padding: 8px 0;
+            }
+            .mobile-toc-nav .toc-item {
+                display: block;
+                padding: 10px 20px;
+                color: var(--ink-sec);
+                font-size: 14px;
+                font-weight: 400;
+                text-decoration: none;
+                border-left: 2px solid transparent;
+                cursor: pointer;
+                transition: color var(--transition-fast), background var(--transition-fast),
+                            border-color var(--transition-fast);
+            }
+            .mobile-toc-nav .toc-item:active {
+                background: var(--primary-light);
+                color: var(--primary);
+                border-left-color: var(--primary);
+            }
+
+            /* ── 内容区域 ── */
+            .content-wrapper { padding: 0 20px; }
+            .slide-inner { padding: 0; }
+
+            .title-slide { padding: 80px 20px 60px; }
+            .title-slide .label { font-size: 10px; letter-spacing: 2px; margin-bottom: 20px; }
+            .title-slide h1 { font-size: 1.5em; letter-spacing: -0.01em; margin-bottom: 10px; }
+            .title-slide .subtitle { font-size: 15px; margin-bottom: 20px; }
+            .title-slide .date { font-size: 16px; margin-bottom: 4px; }
+            .title-slide .meta { font-size: 11px; }
+            .title-slide .accent-line { margin: 20px auto 0; }
+            .signal-legend {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                margin-top: 24px;
+                flex-wrap: nowrap;
+            }
+            .legend-item { font-size: 12px; gap: 8px; width: 100%; }
+            .title-disclaimer { margin-top: 20px; font-size: 11px; max-width: 90%; }
+
+            .chapter-title { font-size: 22px; padding: 32px 0 10px; margin-bottom: 4px; }
+
+            h3 { font-size: 18px; margin: 20px 0 8px; }
+            h4 { font-size: 15px; margin: 14px 0 4px; }
+            p { margin: 6px 0; }
+
+            .table-scroll {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin: 10px 0;
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                position: relative;
+                box-shadow: inset -12px 0 8px -8px rgba(0,0,0,0.03);
+            }
+            .table-scroll table {
+                margin: 0;
+                min-width: 480px;
+                white-space: nowrap;
+                font-size: 13px;
+            }
+            .table-scroll th { padding: 8px 12px; font-size: 11px; }
+            .table-scroll td { padding: 8px 12px; }
+            .table-scroll th:first-child,
+            .table-scroll td:first-child {
+                position: sticky;
+                left: 0;
+                background: inherit;
+                z-index: 1;
+            }
+            .table-scroll th:first-child { background: var(--surface); z-index: 2; }
+            .table-scroll tbody tr:nth-child(even) td:first-child { background: rgba(0,0,0,0.01); }
+            .table-scroll tbody tr:hover td:first-child { background: var(--primary-light); }
+
+            table { font-size: 13px; border-radius: var(--radius-md); }
+            th, td { padding: 8px 12px; }
+
+            .sig { font-size: 11px; }
+
+            .slide-body ul li {
+                font-size: 14px;
+                padding: 3px 0 3px 14px;
+                line-height: 1.65;
+            }
+
+            /* 风险卡片移动端 */
+            .risk-card {
+                padding: 12px 14px;
+                margin: 12px 0;
+            }
+            .risk-header .risk-title {
+                font-size: 15px;
+                min-width: 150px;
+            }
+            .risk-field {
+                grid-template-columns: 80px 1fr;
+                gap: 2px 10px;
+            }
+            .risk-field .field-label {
+                font-size: 12px;
+            }
+            .risk-field .field-value {
+                font-size: 13px;
+            }
+            .risk-triggers {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .disclaimer-slide .slide-body { font-size: 13px; }
+
+            .back-to-top { bottom: env(safe-area-inset-bottom, 20px); right: 20px; width: 48px; height: 48px; font-size: 14px; }
+        }
+
+        /* ── 小屏 (< 400px) ── */
+        @media (max-width: 400px) {
+            .title-slide h1 { font-size: 1.3em; }
+            .title-slide .subtitle { font-size: 14px; }
+            .chapter-title { font-size: 19px; }
+            body { font-size: 15px; }
+            .content-wrapper { padding: 0 14px; }
+        }
+
+        /* ═══════════════════════════════════════════
+           PRINT
+           ═══════════════════════════════════════════ */
+        @page {
+            size: A4;
+            margin: 20mm 15mm;
+        }
+        @media print {
+            *, *::before, *::after {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            :root {
+                --bg: #FFFFFF;
+                --surface: #F5F5F7;
+                --surface-elevated: #FFFFFF;
+                --ink: #1D1D1F;
+                --ink-sec: #6E6E73;
+                --ink-muted: #86868B;
+                --border: rgba(0, 0, 0, 0.12);
+                --primary: #007AFF;
+                --primary-light: rgba(0, 122, 255, 0.08);
+                --red: #FF3B30;
+                --amber: #FF9500;
+            }
+            .sidebar, .watermark-strip, .title-disclaimer,
+            .mobile-topbar, .mobile-toc-overlay, .mobile-toc,
+            .scroll-progress, .back-to-top,
+            .theme-toggle, .mobile-theme-toggle { display: none !important; }
+            body { margin-left: 0; font-size: 10pt; }
+            .chapter-title { border-bottom: 1px solid #ccc; page-break-after: avoid; }
+            .slide-inner { max-width: 100%; padding: 0; }
+            .slide-body { padding: 8px 0; }
+            table { font-size: 0.8em; border-radius: 0; overflow: visible; }
+            .table-scroll { overflow: visible; }
+            .table-scroll table { min-width: 0; white-space: normal; }
+            thead { display: table-header-group; background: var(--surface) !important; }
+            th { border-bottom: 1px solid #ccc; color: var(--ink-sec); }
+            .title-slide { background: none; }
+            .title-slide h1 { color: var(--ink); }
+            .title-slide .label, .title-slide .subtitle { color: var(--ink-sec); }
+            .title-slide .meta { color: var(--ink-muted); }
+            .title-slide .accent-line { display: none; }
+            .slide { page-break-inside: avoid; }
+            .risk-card { page-break-inside: avoid; }
+            .chapter-title { page-break-after: avoid; }
+            h3 { page-break-after: avoid; }
+            a { color: var(--ink); text-decoration: underline; }
+            a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: var(--ink-muted); word-break: break-all; }
+            a[href^="#"]::after { content: ""; }
+            hr.section-sep { border-top: 1px solid #ccc; background: none; }
+            .sig { border: 1px solid #999; background: none !important; color: #333 !important; }
+            .sig::before { background: #333 !important; }
+            .sig-S { border-width: 2px; font-weight: 800; }
+            .sig-A { border-width: 2px; font-weight: 700; }
+            .trigger-box { border-left-width: 4px !important; background: none !important; }
+            .trigger-box.escalation { border-left-style: solid; }
+            .trigger-box.de-escalation { border-left-style: dashed; }
+            td { border-bottom: 1px solid #ccc; }
+            tbody tr:hover { background: none; }
+            td:empty { visibility: hidden; }
+            .country-tag { background: rgba(0, 122, 255, 0.1) !important; color: #007AFF !important; }
+            .reveal { opacity: 1 !important; transform: none !important; }
+            .title-slide .label::before { animation: none; }
+        }
+    </style>
+    <noscript>
+        <style>
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+        </style>
+    </noscript>
+</head>
+<body>
+
+    <svg style="position:fixed;width:0;height:0;pointer-events:none" aria-hidden="true">
+      <defs>
+        <filter id="lg-chromatic" x="-10%" y="-10%" width="120%" height="120%" colorInterpolationFilters="sRGB">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="0.5" result="BLUR" />
+          <feComponentTransfer in="BLUR" result="EDGE">
+            <feFuncA type="linear" slope="0.08" />
+          </feComponentTransfer>
+          <feOffset in="SourceGraphic" dx="0.3" dy="0" result="SHIFT_R" />
+          <feOffset in="SourceGraphic" dx="-0.3" dy="0" result="SHIFT_B" />
+          <feColorMatrix in="SHIFT_R" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="RED" />
+          <feColorMatrix in="SHIFT_B" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 1 0 0 0  0 0 0 1 0" result="BLUE" />
+          <feMerge>
+            <feMergeNode in="RED" />
+            <feMergeNode in="SourceGraphic" />
+            <feMergeNode in="BLUE" />
+          </feMerge>
+        </filter>
+        <filter id="lg-frost" x="-10%" y="-10%" width="120%" height="120%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" />
+          <feComponentTransfer><feFuncA type="linear" slope="0.12" /></feComponentTransfer>
+        </filter>
+      </defs>
+    </svg>
+
+    <div class="watermark-strip left">
+        <span class="wm-line">OSINT · 公开信息分析</span>
+        <span class="wm-line">非官方情报</span>
+        <span class="wm-line">AI 辅助生成</span>
+        <span class="wm-line">仅供参考 · 研究用途</span>
+        <span class="wm-line">非事实认定</span>
+        <span class="wm-line">OSINT · 公开信息分析</span>
+        <span class="wm-line">非官方情报</span>
+        <span class="wm-line">AI 辅助生成</span>
+        <span class="wm-line">仅供参考 · 研究用途</span>
+        <span class="wm-line">非事实认定</span>
+    </div>
+    <div class="watermark-strip right">
+        <span class="wm-line">OSINT · 公开信息分析</span>
+        <span class="wm-line">非官方情报</span>
+        <span class="wm-line">AI 辅助生成</span>
+        <span class="wm-line">仅供参考 · 研究用途</span>
+        <span class="wm-line">非事实认定</span>
+        <span class="wm-line">OSINT · 公开信息分析</span>
+        <span class="wm-line">非官方情报</span>
+        <span class="wm-line">AI 辅助生成</span>
+        <span class="wm-line">仅供参考 · 研究用途</span>
+        <span class="wm-line">非事实认定</span>
+    </div>
+
+    <aside class="sidebar" id="sidebar" aria-expanded="false">
+        <div class="sidebar-header">
+            <div class="logo">国际局势日报</div>
+            <button class="theme-toggle" id="themeToggle" title="切换暗色模式" aria-label="切换暗色模式"><span aria-hidden="true">🌙</span><span class="sr-only">切换暗色模式</span></button>
+        </div>
+        <nav class="sidebar-nav" role="navigation" aria-label="章节导航">
+        <a class="nav-item active" data-slide="0" href="#〇-今日核心判断-150字"><span class="nav-idx">01</span><span class="nav-text">〇、今日核心判断（≤150字）</span></a>
+        <a class="nav-item" data-slide="1" href="#一-核心风险与观察哨"><span class="nav-idx">02</span><span class="nav-text">一、核心风险与观察哨</span></a>
+        <a class="nav-item" data-slide="2" href="#二-核心国际事件分析"><span class="nav-idx">03</span><span class="nav-text">二、核心国际事件分析</span></a>
+        <a class="nav-item" data-slide="3" href="#三-政府与智库信号"><span class="nav-idx">04</span><span class="nav-text">三、政府与智库信号</span></a>
+        <a class="nav-item" data-slide="4" href="#四-金融风险层"><span class="nav-idx">05</span><span class="nav-text">四、金融风险层</span></a>
+        <a class="nav-item" data-slide="5" href="#五-国家安全与科技竞争"><span class="nav-idx">06</span><span class="nav-text">五、国家安全与科技竞争</span></a>
+        <a class="nav-item" data-slide="6" href="#六-事件聚类"><span class="nav-idx">07</span><span class="nav-text">六、事件聚类</span></a>
+        <a class="nav-item" data-slide="7" href="#七-长期趋势分析与战略展望"><span class="nav-idx">08</span><span class="nav-text">七、长期趋势分析与战略展望</span></a>
+        <a class="nav-item" data-slide="8" href="#八-全球投资研判"><span class="nav-idx">09</span><span class="nav-text">八、全球投资研判</span></a>
+        <a class="nav-item" data-slide="9" href="#九-资源安全"><span class="nav-idx">10</span><span class="nav-text">九、资源安全</span></a>
+        <a class="nav-item" data-slide="10" href="#十-原始新闻链接"><span class="nav-idx">11</span><span class="nav-text">十、原始新闻链接</span></a>
+        </nav>
+    </aside>
+
+    <div class="mobile-topbar" id="mobileTopbar">
+        <div class="hamburger" id="hamburger" role="button" aria-label="打开目录导航" aria-expanded="false" tabindex="0">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="logo-text">国际局势日报</div>
+        <div class="page-badge" id="mobilePageBadge">1/13</div>
+        <button class="theme-toggle mobile-theme-toggle" id="mobileThemeToggle" title="切换暗色模式" aria-label="切换暗色模式"><span aria-hidden="true">🌙</span><span class="sr-only">切换暗色模式</span></button>
+    </div>
+
+    <div class="mobile-toc-overlay" id="mobileTocOverlay"></div>
+    <nav class="mobile-toc" id="mobileToc" aria-label="目录导航" aria-hidden="true">
+        <div class="mobile-toc-header">目录导航</div>
+        <div class="mobile-toc-nav" id="mobileTocNav"></div>
+    </nav>
+
+    <div class="scroll-progress" id="scrollProgress"><div class="scroll-progress-bar" id="scrollProgressBar"></div></div>
+
+    <main class="content-wrapper" id="slidesWrapper">
+
+        <section class="title-slide" data-index="0">
+            <div class="label">Strategic Intelligence Briefing</div>
+            <h1>国际局势日报</h1>
+            <div class="subtitle">多阵营叙事分析 · 事件聚类 · 风险信号提炼 · 上午版</div>
+            <div class="date">2026年08月03日</div>
+            <div class="meta">精选 61 源 · 500 条新闻 · 生成 08:03:46</div>
+            <div class="accent-line"></div>
+            <div class="signal-legend">
+                <span class="legend-item"><span class="sig sig-S">S级</span> 全球战略级变化</span>
+                <span class="legend-item"><span class="sig sig-A">A级</span> 重大区域风险</span>
+                <span class="legend-item"><span class="sig sig-B">B级</span> 持续观察信号</span>
+                <span class="legend-item"><span class="sig sig-C">C级</span> 短期噪音</span>
+            </div>
+            <div class="title-disclaimer">本报告基于公开信息（OSINT）由 AI 辅助生成，仅用于研究参考，不构成事实认定或专业建议。</div>
+        </section>
+
+    <section class="slide" id="〇-今日核心判断-150字" data-index="0">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="〇-今日核心判断-150字-heading"><span class="ch-num">01</span>〇、今日核心判断（≤150字）</h2>
+        <div class="slide-body">
+<p>[事实·多源] 特朗普叫停对伊朗打击并宣布周一重启谈判，美伊局势从军事升级阶段戏剧性回调。[分析·推理链] 美日联合干预汇市，美元/日元单日波动超1.5%，为2011年来首次协同行动。[推测·置信度82%] 全球正经历罕见的"军事降温+金融干预"同步窗口，但这不代表趋势逆转，而是各方策略性暂停，30天内美伊仍有40%概率重返军事对峙。</p>
+</div>
+      </div>
+    </section>
+    <section class="slide" id="一-核心风险与观察哨" data-index="1">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="一-核心风险与观察哨-heading"><span class="ch-num">02</span>一、核心风险与观察哨</h2>
+        <div class="slide-body">
+<h4 id="_2">最高优先级风险矩阵</h4>
+<table>
+<thead>
+<tr>
+<th>风险项</th>
+<th>信号等级</th>
+<th>置信度</th>
+<th>风险来源</th>
+<th>升级触发(≤20字)</th>
+<th>缓和触发(≤20字)</th>
+<th>涉及国家</th>
+<th>潜在演化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>美伊谈判破裂重返军事对峙</td>
+<td><span class="sig sig-S">S级</span></td>
+<td>78%</td>
+<td>特朗普叫停打击后谈判无实质进展</td>
+<td>周一谈判破裂，伊朗拒开放海峡</td>
+<td>48小时内达成霍尔木兹开放时间表</td>
+<td>美、伊、以、沙特、阿曼</td>
+<td>谈判窗口≤72小时，失败后Brent&gt;$95</td>
+</tr>
+<tr>
+<td>美日联合干预汇市引发连锁</td>
+<td><span class="sig sig-A">A级</span></td>
+<td>85%</td>
+<td>2011年来首次协同干预，日元空头挤压</td>
+<td>USDJPY再破160，日本宣布追加干预</td>
+<td>USDJPY稳定在155-158区间48h</td>
+<td>美、日</td>
+<td>干预常态化，新兴市场货币连锁贬值</td>
+</tr>
+<tr>
+<td>加沙停火承诺与实际打击背离</td>
+<td><span class="sig sig-A">A级</span></td>
+<td>82%</td>
+<td>特朗普宣布突破后24小时以军仍空袭18人</td>
+<td>以军持续打击，哈马斯拒绝缴械</td>
+<td>以色列单方面宣布停火72h</td>
+<td>以、巴、美、埃及</td>
+<td>停火框架崩塌，地区冲突扩大</td>
+</tr>
+<tr>
+<td>极端气候叠加能源危机</td>
+<td><span class="sig sig-A">A级</span></td>
+<td>88%</td>
+<td>韩国42.5°C破纪录、匈牙利核电站缺水停堆、希腊火灾</td>
+<td>匈牙利核电站停堆超48h</td>
+<td>欧洲普遍降雨，多瑙河水位回升</td>
+<td>韩国、匈牙利、希腊、意大利</td>
+<td>欧洲电价飙升，粮食减产预期强化</td>
+</tr>
+<tr>
+<td>欧洲移民危机重现</td>
+<td><span class="sig sig-B">B级</span></td>
+<td>75%</td>
+<td>休达6万人涌入，72人死亡，极右翼势力反弹</td>
+<td>西班牙启动EU边境应急机制被否</td>
+<td>摩洛哥有效管控边境，遣返加速</td>
+<td>西班牙、摩洛哥、法、德</td>
+<td>申根体系改革压力骤增</td>
+</tr>
+</tbody>
+</table>
+<h4 id="48">未来48小时关键观察哨</h4>
+<ul>
+<li><strong>美伊周一谈判进展</strong>：当前状态——双方承诺谈判但无细节；升级触发——任何一方在谈判前新增军事部署（确认门槛：卫星图像/OSINT）；缓和触发——联合声明确认霍尔木兹开放时间表（确认来源：双方外交部）；监控方式：Reuters/Al Jazeera/Tasnim实时跟踪</li>
+<li><strong>美元/日元汇率</strong>：当前状态——157.69，日美协同干预后回落；升级触发——单日波动超2%（约3.15点），或日本财务省宣布追加干预；缓和触发——连续两个交易日稳定在155-158区间，且隐含波动率回落；监控方式：Bloomberg终端+BOJ网站</li>
+<li><strong>匈牙利核电站停堆持续时间</strong>：当前状态——已宣布因多瑙河缺水停堆；升级触发——连续停堆超48小时或扩散至其他多瑙河沿岸电厂；缓和触发——官方宣布恢复运行并确认冷却水补给充足；监控方式：ENTSO-E透明度平台+匈牙利国家通讯社MTI</li>
+<li><strong>加沙实战与停火背离</strong>：当前状态——特朗普宣布突破，以军持续空袭，24小时18人死亡；升级触发——以军发动师级规模地面行动（确认门槛：IDF声明/Gaza卫生部门）；缓和触发——连续24小时无军事行动报道；监控方式：Al Jazeera直播+UN OCHA更新</li>
+</ul>
+</div>
+      </div>
+    </section>
+    <section class="slide" id="二-核心国际事件分析" data-index="2">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="二-核心国际事件分析-heading"><span class="ch-num">03</span>二、核心国际事件分析</h2>
+        <div class="slide-body">
+<h3 id="1">事件1：特朗普"叫停打击→重启谈判"——美伊战争边缘的戏剧性回调</h3>
+<ul>
+<li><strong>事件概述</strong>：2026年8月2日，美国总统特朗普宣布取消原定对伊朗的"二战以来最大规模打击"，并声称与伊朗"达成协议轮廓"，将于8月3日（周一）恢复谈判。伊朗外长阿拉格齐同日确认与阿曼就霍尔木兹海峡通航谈判接近完成，但否认与美国存在任何协议。[事实·12源交叉验证]</li>
+<li><strong>多阵营叙事对比</strong>：</li>
+<li><strong>美国官方（偏好西方叙事）</strong>：特朗普在空军一号上对记者称"我不想杀人……我们更想达成交易"，声称沙特王储MBS"恳求我优先对话"，并将取消打击归因为"人道主义+地缘交易"。[事实·3源：Reuters/FT/NYT]。强调"交易的艺术"——放弃打击换取伊朗开放海峡承诺。</li>
+<li><strong>伊朗官方（偏好伊朗叙事）</strong>：外长阿拉格齐明确否认与美国存在协议，将谈判定性为"伊朗-阿曼双边事务"，强调"我们没有要求美国停止打击，我们展示的是战略耐心"。[事实·4源：Al Jazeera/Sputnik/Tasnim/Al-Monitor]。淡化美国让步，强调自身战略定力。</li>
+<li><strong>以色列反应（叙事撕裂）</strong>：以媒报道内塔尼亚胡"通过特朗普社交媒体才得知取消打击"，一名官员透露"如果不打击伊朗政权目标和经济，攻击毫无意义"。以军同时在加沙持续高强度空袭（18人死亡），国防部长卡茨公开宣称"没有协议能阻止我们打击哈马斯"。[事实·3源：观察者网/Jerusalem Post/Channel News Asia]</li>
+<li><strong>沙特/海湾视角（区域本土视角）</strong>：MBS被特朗普描绘为"恳求对话"的关键推手，WSJ称阿联酋此前曾敦促美国发动地面进攻，沙特则力主停火。海湾国家内部在伊朗问题上分裂加剧。[事实·2源：Al Jazeera/WSJ]</li>
+<li><strong>叙事框架分析</strong>：</li>
+<li>特朗普选择"交易者"框架（强调谈判成果）而非"三军统帅"框架，系2026年第三次对伊"极限施压后突然回调"，形成一种可预测的不可预测性模式。</li>
+<li>伊朗选择"主权抵抗者"框架：将霍尔木兹谈判定性为与邻国阿曼的正常外交，否认美国的"让步"叙事，维持国内强硬形象。</li>
+<li>[推测·置信度79%] 以色列正在经历被排除在美伊博弈之外的战略性边缘化。以色列的反应——加沙持续打击+公开质疑美国决策——是试图重新塑造局势的杠杆行为。</li>
+</ul>
+<hr class="section-sep">
+<h3 id="22011">事件2：美日2011年来首次联合干预汇市</h3>
+<ul>
+<li><strong>事件概述</strong>：2026年8月2日，日本财务大臣确认日美两政府联合干预外汇市场以支撑日元（USD/JPY从高点回落至157.69，单日-1.56%）。特朗普表示这是"对日本的友谊信号"。美财长贝森特表明"不排除进一步行动"。[事实·7源：Investing.com/Bloomberg/Nikkei/Japan Times/NHK/CNBC/Yonhap]</li>
+<li><strong>多阵营叙事对比</strong>：</li>
+<li><strong>美日官方（偏好西方叙事）</strong>：将干预定义为"应对无序波动的技术性行动+盟友友谊的象征"。特朗普罕见地在Truth Social上评论日元汇率。[事实·4源：Bloomberg/Reuters/Investing.com]</li>
+<li><strong>市场分析（多源平衡）</strong>：摩根士丹利、彭博策略师警告，"联合干预增加了做空日元的尾部风险，但若美日利差（10年期美债4.74% vs JGB≈0.5%）不收敛，干预效果可能仅持续数日"。[推测·置信度82%] 这是对美联储独立性模糊边界的又一次试探——财政主导汇市干预是否预示未来更多政策协调？</li>
+<li><strong>中方视角（偏好中方叙事）</strong>：尚未有官方回应。[分析·推理链] 日本干预通常引发亚洲竞争性贬值担忧，尤其是韩国（韩元本月已大幅波动）。需观察PBOC是否会调整CNH管理策略以对冲。</li>
+<li><strong>叙事框架分析</strong>：</li>
+<li>日本使用"反投机"框架，避免承认干预的经济逻辑（利差、贸易逆差）。</li>
+<li>特朗普将汇市干预政治化——"友谊信号"——模糊了货币政策的独立性边界，可能开创美国以汇率为外交工具的长期先例。</li>
+</ul>
+<hr class="section-sep">
+<h3 id="3">事件3：全球极端气候并发能源危机</h3>
+<ul>
+<li><strong>事件概述</strong>：2026年8月2日，韩国创下百余年最高温42.5°C(Yonhap)；匈牙利因多瑙河水位过低被迫关闭唯一核电站——这是该国首次因缺水停堆(France24)；希腊两架消防直升机相撞坠毁，2人死亡(Euronews)；意大利25城发布最高级红色高温警报(环球时报)；澳大利亚野火迫使大规模疏散(ABC)。</li>
+<li><strong>多阵营叙事对比</strong>：</li>
+<li><strong>欧洲视角（偏好西方叙事）</strong>：希腊消防直升机碰撞暴露"极端气候下的应急能力极限"；匈牙利核电站停堆引发"能源安全+气候适应"双议题联动；西班牙因非洲移民涌入抨击欧盟"自私"。[事实·3源：Euronews/France24/Deutsche Welle]</li>
+<li><strong>亚太视角（区域本土视角）</strong>：韩国42.5°C被韩联社定性为"百余年一遇"；日本70岁灾民车内避难中暑死亡，暴露出防灾体系在面对"地震+高温"复合灾害时的脆弱性。[事实·2源：Yonhap/观察者网]</li>
+<li><strong>全球南方视角</strong>：非洲（南非/埃塞）处于旱季与厄尔尼诺重合期，但新闻覆盖稀疏（仅2条提及），暴露"气候叙事失衡"。[推测·置信度68%] 南亚/非洲的极端高温可能被严重低估。</li>
+<li><strong>叙事框架分析</strong>：</li>
+<li>欧洲陷入"气候紧急→能源脆弱→移民压力"三重复合叙事。匈牙利核电站停堆是标志性事件：核能被部分国家视为零碳电力支柱，但气候脆弱性可能改变成本收益计算。</li>
+<li>韩国高温刷新纪录，但未引发系统性危机叙事——与欧洲形成对比，显示东亚国家对热浪的常态化适应能力。</li>
+</ul>
+<hr class="section-sep">
+<h3 id="4">事件4：加沙停火承诺与持续打击的叙事撕裂</h3>
+<ul>
+<li><strong>事件概述</strong>：特朗普宣布与哈马斯达成"缴械+撤军"框架后仅24小时，以军在加沙发动新轮空袭，在Deir al-Balah、加沙城、Jabalia等地至少打死18名巴勒斯坦人。以国防部长卡茨公开宣称"没有协议能阻止我们打击恐怖分子"，IDF确认袭击目标是两名哈马斯"Nukhba"指挥官。[事实·8源：Al-Monitor/Reuters/Al Jazeera/NYT/Jerusalem Post/Hindu/南华早报/观察者网]</li>
+<li><strong>多阵营叙事对比</strong>：详见第六章"停火承诺与军事实战的叙事断裂"聚类分析。</li>
+<li><strong>叙事框架分析</strong>：</li>
+<li>特朗普选择"突破性协议"框架以支撑其"和平缔造者"形象，但以军的持续行动使该框架实质上崩塌。哈马斯接受缴械但以军不停止打击，形成了一个不对称的停火逻辑——一方缴械，另一方不必停火。</li>
+</ul>
+</div>
+      </div>
+    </section>
+    <section class="slide" id="三-政府与智库信号" data-index="3">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="三-政府与智库信号-heading"><span class="ch-num">04</span>三、政府与智库信号</h2>
+        <div class="slide-body">
+<h4 id="a"><span class="sig sig-A">A级</span>信号</h4>
+<ul>
+<li>[事实·7源] 美国财政部与日本财务省联合干预汇市，系2011年G7协调行动以来首次。特朗普公开评论日本干预，"友谊信号"的表述可能重塑G7汇率政策的政治维度。[推测·置信度82%] 此举可能削弱美联储的独立性叙事，鼓励更多政府-央行联合行动。</li>
+<li>[事实·4源] 匈牙利总理宣布因多瑙河缺水关闭唯一核电站（Paks），系该电站首次因环境因素停堆。多瑙河航运面临中断，塞尔维亚总统武契奇警告"几日内多瑙河将无法行船"。[推测·置信度78%] 事件可能触发欧盟层面对核电站气候脆弱性的重新评估，短期内欧洲电价看涨。</li>
+<li>[事实·3源] 俄罗斯宣布击落635架乌克兰无人机（系迄今最大规模袭击），同时宣布打击哈尔科夫地区乌军无人机指挥中心。莫斯科市长将市中心餐厅爆炸定性为"恐怖袭击"，3死21伤，女嫌犯身份被确认。[推测·置信度65%] 餐厅爆炸可能是乌克兰情报部门或俄国内反对派的非常规打击，表明冲突正向俄社会内部传导。</li>
+</ul>
+<h4 id="b"><span class="sig sig-B">B级</span>信号</h4>
+<ul>
+<li>[事实·3源] 南部战区与海警同日（8月2日）在黄岩岛附近海域组织军事训练和海警巡航，发布航行警告。菲律宾媒体关注中国"丰富的工具箱"表述。[推测·置信度75%] 这是中国在南海争议水域的常态展示+威慑组合，信号强度低于直接对抗。</li>
+<li>[事实·2源] 六艘沙特油轮因胡塞武装威胁绕行非洲好望角（OilPrice），表明红海航道安全未恢复。</li>
+<li>[事实·2源] 加勒比地区：委内瑞拉与多米尼加宣布逐步恢复外交关系（环球时报），同时哥伦比亚警察局遭汽车炸弹袭击（14伤），ELN叛乱组织被指实施。特朗普政府委内瑞拉/海地/古巴政策被美议员批评为"破坏地区稳定"。[推测·置信度68%] 加勒比-安第斯地区正进入同步不稳定的窗口期。</li>
+<li>[事实·2源] 埃塞俄比亚提格雷地区与苏丹边境发生冲突，数百名难民流入苏丹（Hindu），但无后续升级报道。非洲安全信号薄弱但持续。</li>
+</ul>
+</div>
+      </div>
+    </section>
+    <section class="slide" id="四-金融风险层" data-index="4">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="四-金融风险层-heading"><span class="ch-num">05</span>四、金融风险层</h2>
+        <div class="slide-body">
+<h5 id="41">4.1 全量市场数据</h5>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>最新价</th>
+<th>涨跌(vs昨收)</th>
+<th>趋势</th>
+<th>数据时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>欧元/美元</td>
+<td>1.15</td>
+<td>+0.21%</td>
+<td>↑</td>
+<td>08-03 收盘</td>
+</tr>
+<tr>
+<td>美元/日元</td>
+<td>157.69</td>
+<td>-1.56%</td>
+<td>↓</td>
+<td>08-03 收盘</td>
+</tr>
+<tr>
+<td>英镑/美元</td>
+<td>1.35</td>
+<td>+0.23%</td>
+<td>↑</td>
+<td>08-03 收盘</td>
+</tr>
+<tr>
+<td>美元/加元</td>
+<td>1.4</td>
+<td>+0.02%</td>
+<td>↑</td>
+<td>08-03 收盘</td>
+</tr>
+<tr>
+<td>澳元/美元</td>
+<td>0.7</td>
+<td>+0.32%</td>
+<td>↑</td>
+<td>08-03 收盘</td>
+</tr>
+<tr>
+<td>30年期美债收益率</td>
+<td>5.28 %</td>
+<td>+1.29%</td>
+<td>↑</td>
+<td>07-31 收盘</td>
+</tr>
+<tr>
+<td>3个月期国库券</td>
+<td>3.68 %</td>
+<td>+0.19%</td>
+<td>↑</td>
+<td>07-31 收盘</td>
+</tr>
+<tr>
+<td>白银</td>
+<td>58.45 USD/盎司</td>
+<td>+1.49%</td>
+<td>↑</td>
+<td>08-02 收盘</td>
+</tr>
+<tr>
+<td>WTI原油</td>
+<td>80.66 USD/桶</td>
+<td>-4.74%</td>
+<td>↓</td>
+<td>08-02 收盘</td>
+</tr>
+<tr>
+<td>天然气</td>
+<td>2.75 USD/MMBtu</td>
+<td>+0.18%</td>
+<td>↑</td>
+<td>08-02 收盘</td>
+</tr>
+<tr>
+<td>取暖油</td>
+<td>4.05 USD/加仑</td>
+<td>-1.72%</td>
+<td>↓</td>
+<td>08-02 收盘</td>
+</tr>
+<tr>
+<td>铜</td>
+<td>6.54 USD/磅</td>
+<td>+1.6%</td>
+<td>↑</td>
+<td>08-02 收盘</td>
+</tr>
+<tr>
+<td>咖啡</td>
+<td>313.55 美分/磅</td>
+<td>-2.94%</td>
+<td>↓</td>
+<td>07-31 收盘</td>
+</tr>
+<tr>
+<td>棉花</td>
+<td>80.5 美分/磅</td>
+<td>+1.37%</td>
+<td>↑</td>
+<td>07-31 收盘</td>
+</tr>
+<tr>
+<td>橙汁</td>
+<td>153.35 美分/磅</td>
+<td>+5.03%</td>
+<td>↑</td>
+<td>07-31 收盘</td>
+</tr>
+<tr>
+<td>比特币</td>
+<td>63502.4 USD</td>
+<td>+1.18%</td>
+<td>↑</td>
+<td>08-03 收盘</td>
+</tr>
+<tr>
+<td>以太坊</td>
+<td>1882.21 USD</td>
+<td>+2.1%</td>
+<td>↑</td>
+<td>08-03 收盘</td>
+</tr>
+</tbody>
+</table>
+<h5 id="42">4.2 美股信号</h5>
+<p>[分析·推理链] S&amp;P 500在"美伊缓和的乐观+美债收益率上行"的拉锯中收于+0.7%（数据过期72h，仅供参考）。纳斯达克+1.0%跑赢价值股，AI主题（Amazon/Anthropic重估推动盈利异常增长——MarketWatch报道）提供结构性支撑。但罗素2000跌0.5%，暗示利率敏感板块承受压力。[推测·置信度75%] 美股进入"地缘缓和反弹 vs 利率敏感板块承压"的分化格局，不宜做单边判断。</p>
+<h5 id="43">4.3 美债信号</h5>
+<p>[事实·N源] 2年期美债收益率稳在4.23%，但长端持续承压（10年4.74%，30年5.28%）。2s10s利差扩大至0.51%，期限溢价上升。[分析·推理链] 市场正在定价两个相互矛盾的风险：短期可能因美伊缓和而情绪改善，但中期财政风险+美联储观望（WSJ报道称市场对"无前瞻指引"感到迷茫）正推升长端利率。[推测·置信度72%] 若10年期美债收益率突破4.8%，可能触发新一轮风险资产重定价。</p>
+<h5 id="44-a">4.4 港股/A股联动信号</h5>
+<p>[事实] A股沪深300涨1.63%，上证综指涨0.76%，但港股恒生指数几乎持平（-0.08%），恒生科技微涨0.3%。[分析·推理链] A股的"A/H价差扩张+北上资金"与港股的"外资观望+港元流动性"正形成不同逻辑驱动。中国央行下半年工作会议重申"适度宽松货币政策"，支撑A股情绪。[推测·置信度70%] 港股等待外资对美伊局势+中国政策的双重确认，短期仍将弱于A股。</p>
+<h5 id="45">4.5 大宗商品与外汇</h5>
+<ul>
+<li><strong>原油</strong>：WTI跌4.74%至$80.66，因美伊谈判预期减轻地缘风险溢价。RBOB汽油更跌5.69%，显示市场对"海峡封锁溢价"的快速挤压。[推测·置信度82%] 但Brent仍高于$90（截至7-31），显示实际供应担忧未消除。若周一谈判无进展，WTI可能快速反弹至$85+。</li>
+<li><strong>贵金属</strong>：黄金涨1.85%至$4124，白银+1.49%。金价在"美伊缓和→美元弱→但利率上行"的三重矛盾中上行，反映更深层的"体系不信任"需求。</li>
+<li><strong>美元</strong>：美元指数跌至99.73，欧元/美元升破1.15（+0.21%）。日元因干预大幅升值（-1.56%），人民币（CNH 6.7488）温和走强。</li>
+</ul>
+<h5 id="46">4.6 风险传导路径</h5>
+<p>[事实·推理链] 当前存在两条并行传导链：
+1. <strong>美伊链</strong>：谈判预期→WTI跌(-4.74%)→汽油跌(-5.69%)→能源板块压力。反之，若谈判失败，传导方向立刻反转。
+2. <strong>美日干预链</strong>：BOJ/MOF干预→USDJPY跌(-1.56%)→日元空头挤压→美元指数下跌(-0.07%)→黄金上涨(+1.85%)→美股微涨。
+[推测·置信度72%] 美债利率上行（10Y 4.74%）与美元走弱（DXY&lt;100）的罕见组合正在形成，这是全球投资者"减持美元资产但不增持美债"的信号边缘。</p>
+<h5 id="47">4.7 航运与供应链信号</h5>
+<p>[事实·N源] 霍尔木兹海峡局势因谈判预期改善，但六艘沙特油轮仍绕行好望角（OilPrice）。多瑙河因缺水无法行船（塞尔维亚总统警告），中东欧内陆航运受阻。[推测·置信度68%] 全球航运正同时面临"海峡地缘风险+内陆水道气候风险"的双重挤压。</p>
+</div>
+      </div>
+    </section>
+    <section class="slide" id="五-国家安全与科技竞争" data-index="5">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="五-国家安全与科技竞争-heading"><span class="ch-num">06</span>五、国家安全与科技竞争</h2>
+        <div class="slide-body">
+<h5 id="51-ai">5.1 半导体与AI芯片</h5>
+<p>[事实·2源] SK Hynix ADR流入资金推动韩元创2009年以来最大月度涨幅（Yonhap）。摩根士丹利认为韩国股市在AI主题的"去杠杆冲刷"后提供更好的切入点（Bloomberg）。[分析·推理链] 全球AI算力需求持续推升HBM（高带宽存储）产业链，但AI电力需求的"非灵活性"而非总量成为新瓶颈（OilPrice转引能源专家分析）。[推测·置信度78%] 韩国半导体出口将维持强劲（HBM绑定NVIDIA/Google），但电力供给问题正成为AI基础设施扩张的硬约束。</p>
+<h5 id="52">5.2 网络与信息战</h5>
+<p>[事实·2源] Defense One警告，大科技公司拥抱开源AI的同时，攻击者正针对性寻找漏洞，"这将是永无止境的军备竞赛"。Tom's Hardware报道全球存储短缺波及MacBook Air。[分析·推理链] 开源AI的安全漏洞与DRAM供应链瓶颈正同时成为科技竞争的软肋。</p>
+<h5 id="53">5.3 太空军事化</h5>
+<p>无新增重大信号。OilPrice提及争议性的太空反射镜太阳能概念，属于极远期技术讨论，无军事化关联。</p>
+<h5 id="54">5.4 科技脱钩全景</h5>
+<p>[事实·N源] 中国AI产业持续突破：全国首个游戏出海公共服务平台上线（环球时报），世界人工智能合作组织协定签署（观察者网），但核心技术瓶颈仍在。美方CNBC评论指出"美国对华AI优势几乎消失"，呼吁国家战略转型。[推测·置信度72%] AI领域的"开源vs闭源"正在取代"出口管制"成为新的竞技场。</p>
+</div>
+      </div>
+    </section>
+    <section class="slide" id="六-事件聚类" data-index="6">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="六-事件聚类-heading"><span class="ch-num">07</span>六、事件聚类</h2>
+        <div class="slide-body">
+<h4 id="1-">聚类1：美伊"打击-谈判"模式的第三次上演</h4>
+<ul>
+<li><strong>涉及事件</strong>：特朗普叫停打击+宣布周一谈判；伊朗否认与美国有协议但确认与阿曼谈判；以色列"被排除在决策外"的抱怨</li>
+<li><strong>综合信号等级</strong>：<span class="sig sig-A">A级</span></li>
+<li><strong>源共识度</strong>：高（&gt;15源覆盖）</li>
+<li><strong>新兴信号</strong>：否（第三次出现类似模式）</li>
+<li><strong>风险趋势</strong>：升温中继（短期降温，但模式本身孕育变数）</li>
+</ul>
+<h4 id="2">聚类2：停火承诺与军事实际的叙事断裂</h4>
+<ul>
+<li><strong>涉及事件</strong>：特朗普宣布加沙停火框架；以军24小时内打死18人；以国防部长"无协议可阻打击"表态；IDF强调目标为"Nukhba指挥官"</li>
+<li><strong>综合信号等级</strong>：<span class="sig sig-A">A级</span></li>
+<li><strong>源共识度</strong>：中（多数媒体记录事实，但框架分析差异大）</li>
+<li><strong>新兴信号</strong>：否（持续数月）</li>
+<li><strong>风险趋势</strong>：升级</li>
+</ul>
+<h4 id="3_1">聚类3：全球极端气候事件并发</h4>
+<ul>
+<li><strong>涉及事件</strong>：韩国42.5°C纪录；匈牙利核电站因缺水停堆；希腊直升机碰撞；意大利红色高温警报；塞尔维亚/中东欧多瑙河断航风险</li>
+<li><strong>综合信号等级</strong>：<span class="sig sig-A">A级</span></li>
+<li><strong>源共识度</strong>：高（&gt;12源从不同区域独立报道）</li>
+<li><strong>新兴信号</strong>：是（匈牙利核电站停堆为新信号）</li>
+<li><strong>风险趋势</strong>：升级</li>
+</ul>
+<h4 id="4_1">聚类4：欧洲移民压力骤升</h4>
+<ul>
+<li><strong>涉及事件</strong>：休达6万人涌入（72人死亡）；西班牙设置浮动隔离墙；极右翼Vox领袖访问休达；摩洛哥承认11人死亡</li>
+<li><strong>综合信号等级</strong>：<span class="sig sig-B">B级</span></li>
+<li><strong>源共识度</strong>：高（&gt;8源覆盖）</li>
+<li><strong>新兴信号</strong>：是</li>
+<li><strong>风险趋势</strong>：稳定（多数移民已返回摩洛哥，但政治余震持续）</li>
+</ul>
+<h4 id="5-">聚类5：亚太财政-货币联合干预新范式</h4>
+<ul>
+<li><strong>涉及事件</strong>：美日联合干预汇市；日本宣布"不排除更多行动"；特朗普"友谊信号"表述；韩元本月大幅反弹</li>
+<li><strong>综合信号等级</strong>：<span class="sig sig-A">A级</span></li>
+<li><strong>源共识度</strong>：高（&gt;10源）</li>
+<li><strong>新兴信号</strong>：是（2011年来首次）</li>
+<li><strong>风险趋势</strong>：观察中</li>
+</ul>
+<h4 id="6">聚类6：非洲安全信号薄弱但持续</h4>
+<ul>
+<li><strong>涉及事件</strong>：尼日利亚大选动态（Kwankwaso接受APC叛逃者），苏丹军空袭达尔富尔（35死），埃塞-苏丹边境冲突，肯尼亚身份证发放争议</li>
+<li><strong>综合信号等级</strong>：<span class="sig sig-C">C级</span></li>
+<li><strong>源共识度</strong>：低（各事件1-2源）</li>
+<li><strong>新兴信号</strong>：否</li>
+<li><strong>风险趋势</strong>：稳定</li>
+</ul>
+</div>
+      </div>
+    </section>
+    <section class="slide" id="七-长期趋势分析与战略展望" data-index="7">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="七-长期趋势分析与战略展望-heading"><span class="ch-num">08</span>七、长期趋势分析与战略展望</h2>
+        <div class="slide-body">
+<h5 id="71">7.1 事件演化分析</h5>
+<p>[分析·推理链] 当前最突出的模式是<strong>特朗普政府第三次在伊朗问题上"极限施压→叫停→谈判"循环</strong>。每次循环的变量不同：第一次（2025）因国际压力；第二次（2026年初）因内部反弹；第三次（当前）因沙特等海湾盟友的斡旋+可能的私下交易。但这个模式的危险在于：每一次"叫停"都伴随着以色列更大的战略焦虑，可能触发以色列单边行动——这是一个被低估的风险传导路径。</p>
+<h5 id="72">7.2 信号变化检测（与昨日对比）</h5>
+<ul>
+<li><strong>新出现</strong>：美日联合干预（1971年来汇市干预的美国角色从"反对者"变为"配合者"）；匈牙利核电站停堆（核能-气候脆弱性被显性化）</li>
+<li><strong>信号强度变化</strong>：美伊紧张从"即刻打击威胁"降级为"谈判窗口"（±40%概率波动）；加沙停火承诺与实际打击的背离加剧（从"突破"到"24小时内18人死亡"）</li>
+<li><strong>信号消失</strong>：无昨日关注主题完全消失，但南中国海信号从A降为<span class="sig sig-B">B级</span></li>
+</ul>
+<h5 id="73">7.3 风险主题温度计</h5>
+<table>
+<thead>
+<tr>
+<th>风险主题</th>
+<th>当前温度(0-100)</th>
+<th>趋势(30天)</th>
+<th>关键驱动因素</th>
+<th>置信度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>美伊军事对峙</td>
+<td>65（从85↓）</td>
+<td>↓短期↑中期</td>
+<td>谈判开启但无实质框架；以色列边缘化压力</td>
+<td>78%</td>
+</tr>
+<tr>
+<td>霍尔木兹海峡封锁</td>
+<td>50（从85↓）</td>
+<td>↓</td>
+<td>WTI -4.74%；伊朗-阿曼谈判接近完成</td>
+<td>82%</td>
+</tr>
+<tr>
+<td>中东多线战争</td>
+<td>72</td>
+<td>↑</td>
+<td>加沙-以色列持续打击；也门胡塞红海威胁；以色列可能单边行动</td>
+<td>85%</td>
+</tr>
+<tr>
+<td>全球极端气候</td>
+<td>78</td>
+<td>↑</td>
+<td>欧亚同步热浪；匈牙利核电站停堆；韩国42.5°C破纪录</td>
+<td>88%</td>
+</tr>
+<tr>
+<td>欧洲能源危机</td>
+<td>62</td>
+<td>↑</td>
+<td>核电停堆+多瑙河断航+持续高温</td>
+<td>75%</td>
+</tr>
+<tr>
+<td>美日汇市干预常态化</td>
+<td>55</td>
+<td>新信号</td>
+<td>2011年来首次协同；特朗普政治化表述</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>欧洲移民危机</td>
+<td>60</td>
+<td>↑</td>
+<td>休达事件政治余震；极右翼反弹</td>
+<td>75%</td>
+</tr>
+<tr>
+<td>亚太科技供应链</td>
+<td>45</td>
+<td>→</td>
+<td>AI芯片需求强劲但电力瓶颈显现</td>
+<td>72%</td>
+</tr>
+</tbody>
+</table>
+<h5 id="74-30-90">7.4 30-90天战略展望（三情景）</h5>
+<table>
+<thead>
+<tr>
+<th>情景</th>
+<th>概率</th>
+<th>核心假设</th>
+<th>潜在影响</th>
+<th>关键触发条件(≤20字)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>基线</strong>：美伊谈判维持低水平对话，海峡逐步开放</td>
+<td>50%</td>
+<td>特朗普保持谈判姿态；伊朗认为开放海峡有利可图；以色列被有效管控</td>
+<td>Brent回落至$78-82；WTI$75-80；美股平稳；黄金$3800-4200区间</td>
+<td>美伊联合声明+海峡航运恢复至80%</td>
+</tr>
+<tr>
+<td><strong>上行</strong>：美伊框架协议达成，地区整体降温</td>
+<td>20%</td>
+<td>特朗普需要"伊朗胜利"支撑连任；海湾国家全力斡旋；以色列默认新秩序</td>
+<td>Brent&lt;$75；能源板块回调；新兴市场货币走强；S&amp;P500突破前高</td>
+<td>美伊宣布"全面协议路线图"(含核)</td>
+</tr>
+<tr>
+<td><strong>下行</strong>：谈判破裂，冲突重返军事阶段</td>
+<td>30%</td>
+<td>周一谈判无成果；以色列借机升级加沙/黎巴嫩；伊朗重启霍尔木兹封锁</td>
+<td>Brent&gt;$95-100；VIX&gt;25；黄金&gt;$4300；新兴市场承压；AI/半导体供应链中断风险剧增</td>
+<td>谈判48小时内破裂+Brent单日&gt;5%</td>
+</tr>
+</tbody>
+</table>
+</div>
+      </div>
+    </section>
+    <section class="slide" id="八-全球投资研判" data-index="8">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="八-全球投资研判-heading"><span class="ch-num">09</span>八、全球投资研判</h2>
+        <div class="slide-body">
+<p><strong>美股</strong>：核心驱动——"地缘缓和反弹 vs 利率敏感板块承压"的拉锯。AI主题（NVIDIA/Amazon链）提供结构性支撑，但10年期美债4.74%对高估值成长股构成压力。资金流——板块轮动迹象：科技（+1.0%）vs 小盘（-0.5%）的K型分化加剧。中期关注——美联储9月会议前的通胀数据；若10Y突破4.8%，可能触发5-10%级别的估值修正。VIX虽低（15.99），但MOVE债券波动率（70.88）暗示固定收益市场异常紧张。</p>
+<p><strong>美债</strong>：核心驱动——财政风险定价+美联储观望+外部干预的政治化。长端利率上行（30Y 5.28%）直接推高抵押贷款利率和企业融资成本。2s10s利差0.51%显示"软着陆"叙事仍存但脆弱。资金流——外国央行（日本）干预可能意味着未来减持美债以筹集美元，形成长期抛压。中期关注——美是否将汇市干预常态化，若如此，长端利率将加速上行。</p>
+<p><strong>港股</strong>：核心驱动——A/H价差+外资观望美伊/中国经济+港元流动性适中。恒生科技微涨0.3%，AI主题正向传导有限。资金流——南下资金vs外资净流出的平衡游戏。中期关注——香港调升GDP预测若能兑现（南华早报），将支撑估值；但若美债利率继续上行，港股的外资敏感型特征将承压。</p>
+<p><strong>A股</strong>：核心驱动——中国央行"适度宽松"信号+上半年25万亿外贸（证券时报）+AI产业链国产替代加速。沪深300涨1.63%，北向资金情绪改善。板块影响——新能源/光伏/储能受全球能源危机关注提振；地产仍拖累。中期关注——人民币汇率（CNH 6.7488）的稳定窗口为宽松政策提供空间，但若美伊再升级，出口链可能承压。</p>
+<p><strong>韩国KOSPI</strong>：核心驱动——AI/HBM需求+韩元反弹+摩根士丹利"超配"评级。KOSPI单日+17.91%（数据过期72h，但显示强劲反弹），SK Hynix ADR流入推动韩元升值（美元/韩元 -0.52%）。资金流——全球AI产业链资金重新配置，"去杠杆冲刷"后入场点改善。中期关注——韩元过快升值或损伤出口竞争力；电力供给瓶颈可能制约半导体扩张。</p>
+</div>
+      </div>
+    </section>
+    <section class="slide" id="九-资源安全" data-index="9">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="九-资源安全-heading"><span class="ch-num">10</span>九、资源安全</h2>
+        <div class="slide-body">
+<h5 id="91">9.1 关键矿产</h5>
+<p>[事实·1源] 美国防部Breaking Defense报道，五角大楼正制定关键矿产行政令的对冲方案，以缓解国防供应链冲击。[推测·置信度68%] 稀土/锂/钴的供应集中度仍是美国最大供应链脆弱点。</p>
+<h5 id="92">9.2 能源安全</h5>
+<p>[事实·N源] 霍尔木兹海峡是今日核心变量（详见第二章·事件1）。匈牙利核电因缺水停堆打开"气候-核能脆弱性"新议题。OPEC+同意9月增产18.8万桶/日（Al-Monitor），但市场更关注海峡开放进程而非供给增量。[推测·置信度78%] 若海峡谈判失败，增产无法弥补封锁缺口；若开放，增产可能加速油价回落至$75以下。</p>
+<h5 id="93">9.3 粮食安全</h5>
+<p>[事实] 玉米涨4.09%至464美分/蒲式耳，大豆微涨0.87%，小麦跌3.65%（数据过期72h）。多瑙河断航威胁中东欧粮食出口通道。[推测·置信度65%] 全球极端高温（韩国/欧洲/可能被低估的非洲）将在未来30-60天推升粮食价格指数，玉米-能源关联（乙醇）加剧波动。</p>
+</div>
+      </div>
+    </section>
+    <section class="slide" id="十-原始新闻链接" data-index="10">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="十-原始新闻链接-heading"><span class="ch-num">11</span>十、原始新闻链接</h2>
+        <div class="slide-body">
+<p><strong>中东：</strong></p>
+<ul>
+<li>Al-Monitor - Trump says Iran talks to take place on Monday, sets no deadline for deal <a href="https://www.al-monitor.com/originals/2026/08/trump-says-iran-talks-take-place-monday-sets-no-deadline-deal">阅读原文</a></li>
+</ul>
+
+<ul>
+<li>Al-Monitor - Trump says US will hold off on fresh Iran attack in hope of quick deal <a href="https://www.al-monitor.com/originals/2026/08/trump-says-us-will-hold-fresh-iran-attack-hope-quick-deal">阅读原文</a></li>
+<li>Al-Monitor - Israeli strikes kill 18 in Gaza, minister says no deal to halt attacks <a href="https://www.al-monitor.com/originals/2026/08/israeli-strikes-kill-18-gaza-minister-says-no-deal-halt-attacks">阅读原文</a></li>
+<li>Al Jazeera - Two helicopters collide mid-air while tackling wildfires in Greece <a href="https://www.aljazeera.com/video/newsfeed/2026/8/2/aje-onl-nf_two-helicopters-crash-mid-air-wildfires-in-greece-020826?traffic_source=rss">阅读原文</a></li>
+<li>TRT World - Two firefighting helicopters collide in Greece while battling wildfire - TRT World <a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTFB1TmZNdG9pdDU2WnZOZEVZemJnUUJvb2U5QTd2N2t0YVJjemVCdEdVdHVuUFQwdW5tOHhOWnVOa3hSTVAtcE1aMm5NS3lsMDJvUlU2WTY5WGs?oc=5">阅读原文</a></li>
+</ul>
+<p><strong>中亚：</strong></p>
+<ul>
+<li>Tengrinews - Артур - TengriNews <a href="https://news.google.com/rss/articles/CBMiakFVX3lxTE5Vc0Q2anBxaVU0TU8xd1l4Z3NGbFRiV2k4TDZJNTRKWE83c3ExMVZKMW1nUGFJUWFNUHE3VUJOSUV1UjJxRWo5dFE4eG9EOVVsU25uYXhLd3VCcEFvMDZMZHlreGZsV2V4c3c?oc=5">阅读原文</a></li>
+</ul>
+
+<ul>
+<li>Tengrinews - Алёна - TengriNews <a href="https://news.google.com/rss/articles/CBMiakFVX3lxTE55aEdpS1NSZWJydTdVYlpyeGIwLXZ1ejhMbEhibk5QVXcxdGlCREFDTkxoUkJkSXVNb0tWVFRTTG81RTJ0bFZ6WUtYT2VOOGhZOE1ia0tBU2xHY1R2a0ZxWDk1cjhWRFlYcXc?oc=5">阅读原文</a></li>
+<li>Tengrinews - interval - TengriNews <a href="https://news.google.com/rss/articles/CBMib0FVX3lxTFBQbUZjWVg2TUsxRG9Qekt2WTNEMmtQYS12R2hEWVZCUzFrajUzN3VnTF82ckxKSWl6eWNEOEZ6QUlua0RtOC1nNjE2WVAwSUNzTmhMMHowcmUtNDBiN2t2VlBXcEkzRHJUaTdXV0JCVQ?oc=5">阅读原文</a></li>
+<li>Tengrinews - Matrang - TengriNews <a href="https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9PTUJITjVpcWJRbmNJY05wdGNDdnRXYy0zSXZySEdIMk1FdUx3VVd6dWJOOW00ODlkWEUta1hid0R5bVBWS3BRaEJFZEgxUGVTSEpjWUFLTkx4YW9kWnJWRjh3bjgxMU0?oc=5">阅读原文</a></li>
+</ul>
+<p><strong>中国：</strong></p>
+<ul>
+<li>观察者网 - 航行警告！南海部分海域进行军事训练，禁止驶入 - 观察者 <a href="https://news.google.com/rss/articles/CBMiZkFVX3lxTE9JTGxpWTJhVS1VU0s2NWtETVRpaW9IdUl1UEk5SncxMWxLMTZzS1ZrZ3AzWVZLNHVTcE1aQlJXS1NFQW9ONWZLVFRpX2pTUjQ1T2k0NXVNVWtvYnJBVGFQbGZRc0ROQQ?oc=5">阅读原文</a></li>
+</ul>
+
+<ul>
+<li>观察者网 - 从“枪已上膛”到“取消打击”：特朗普的“TACO”大戏再次上新 - 风闻 <a href="https://news.google.com/rss/articles/CBMiW0FVX3lxTFBfakM5MWJDMEdqRkd0ZmkzWXVVemVjdkwwVWZGV1N4WDR0cUlZa1NfdVJ1UV9acXJReGtLM1Y3ajJzQmJ3ZnVLU3NyMThfTjRIckhxdDFhc3dYNlk?oc=5">阅读原文</a></li>
+<li>观察者网 - 以媒：内塔尼亚胡通过特朗普社媒得知美取消对伊打击 - 观察者 <a href="https://news.google.com/rss/articles/CBMiakFVX3lxTE1yT0ctMmVWN0lUZTFiZl9MSHJTOWF0TUNwRWE1aF9Fcm9yS1FwQVFVY1UwLW9McjNkRU83UG1KUHNqN1Y5SE5CZ1NrdHkyVlptNGJYRzhwaDdtM21uckVGMGlRNWpvZU9wVmc?oc=5">阅读原文</a></li>
+<li>观察者网 - 完蛋，我被罪犯包围了！一款App如何吓哭美国人 - 风闻 <a href="https://news.google.com/rss/articles/CBMiWkFVX3lxTE9DaTNjZTlTdHR4SEs0U0lwdXRZOU90blQ2aHk3M0lycHAyWGdUOVRSWTZfcUFxY004dlZFcDV3blN1bTNSN1BrV1N2R1pLMkVLcVRudkhpYlBJUQ?oc=5">阅读原文</a></li>
+<li>观察者网 - 看来空警600是比照E-2D量身定制的 - 风闻 <a href="https://news.google.com/rss/articles/CBMidEFVX3lxTE5pV2dscEFlamRIMXZ2SG1lYXdkdDM5NFcwcFM5WlBVcS00OEd3dVJWUk1BTjFfMFpJY3pkcUNxcUZURjJLeU94bWdpQmtBZE9lamc3X1ExTE1wb0QtYzhGMFBFeThuNk5hSmxYQzdxakxWa1hB?oc=5">阅读原文</a></li>
+</ul>
+<p><strong>亚洲：</strong></p>
+<ul>
+<li>Japan Times - Trump says Iran talks to begin Monday after scrapping attack <a href="https://www.japantimes.co.jp/news/2026/08/03/world/politics/trump-iran-strikes-hormuz-deal/">阅读原文</a></li>
+</ul>
+
+<ul>
+<li>Hindustan Times - Two firefighting helicopters collide while battling Greece wildfire <a href="https://www.hindustantimes.com/world-news/two-firefighting-helicopters-collide-while-battling-greece-wildfire-death-toll-injuries-101785677799842.html">阅读原文</a></li>
+<li>Channel News Asia - Israeli strikes kill 18 in Gaza, minister says no deal to halt attacks <a href="https://www.channelnewsasia.com/world/israeli-strikes-kill-18-in-gaza-minister-says-no-deal-halt-attacks-6294026">阅读原文</a></li>
+<li>Channel News Asia - Japan confirms joint FX intervention with US, says won't hesitate for more <a href="https://www.channelnewsasia.com/business/japan-confirms-joint-fx-intervention-us-says-wont-hesitate-more-6294116">阅读原文</a></li>
+<li>Japan Times - Japan confirms joint yen intervention with U.S., signaling readiness for more action <a href="https://www.japantimes.co.jp/business/2026/08/03/markets/japan-us-joint-yen-intervention/">阅读原文</a></li>
+</ul>
+<p><strong>俄罗斯：</strong></p>
+<ul>
+<li>RT - Trump cancels planned attack on Iran <a href="https://www.rt.com/news/643765-trump-cancels-planned-attack-iran/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=RSS">阅读原文</a></li>
+</ul>
+
+<ul>
+<li>Sputnik - Trump Cancels Planned Attack on Iran Amid Deal Talks - sputnikglobe.com <a href="https://news.google.com/rss/articles/CBMipAFBVV95cUxQdDVLbjNSRHBRZ3NWUUNBcTJiSGg5dURBbXZhcU1LQlVGbXMxZnJWdzhYaUd3akpZS0JQMW1lM0VGcUp2S2lqTG9fMDdReFY4UXR0N3h3UVhhMFlHX2YzaTJHbDNmNnVCQXQ3Vl93cHNnckFiVW1SOFZ0MjF4aE1hSDJ3enFGNGxaTjd1QmZBclRQaXJITzdSLXA3eWpOSTl1SGw0RQ?oc=5">阅读原文</a></li>
+<li>Sputnik - No Agreement Exists Between Iran, US on Opening Strait of Hormuz - Reports - sputnikglobe.com <a href="https://news.google.com/rss/articles/CBMiwAFBVV95cUxPQkp5N0UyQ0dXN09HT0pxcERyRkVVd0xQTGdZQWx4bWpyTmJ2ZHhfZFNKWGNxTjBKZHB1UVgxUlVMTDJZbXRwRU01M3FvT3hKbDBmU21qWUxPY3h6QkpLN09JUGxrREJzdGM2Q3k0Smh2UTZ6Mjl2dkJpUzJVbmhGVmJoV3lBWTBnRWc2OW05T051QjR0WEZpWHY2bGpYb3ZzLWJBeF8yM2ZDalY4bllUcjRIZnd4a3R3ZGdsMXdjQWU?oc=5">阅读原文</a></li>
+<li>Sputnik - Drone Strikes Hit Cargo Ship in Black Sea Carrying Military Supplies for Ukrainian Forces - MoD - sputnikglobe.com <a href="https://news.google.com/rss/articles/CBMi3gFBVV95cUxQQ0pBZGRUTnlBdEMzcEJJQnJhcjN3NGpYdWVvSTIzSmRLSXVJMWNMLUFtX0RkU21PcVFpc25XZER4VG0zYi1PNlA4TTduU0JlTDdFdi1USVFVZWh6emp2bXB4VW83SjNSdEI0ZXFKOUFHWUVWMW94Wmh1TkNvT3NqckhlSzY0cGhmWUpxeDJ2czU4UWE2NTlfdDFUWnRuaVl3ZXdJODFacVBGYVZMUzBvdW5faDAzb0VKTFg3MEdORy1IU1NsZERzaUdzUHVuVDRaT2pnODl2YTFtNUpRRkE?oc=5">阅读原文</a></li>
+<li>RT - US can take ‘whatever we want’ from Ukraine – Trump <a href="https://www.rt.com/news/643741-us-take-whatever-we-want-ukraine-trump/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=RSS">阅读原文</a></li>
+</ul>
+<p><strong>北美：</strong></p>
+<ul>
+<li>Investing.com - Japan confirms joint yen intervention with US, signals readiness for more action <a href="https://www.investing.com/news/economy-news/japan-to-vow-coordination-with-us-on-weak-yen-in-historic-battle-4829714">阅读原文</a></li>
+</ul>
+
+<ul>
+<li>Investing.com - Japan confirms joint FX intervention with U.S., says won’t hesitate for more <a href="https://www.investing.com/news/economy-news/japan-confirms-joint-fx-intervention-with-us-says-wont-hesitate-for-more-4829720">阅读原文</a></li>
+<li>Investing.com - Trump says Iran talks to take place on Monday, sets no deadline for deal <a href="https://www.investing.com/news/commodities-news/trump-says-iran-talks-to-take-place-on-monday-sets-no-deadline-for-deal-4829719">阅读原文</a></li>
+<li>Investing.com - AstraZeneca holds talks with Bristol Myers Squibb on $400 billion megadeal, FT reports <a href="https://www.investing.com/news/stock-market-news/astrazeneca-holds-talks-with-bristol-myers-squibb-on-400-billion-megadeal-ft-reports-4829708">阅读原文</a></li>
+<li>Seeking Alpha - Advanced Energy Q2 2026 Earnings Preview <a href="https://seekingalpha.com/news/4622827-advanced-energy-q2-2026-earnings-preview?utm_source=feed_news_all&amp;utm_medium=referral&amp;feed_item_type=news">阅读原文</a></li>
+</ul>
+<p><strong>南美：</strong></p>
+<ul>
+<li>MercoPress - Trump halts strikes on Iran as Tehran denies any deal exists - MercoPress <a href="https://news.google.com/rss/articles/CBMingFBVV95cUxOYkRIbDlYSEVKbFd0UkRjZVFoelU4UWl6N1hoSk9fMGlaZ25JRXg3Z0VzNFF6cHEzWTdXYXJTaWVfQzc4b3FGUjhNOTlvTDNFSnl6QjVEQTZfZ29acm9zSzJwcmFwMmVGOE5XOVZoQk8xMkxpbVdHTzdsejBsTVF4QS05Z1lOLTA2d1FTdkVyQ3ctclR1WFRZclptaVI3UQ?oc=5">阅读原文</a></li>
+</ul>
+
+<ul>
+<li>Rio Times - Brazil’s Petrol Now Has 32% Ethanol. The Saving Is Half a US Cent a Litre. - riotimesonline.com <a href="https://news.google.com/rss/articles/CBMigAFBVV95cUxQTlltR2U5QnhZaFVSQXhGamJwb2ZTeWlpRlZuN3JnZVI0R3JOejdoTzB6ZlZCVGpqS21YWGRmT1dxVnlkV2lyclBDdWNZakY1M2N2UVJXNXVBbmJzSGdsWjRDYzYtRkNBOW5jN0tnMjNjTnNuSWJXZ1BNVEhYYWpibg?oc=5">阅读原文</a></li>
+<li>Buenos Aires Times - Indigenous groups oppose Milei plan to open Argentina to foreign buyers - Al Jazeera <a href="https://news.google.com/rss/articles/CBMikAFBVV95cUxNdWMzenNGR2JTOU5aWDRZVi1pYjJrc2dkemU2UGNaV0Y0bGFCYk55T0t6VXpOUFhfbEtVYnk3Q2lZcHRLOTcyVklxYmNubVVIT1RmeW9tbjJTSTJvdFhlMDU1a0J3X1BoT1hGSU13WE92QU9UQ3BXR1pmbWRoZjFrRVdrX1FfTnU5LWVZMmlmS2bSAZYBQVVfeXFMUHhLV09DRG96bWIzYU96bzRqN1MzNnluMjFRMndlLUhIS1pUZWdqTmpkU2F1T1U3dExqVzBmY3JKaW80dmdCZmd3TTlVVEFkeUVpUWdLZy1Jc3ZkVVJsSC1IRFdDcl83TGYzd2ppa0hlRHdia1BuM2JPaWNQTmM2NkFEbm41aDRXWlAwM1FUMW10bEtMaVBB?oc=5">阅读原文</a></li>
+</ul>
+<p><strong>国际：</strong></p>
+<ul>
+<li>OilPrice - AI's Electricity Demand Is Not the Real Problem. Its Inflexibility Is - Crude Oil Prices Today | OilPrice.com <a href="https://news.google.com/rss/articles/CBMitgFBVV95cUxQU3lQT2JVN1htYVgzb01PZGdhd2FIcTkyQWM2V2NMSTBMSGZILURtTElnU0Y2c19lM1NqdktHekFRY2VabFN0REhkWDk0cmdnX2tGeVRUY0hBQkNUd3ZBTjFVaXVoSkpQRUlnZHlONFZwdXRKM2FKYkJ2MVI2Y0FPYTJzcERMam1qVmh5c1NLa0lKcGYwNzdRdkEzMFJZM0tOSDV0Ynh0YnUtdUtyUkowTFhLY0RRd9IBuwFBVV95cUxQbG9hdWlmSjBLYk8yejJXTGEzQ19NMUc2SzN3aXNzNHB4NDVlSVRSS0ZqZTJrTHdyRVozd2N4bjVjVWp5ZzNfYWdQNWFTNk9hcW9jM2I2SFJZWFlscmlJTmM1OFNJbWZoNTlzVGJ4YW05X243TUdjVG9kSmNuVEhZczFqR2RhYkQwa2pKS0ZWaW9OS294WWp0X0JLd1ZFM0lwMWczX1IxTzYzUXFOczVlaF9HOTNXcVFyRTJn?oc=5">阅读原文</a></li>
+</ul>
+
+<ul>
+<li>OilPrice - The Bank of England Is Moving Away From Coal - Crude Oil Prices Today | OilPrice.com <a href="https://news.google.com/rss/articles/CBMilwFBVV95cUxPSXl6N1dPVXVoZlJxZVFwTnEtRTJFcW5HU2JMT2RzdEdhSV9id09zd2puLXpGcndOYl9BbnhCbWtnLXA2WjZLbVZNTEpwQlQtZlE1TUFGX3JLOUxwWjY2T0FCbzVJNkJQcjVORlRzUzh1ZGpwV3hvaksyUzZUaXpJb2NJSURySDJnMU45ME9McWI1U3lnN2VZ0gGcAUFVX3lxTE1mNm5ibG5zUUVueU51X2hyaW5zbzFpOWZheENLVWp4djUwb2RvRi1lYVNqdEt0MGpOVy10QTdJNWZ6RWxhRmhGNXJ4LVdUS2liLXMwcDhFbDMtZjhSdEtSdlhLOHhWWm9sS2VkN2Rlbm15UTV6RDQ0YXNQVlZEZ3hkTEFvc2IxbjBJcGdaXzVPdTU0bGNHYzBCZUtYbg?oc=5">阅读原文</a></li>
+<li>OilPrice - What Kyrgyzstan Wants From the UN Security Council - Crude Oil Prices Today | OilPrice.com <a href="https://news.google.com/rss/articles/CBMimAFBVV95cUxOMnpwVDgyR2lrMUxaMlVIbk1pZGplRkJCZi1FOFZyWGhvX0M2enJsUHpoZ3hZbmV0OW1xZE5xekp6TXlRWVRjbGhEQTduQmhJbi1tamxtVHVjNEZLWUJVbG5ncVZ0RDBvMkxSODc5c3c4VTdvb3VpaGFWdmo2bnRxVDZLdnl6SVNlN3R4Q0k0dktBZmF0VWhUStIBngFBVV95cUxOQVc0QzFPREZXQjRUamxWVUl3dE9tVzQ3LVRvQzRwcVM3Mmd5VVhaQlJocHd3SFo4a3l4NU8tY3JsZ1JLNEIxSTNXT3Z6a0tGYmJ0WmF0cElaWk5YTHZiVC1BVmRHYjlSSjZlTHotOFNULWJJajhEWF94bzdsSzhRa2JfNE1hUWJGV1NGUXNCMkJic2JVeXRRU3d5aF9XQQ?oc=5">阅读原文</a></li>
+<li>OilPrice - China's Car Market Stalls Even as Global Demand Keeps Growing - Crude Oil Prices Today | OilPrice.com <a href="https://news.google.com/rss/articles/CBMirAFBVV95cUxQb3FpY3B0d1gyajVIUzN4QmtNY09IMGNfVVJIcHU5WEtOS19LekhmV09GQW1xQm1mWkozYy02N3c1X0RmSVdZeFVrQ2hxYkpZcXVQcWgzX3hQWjVIMmxVSlJueDNGMl9RdDlpMmFoVEhHekx6T3ppT1VDeElMNm92R21JVkhfampwMmNCbEFYRkljZXJwenpydk5pd0FkOGoybkZaNTFyU3FvSDRu0gGyAUFVX3lxTFA5SVgyUW5vdlRXUzh0STNfblhPQTNUUDRka29mM2JUUVluNnV6WE1KTzQ3Y3FoZ2YzTWoyTXliU0lhWi1yQ25qczNUV0gzVzhvOXZvdWhaZmR6c0R5SnNVLVZUc0lvcGwzZ042SDN6OWNESTdkNHZKUFpwbWNHUXZ3TE5TSnJBM09pdWRKZXRxd1JGSFVXWjdVaWU5WnBlQk9EWnhDZFBlUTJ0NkxwSjhiZVE?oc=5">阅读原文</a></li>
+<li>OilPrice - China Doubles Down on Clean Energy Even as Coal Keeps Growing - Crude Oil Prices Today | OilPrice.com <a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxQQkRLdk40Tkp2eDB1N3BCeTZVc2kzQXlOZVkxc3J3aE5yMGpuYVRMZE51YWMwajJRcXhWQm5vV1RZUWIwWWh6TDhLM2dSaXpmaGxMVlJzUHVzamF0SkkyVnR0N3JJQU9IVFRXU25EQjRxX2NGaVZVSzU5TUl0UG1HNTF5SWE3R0hBVjNOd1ZVdzY4emtSdENCZ2xNSXk5cUFGaThTX2hYMXEyOGEyUXfSAbMBQVVfeXFMTURRZHlPQm5ldkllTElZb3NGWHY3dWxDWXNPVHh3TXlKMUhkOWVmOVhycF9rN3p2WWEzTEZFTXRZdXE3UURYX0U2V1RETmZyc0JYUnlUVmtkSVJJempUVGpJd2c3QlY5cE1kNzVZeHd6NlJ3dVRuZUdzLUVoV18xYllDcjNrSDhOWG11WWcyRmpnOXBUUVpxWXNHaUgyalBsRUtHa3Q3Zjc1Nk5Ma0dkR2t1Snc?oc=5">阅读原文</a></li>
+</ul>
+<p><strong>大洋洲：</strong></p>
+<ul>
+<li>ABC Australia - Housing market seeing 'rapid deterioration' as downturn deepens - ABC News &amp; Headlines – Australian Broadcasting Corporation <a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxNYWg1WnZ5MS1zOUNHSURYVDdCRkJ3Zm5DR3A2WFRhRzlHSnQ1eTlnWGw1Vl83RE9Eb0pleGZDTDFqSm5XcTU0VmFodE9KdEVUOVlSeWZrN21KSHR5Z0dXWDBTWU9WdlZiRTBoaEJjNVo0N2o1S1VYS3FEWkYyV1hFTmROS3FyMnZveER6MVg3cDQyTmpfODA4NF9JRVFxbU5YX3otY2JER0Y?oc=5">阅读原文</a></li>
+</ul>
+
+<ul>
+<li>ABC Australia - Fifth-generation farm at a standstill due to contamination - ABC News &amp; Headlines – Australian Broadcasting Corporation <a href="https://news.google.com/rss/articles/CBMirAFBVV95cUxOXzNjUG43OVktV0dtNU9BcEFsMFlnWWswTXpYSENKT0FOZ0syMjNPVlpWM3ZwMUd6bThIOVpkYkdITFNiVGhzNlVKQ2Q0QlcxYmJZdGt5djBOc3JzOUxQVUhoSkdHRWNNd0FYLUZINUw1OERnal9qbTFNaHZ6QVZLZF9KS204bDVWV1VlMWFBY1lmYlNEcEVNMFQ1Zk1DUUlEZmMtZVpJSmQtaW9W?oc=5">阅读原文</a></li>
+<li>ABC Australia - Spain slams 'selfish' EU, sets up floating barriers - ABC News &amp; Headlines – Australian Broadcasting Corporation <a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxPbWRLQmFZdVNVbFp5MTlEa1hlYTBiQ2hsYVVNTWRJSmlPeXAxaHZqWnNFU3BZcFJRYnFRekdwYW80aEFEZ3EtUlVpV0FOWjZFYXhxUVRlQlpoNG9sdWF4bjk5amFVS2dMSVM5aEI1czdKbVRjem9UT0pCWmRnUkZPXzNPdXZzYUJCNHBRUE1XbHpmY2JGRUYyeUFkU0NJeWk4cUhOa2g3REQ2UU1BbEE?oc=5">阅读原文</a></li>
+<li>ABC Australia - Ben Carroll to fill one of three vacancies in Victorian cabinet, ABC understands - ABC News &amp; Headlines – Australian Broadcasting Corporation <a href="https://news.google.com/rss/articles/CBMilwFBVV95cUxPN25DSkRTUVUxazk4bk9ZMnBDZHZtOWRCQkhQNzBYdFZxX0tNTGRDeDlGTXZaWFNYYXJPcVVVR2d2eGdVVy1lZGkzaE1SRTJRNi14NHloVFdscVFyNmJWQWNuU0hIUVB6YzlJZ3dXMk1EbE04QXB4ZktnbXdQM3E1bXdCV0VhZmR2eDIzcF9yZmNhZlpFREV3?oc=5">阅读原文</a></li>
+<li>ABC Australia - In a remote community, a boy asked me a question no child should - ABC News &amp; Headlines – Australian Broadcasting Corporation <a href="https://news.google.com/rss/articles/CBMipwFBVV95cUxQcGh3aDUzMkVnTmZ0MTNWTlduakZlMlVHdjN3TnZmM1lJY01Db2pzQWtmaFNyZzNTNVdmZUtRMVlzQVIyOXNsX3pWY2dHdC1kN3FRLU9jS1MxaU9mTk5hUkR1a0JCUW5jcW9JWDEtZVdkZDVFVUdzdlgzQS1fSWgxNi05SThhcGtVdTIzNE8zQURSV3ZmbzYwZkxMYlZQZFdfZ21SYW5COA?oc=5">阅读原文</a></li>
+</ul>
+<p><strong>欧洲：</strong></p>
+<ul>
+<li>Financial Times - Trump says Iran talks to resume after US called off major attack <a href="https://www.ft.com/content/c9bd508c-2915-4b34-a5a5-553bff9548a5?syn-25a6b1a6=1">阅读原文</a></li>
+</ul>
+
+<ul>
+<li>Deutsche Welle - Man arrested over death of British woman found in suitcase in Athens <a href="https://www.dw.com/en/man-arrested-over-death-of-british-woman-found-in-suitcase-in-athens/a-78210183?maca=en-rss-en-all-1573-rdf">阅读原文</a></li>
+<li>France 24 - Live: Trump says new talks with Iran to begin Monday after calling off strikes <a href="https://www.france24.com/en/middle-east/20260802-live-trump-says-new-talks-with-iran-to-begin-monday-after-calling-off-strikes">阅读原文</a></li>
+<li>Euronews - Latest news bulletin | August 2nd, 2026 – Evening <a href="http://www.euronews.com/video/2026/08/02/latest-news-bulletin-august-2nd-2026-evening">阅读原文</a></li>
+<li>Euronews - Europe's wildfires update: two helicopters collide while battling fire in Greece <a href="http://www.euronews.com/my-europe/2026/08/02/europes-wildfires-update-greece-still-battling-outbreaks-in-spain">阅读原文</a></li>
+</ul>
+<p><strong>非洲：</strong></p>
+<ul>
+<li>Daily Nation Kenya - Behind government push to issue one million Form Four students with national IDs - Daily Nation <a href="https://news.google.com/rss/articles/CBMivgFBVV95cUxNZk9iRkVuODR3QVRaeVF0SGJ5cHdONXRrc3ZKSDd6ZEhZLVZXa0g5TWdrajVLOXVJMUpuM3hZVGFwR3JuWFk2c1B2Rlp5MUd0R2xlRzdiblhGbjY4QlhTOC1aSG5nOFdxVFNxc3paS2NvQnpUbHFVbWg4dnNhQVF1c0NtVTNFZEN2SUtFY1NkQ3F6ZktJU2pRLWZwc0JHM0M4M3hwdzRCelVzV3JqQ3pDWktwVlVlMHRndnh3bFBB?oc=5">阅读原文</a></li>
+</ul>
+
+<ul>
+<li>Punch Nigeria - I was dollar millionaire at 30, became labourer in England at 35 — Farooq Oreagba - Punch Newspapers <a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxNVVRfbUhGdHdHRXdHZWZ4dFlGcExWblVoMzV3T0ZiM204UUwzbTllSTdWRHhQSGtsQ08yS0hLaS00ZWpmcDlNLVh6SWFPak9SbXRBSG4wNUZmOHRQME1xV0JYeWM4N0o3V2I0MnAyUVg0d2JpQmppUmRBdFFSMHd2cjVRdnV0WkJ6enlSMFQ3Zk5oRXd6M3ZzLXFpQ3d4UlZl?oc=5">阅读原文</a></li>
+<li>Punch Nigeria - Punch newspapers - Breaking News, Nigerian News &amp; Top Stories - Punch Newspapers <a href="https://news.google.com/rss/articles/CBMiN0FVX3lxTE1BSGpkN0wwY3o4QWQxMlNfeEwzd1dKTnlCNkRwZFFheVExQ0Q4VWRhVmFlb29Db0E?oc=5">阅读原文</a></li>
+<li>Daily Maverick - The way back to nature and the art of not forcing the world - Daily Maverick <a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxObUp3TTEzbTVnTGNGQzdNaG5XY2ltc1hwZ1VWRWVEa1l1RG5jN3l3Z2ZJWmRSM1Foek1aVjJPVTJnbDQ0YmZrSEhDNXo0X2UyVXpHcHhXUWlNRUxXWEZMYVFvdFpnVEdZSnoxOW1tU0FVTzdHaEFZdTBwZjlKdmpuT29XNkt4VE1iSGdOWnRpQUZ3ZThnUnpLWnNaZmVXOHY4QUJuNk5HY1lnczF1ZXc?oc=5">阅读原文</a></li>
+<li>Daily Maverick - Western Cape’s driest July is a harbinger of parched summer as El Niño strengthens - Daily Maverick <a href="https://news.google.com/rss/articles/CBMiyAFBVV95cUxPdms1M01UNldrSWkyN3lVUG5pNWhwVWJ6R2podU5TSGN1emZicklxQXhIOFNjZlEwRVloSjVuUC05M3NLUmRkcVl5YVRvUGVKQ203bHppYm9VdkJUcnlDOVB2N1R2alJ2ZGcxVHRaZTV2NFJPTW55aGEwSGdXQkdxUHNOcFR2aVlGU1BVemRNbzBEZ0pwN0x2eWd3RWRtTmRXdWtjVVI4TFFrMUhrUy1OMjNVU0oxd0xNMzQzekY1cFQ4SktaRWU5cA?oc=5">阅读原文</a></li>
+</ul>
+<p><strong>区域覆盖提醒</strong>：以下区域在今日新闻源中有覆盖但日报正文未充分提及：国际。建议在下次生成时关注这些区域。</p></div>
+      </div>
+    </section>
+
+    <section class="slide disclaimer-slide" id="disclaimer" data-index="12">
+      <div class="slide-inner">
+        <h2 class="chapter-title" id="disclaimer-chapter"><span class="ch-num">附</span>免责声明</h2>
+        <div class="slide-body">
+          <div class="disclaimer-content">
+            <p>本系统为基于公开信息（OSINT）的自动化国际局势观察与风险分析工具，内容由 AI 模型结合公开新闻、政府声明、智库报告及市场信息生成，<strong>仅用于研究、学习与信息参考用途</strong>。</p>
+            <h3>信息性质声明</h3>
+            <p>系统输出可能包含未经官方确认的信息、媒体推测与市场传闻、AI 模型的聚类、归因与趋势推演，以及对风险等级、升级信号与事件演化的概率性判断。<strong>上述内容不构成事实认定、官方立场或任何形式的专业建议。</strong></p>
+            <h3>不确定性声明</h3>
+            <p>系统可能包含未确认消息、媒体推测、模型推演或不完整信息。所有"风险等级""升级信号""趋势判断"均属于概率性分析，不代表事件必然发生。</p>
+            <h3>媒体叙事偏差声明</h3>
+            <p>不同媒体、政府与智库可能存在叙事偏差、信息筛选与立场差异。本系统旨在比较不同叙事框架，不代表认同任何特定国家、机构或意识形态立场。</p>
+            <h3>投资免责声明</h3>
+            <p>系统涉及的金融市场、行业、供应链与资产相关分析，仅用于宏观研究与风险观察，<strong>不构成证券、期货、基金或其他金融产品的投资建议</strong>。</p>
+            <h3>AI 生成标记</h3>
+            <p>本报告内容由 AI 模型自动生成，并经过规则化结构处理。使用者应结合独立信息来源进行判断，并自行承担因使用本系统内容产生的相关风险。</p>
+            <p class="disclaimer-update">报告日期：2026年08月03日 · 生成时间：08:03:46 UTC</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    </main>
+
+    <button class="back-to-top" id="backToTop" title="回到顶部" aria-label="回到顶部">↑</button>
+
+    <script>
+    (function() {
+        const S = [...document.querySelectorAll('.title-slide, .slide')];
+        const N = [...document.querySelectorAll('.nav-item')];
+        const progressBar = document.getElementById('scrollProgressBar');
+        const backToTop = document.getElementById('backToTop');
+        const isMobile = window.matchMedia('(max-width: 900px)').matches;
+
+        // ── 暗色模式切换 ──
+        const themeToggle = document.getElementById('themeToggle');
+        const mobileThemeToggle = document.getElementById('mobileThemeToggle');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const savedTheme = localStorage.getItem('theme');
+        const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+        if (initialTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            if (themeToggle) themeToggle.textContent = '☀️';
+            if (mobileThemeToggle) mobileThemeToggle.textContent = '☀️';
+        }
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            const icon = next === 'dark' ? '☀️' : '🌙';
+            const isEn = document.documentElement.lang === 'en';
+            const label = isEn
+                ? (next === 'dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode')
+                : (next === 'dark' ? '切换亮色模式' : '切换暗色模式');
+            if (themeToggle) {
+                themeToggle.textContent = icon;
+                themeToggle.setAttribute('aria-label', label);
+                themeToggle.setAttribute('title', label);
+            }
+            if (mobileThemeToggle) {
+                mobileThemeToggle.textContent = icon;
+                mobileThemeToggle.setAttribute('aria-label', label);
+                mobileThemeToggle.setAttribute('title', label);
+            }
+        }
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
+        if (mobileThemeToggle) {
+            mobileThemeToggle.addEventListener('click', toggleTheme);
+        }
+
+        // ── 侧边栏展开状态 ──
+        var sidebar = document.getElementById('sidebar');
+        if (sidebar) {
+            sidebar.addEventListener('mouseenter', function() { this.setAttribute('aria-expanded', 'true'); });
+            sidebar.addEventListener('mouseleave', function() { this.setAttribute('aria-expanded', 'false'); });
+            sidebar.addEventListener('focusin', function() { this.setAttribute('aria-expanded', 'true'); });
+            sidebar.addEventListener('focusout', function(e) {
+                if (!this.contains(e.relatedTarget)) { this.setAttribute('aria-expanded', 'false'); }
+            });
+        }
+
+        // ── 滚动进度条（使用 transform + rAF 节流）──
+        var _rafId = null;
+        function updateProgress() {
+            if (_rafId) return;
+            _rafId = requestAnimationFrame(function() {
+                _rafId = null;
+                var scrollTop = window.scrollY;
+                var docHeight = document.body.scrollHeight - window.innerHeight;
+                var pct = docHeight > 0 ? scrollTop / docHeight : 0;
+                if (progressBar) progressBar.style.transform = 'scaleX(' + pct + ')';
+            });
+        }
+        window.addEventListener('scroll', updateProgress, { passive: true });
+
+        // ── 回到顶部按钮 ──
+        if (backToTop) {
+            window.addEventListener('scroll', function() {
+                backToTop.classList.toggle('visible', window.scrollY > 300);
+            }, { passive: true });
+            backToTop.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // ── 章节高亮（IntersectionObserver）──
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var idx = parseInt(entry.target.getAttribute('data-index'));
+                    if (!isNaN(idx)) {
+                        N.forEach(function(n, j) { n.classList.toggle('active', j === idx - 1); });
+                    }
+                }
+            });
+        }, { threshold: 0.2, rootMargin: '-10% 0px -60% 0px' });
+        S.forEach(function(s) { observer.observe(s); });
+
+        // ── Scroll Reveal（IntersectionObserver）──
+        var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll('.slide-body').forEach(function(el) {
+            el.classList.add('reveal');
+            revealObserver.observe(el);
+        });
+
+        // ── sidebar nav 点击 → scrollTo ──
+        N.forEach(function(n, i) {
+            n.addEventListener('click', function(e) {
+                e.preventDefault();
+                var target = S[i + 1];
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // ── 键盘导航 ──
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown') { e.preventDefault(); window.scrollBy(0, window.innerHeight * 0.8); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); window.scrollBy(0, -window.innerHeight * 0.8); }
+            else if (e.key === 'Home') { e.preventDefault(); window.scrollTo(0, 0); }
+            else if (e.key === 'End') { e.preventDefault(); window.scrollTo(0, document.body.scrollHeight); }
+        });
+
+        updateProgress();
+
+        // ═══════════════════════════════════════════
+        //  移动端
+        // ═══════════════════════════════════════════
+        if (isMobile) initMobile();
+
+        function initMobile() {
+            wrapTablesForMobile();
+            buildMobileToc();
+            setupHamburger();
+        }
+
+        function wrapTablesForMobile() {
+            var tables = document.querySelectorAll('.slide-body table');
+            tables.forEach(function(table) {
+                if (table.parentElement && table.parentElement.classList.contains('table-scroll')) return;
+                var cols = table.querySelectorAll('tr:first-child th, tr:first-child td').length;
+                if (cols <= 4) return;
+                var wrapper = document.createElement('div');
+                wrapper.className = 'table-scroll';
+                table.parentNode.insertBefore(wrapper, table);
+                wrapper.appendChild(table);
+            });
+        }
+
+        function buildMobileToc() {
+            var tocNav = document.getElementById('mobileTocNav');
+            if (!tocNav) return;
+            var html = '';
+            html += '<div class="toc-item" role="button" tabindex="0" data-target="0">封面</div>';
+            S.forEach(function(s, i) {
+                if (i === 0) return;
+                var h2 = s.querySelector('.chapter-title');
+                var title = h2 ? h2.textContent.trim() : '章节 ' + i;
+                html += '<div class="toc-item" role="button" tabindex="0" data-target="' + i + '">' + title + '</div>';
+            });
+            tocNav.innerHTML = html;
+
+            tocNav.querySelectorAll('.toc-item').forEach(function(item) {
+                function activate() {
+                    var target = parseInt(item.getAttribute('data-target'));
+                    if (!isNaN(target)) {
+                        var el = S[target];
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        closeMobileToc();
+                    }
+                }
+                item.addEventListener('click', activate);
+                item.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); }
+                });
+            });
+        }
+
+        function setupHamburger() {
+            var hamburger = document.getElementById('hamburger');
+            var overlay = document.getElementById('mobileTocOverlay');
+            var toc = document.getElementById('mobileToc');
+            if (!hamburger || !overlay || !toc) return;
+
+            hamburger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (toc.classList.contains('open')) closeMobileToc();
+                else openMobileToc();
+            });
+            hamburger.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (toc.classList.contains('open')) closeMobileToc();
+                    else openMobileToc();
+                }
+            });
+
+            overlay.addEventListener('click', closeMobileToc);
+            overlay.addEventListener('touchmove', function(e) { e.preventDefault(); });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && toc.classList.contains('open')) { closeMobileToc(); }
+            });
+        }
+
+        function openMobileToc() {
+            document.getElementById('hamburger').classList.add('open');
+            document.getElementById('mobileToc').classList.add('open');
+            document.getElementById('mobileTocOverlay').classList.add('open');
+            document.getElementById('mobileToc').setAttribute('aria-hidden', 'false');
+        }
+
+        function closeMobileToc() {
+            document.getElementById('hamburger').classList.remove('open');
+            document.getElementById('mobileToc').classList.remove('open');
+            document.getElementById('mobileTocOverlay').classList.remove('open');
+            document.getElementById('mobileToc').setAttribute('aria-hidden', 'true');
+        }
+    })();
+    </script>
+
+</body>
+</html>
