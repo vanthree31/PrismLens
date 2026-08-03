@@ -15,6 +15,7 @@ Phase 1: SQLite + JSON 共存。写入 SQLite 的同时保留 JSON 写入。
 import hashlib
 import json
 import logging
+import re
 import sqlite3
 import threading
 from dataclasses import dataclass
@@ -229,12 +230,13 @@ INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_relations_active ON event_relations(expired_at) WHERE expired_at IS NULL;",
 ]
 
-# FTS5 — 全文搜索
+# FTS5 — 全文搜索（独立表，手动同步）
 DDL_FTS = """
 CREATE VIRTUAL TABLE IF NOT EXISTS events_fts USING fts5(
+    event_id UNINDEXED,
     display_title,
-    content='events',
-    content_rowid='rowid'
+    summary,
+    tokenize='unicode61'
 );
 """
 
@@ -269,6 +271,63 @@ def init_db() -> None:
             logger.info(f"Event DB 初始化完成: {db_path} (journal=WAL, foreign_keys=ON)")
         finally:
             conn.close()
+
+
+def rebuild_fts() -> int:
+    """重建 FTS5 全文索引（从 events 表全量同步）。
+
+    在 backfill 后或 FTS 数据不一致时调用。
+
+    Returns:
+        索引的事件数量
+    """
+    db_path = get_db_path()
+    if not db_path.exists():
+        init_db()
+
+    conn = sqlite3.connect(str(db_path))
+    try:
+        # 清空现有索引
+        conn.execute("DELETE FROM events_fts")
+
+        # 从 events 表 + 最新 revision 的 summary 重新填充
+        rows = conn.execute(
+            """
+            SELECT e.id, e.display_title,
+                   (SELECT summary FROM event_revisions
+                    WHERE event_id = e.id ORDER BY date DESC LIMIT 1) as latest_summary
+            FROM events e
+            WHERE e.current_status = 'active'
+            """
+        ).fetchall()
+
+        count = 0
+        for row in rows:
+            eid = row[0]
+            title = row[1] or ""
+            summary = row[2] or ""
+            conn.execute(
+                "INSERT INTO events_fts(event_id, display_title, summary) VALUES (?, ?, ?)",
+                (eid, title, summary),
+            )
+            count += 1
+
+        conn.commit()
+        logger.info(f"FTS 索引重建完成: {count} 个事件")
+        return count
+    finally:
+        conn.close()
+
+
+def _sync_event_fts(conn: sqlite3.Connection, event_id: str, title: str, summary: str = ""):
+    """同步单个事件到 FTS 索引（在 conn 事务内调用）。"""
+    # 删除旧索引
+    conn.execute("DELETE FROM events_fts WHERE event_id = ?", (event_id,))
+    # 插入新索引
+    conn.execute(
+        "INSERT INTO events_fts(event_id, display_title, summary) VALUES (?, ?, ?)",
+        (event_id, title, summary),
+    )
 
 
 # ═══════════════════════════════════════════════════
@@ -358,28 +417,56 @@ def make_event_id(identity_key: str) -> str:
 def _derive_identity_from_event(event) -> tuple[str, str]:
     """从 Event 对象推导 identity_key 和 event_id。
 
-    使用 Event 的 domains, actors, phase 字段推导 event_type 和 location。
-    如果 Event 没有 object 信息，使用 title 作为 fallback。
+    Phase 3: 使用 event_graph 的实体/动作提取器，生成更稳定的 identity_key。
+    标题中的实体代码（US, CN, IR...）比 domains 字段更稳定。
 
     Returns:
         (identity_key, event_id)
     """
-    # event_type: 从 domains 取第一个，fallback 到 phase
-    if event.domains:
-        event_type = event.domains[0]
+    title = event.title if hasattr(event, "title") else ""
+
+    # ── actors: 优先使用标题中提取的实体代码 ──
+    actors = []
+    try:
+        from src.event_graph import _extract_entities
+
+        entity_codes = _extract_entities(title)
+        if entity_codes:
+            actors = entity_codes
+    except Exception:
+        pass
+
+    # fallback: Event 自带的 actors
+    if not actors:
+        actors = event.actors if hasattr(event, "actors") and event.actors else []
+
+    # ── event_type: 从 phase 映射 ──
+    if hasattr(event, "phase") and event.phase:
+        event_type = event.phase.upper()
+    elif event.domains:
+        event_type = event.domains[0].upper().replace(" ", "_")
     else:
-        event_type = event.phase if hasattr(event, "phase") else "DIPLOMATIC"
+        event_type = "GEOPOLITICAL"
 
-    # actors
-    actors = event.actors if hasattr(event, "actors") and event.actors else []
-
-    # location: 从 domains 或 region 推导
+    # ── location: 从 domains 或实体推导 ──
     location = ""
     if hasattr(event, "domains") and len(event.domains) > 1:
-        location = event.domains[1]
+        location = event.domains[1].upper().replace(" ", "_")[:30]
 
-    # object_: 从 title 提取核心名词
-    object_ = event.title if hasattr(event, "title") else ""
+    # ── object_: 从标题提取动作代码 ──
+    object_ = ""
+    try:
+        from src.event_graph import _extract_actions
+
+        action_codes = _extract_actions(title)
+        if action_codes:
+            object_ = action_codes[0]  # 主要动作
+    except Exception:
+        pass
+
+    if not object_:
+        # fallback: 标题关键词
+        object_ = re.sub(r"[^\w]+", "_", title[:40]).strip("_").upper()
 
     identity_key = make_identity_key(event_type, actors, location, object_)
     event_id = make_event_id(identity_key)
@@ -541,6 +628,11 @@ class EventWriter:
             summary=event.summary if hasattr(event, "summary") else "",
             trend=event.trend if hasattr(event, "trend") else "stable",
         )
+
+        # 同步 FTS 索引
+        title = event.title if hasattr(event, "title") else ""
+        summary = event.summary if hasattr(event, "summary") else ""
+        _sync_event_fts(self.conn, event_id, title, summary)
 
         return event_id
 
@@ -1011,9 +1103,33 @@ class EventReader:
     # ── 搜索 ───────────────────────────────────────
 
     def search(self, query: str, limit: int = 50) -> list[dict]:
-        """文本搜索（LIKE over display_title + canonical_title + aliases）。"""
+        """全文搜索（FTS5 MATCH + LIKE fallback）。
+
+        FTS5 支持布尔查询和前缀匹配：
+        - "霍尔木兹" — 包含此词
+        - "霍尔木兹 OR 芯片" — 布尔 OR
+        - "军事*" — 前缀匹配
+        """
         conn = self._connect()
         try:
+            # Phase 2: FTS5 MATCH 优先
+            try:
+                # 转义 FTS5 特殊字符，构造安全查询
+                safe_query = query.replace('"', '""')
+                rows = conn.execute(
+                    """SELECT e.* FROM events e
+                       INNER JOIN events_fts f ON f.event_id = e.id
+                       WHERE events_fts MATCH ?
+                       ORDER BY rank
+                       LIMIT ?""",
+                    (safe_query, limit),
+                ).fetchall()
+                if rows:
+                    return self._to_list(rows)
+            except sqlite3.OperationalError:
+                pass  # FTS 查询失败（无匹配或语法错误）→ 回退 LIKE
+
+            # LIKE fallback（FTS 无结果时）
             pattern = f"%{query}%"
             rows = conn.execute(
                 """SELECT * FROM events
@@ -1176,6 +1292,9 @@ if __name__ == "__main__":
     parser.add_argument("--dry-run", action="store_true", help="仅统计，不写入")
     parser.add_argument("--init", action="store_true", help="仅初始化数据库")
     parser.add_argument("--stats", action="store_true", help="显示数据库统计")
+    parser.add_argument("--rebuild-fts", action="store_true", help="重建全文搜索索引")
+    parser.add_argument("--search", type=str, default=None, help="全文搜索事件")
+    parser.add_argument("--search-limit", type=int, default=20, help="搜索结果数量上限")
 
     args = parser.parse_args()
 
@@ -1189,6 +1308,9 @@ if __name__ == "__main__":
 
     elif args.backfill:
         result = backfill_from_json(days=args.days, dry_run=args.dry_run)
+        if not args.dry_run:
+            n = rebuild_fts()
+            print(f"FTS 索引重建: {n} 个事件")
         print(f"\n回填结果: {result}")
 
     elif args.stats:
@@ -1197,6 +1319,23 @@ if __name__ == "__main__":
         print(f"数据库: {get_db_path()}")
         for table, count in stats.items():
             print(f"  {table}: {count} 行")
+
+    elif args.rebuild_fts:
+        n = rebuild_fts()
+        print(f"FTS 索引重建完成: {n} 个事件")
+
+    elif args.search:
+        reader = EventReader()
+        results = reader.search(args.search, limit=args.search_limit)
+        print(f"\n搜索: \"{args.search}\" — {len(results)} 条结果\n")
+        for i, r in enumerate(results, 1):
+            print(
+                f"{i}. [{r.get('current_signal_level', '?')}] "
+                f"{r.get('display_title', '?')[:60]}"
+            )
+            print(f"   风险: {r.get('current_risk_score', 0)} | "
+                  f"区域: {r.get('region', '?')} | "
+                  f"阶段: {r.get('current_phase', '?')}")
 
     else:
         parser.print_help()
