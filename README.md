@@ -123,15 +123,15 @@ AI 不只是总结今天。
         ▼
   Structured Intelligence
         │
-   ┌────┼────┬──────────┐
-   ▼    ▼    ▼          ▼
- 日报  JSON  Email  Telegram
+   ┌────┼────┬──────────┬──────────┐
+   ▼    ▼    ▼          ▼          ▼
+ 日报  JSON  Email  Telegram  Event DB
+                              (SQLite)
 ```
 
 - **单阶段长上下文 Pipeline** — AI 一次性看到全部信息，不是分段拼接
 - **事件知识图谱** — 跨日追踪同一事件，自动识别升级/降温/合并
-- **分层 Prompt 系统** — 6 层模块化，只维护一套
-- **AI Memory** — Event Database 是 AI 的长期记忆，不是给人查询的界面
+- **Event Database (SQLite)** — 五表架构，AI 长期记忆。事件永不删除，证据防 404，分析完全版本化。（[设计文档 →](docs/EVENT_SCHEMA_V1.md)）
 - **风险传导引擎** — 9 条量化传导链，地缘事件 → 金融市场
 
 ---

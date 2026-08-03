@@ -56,7 +56,7 @@ A complete 10-chapter intelligence briefing, delivered automatically.
 ═══════════════════════════════════════
 ```
 
-**[View today's report →](output/)**
+**[📰 View latest sample briefing →](https://htmlpreview.github.io/?https://github.com/vanthree31/PrismLens/blob/main/samples/%E6%AF%8F%E6%97%A5%E7%AE%80%E6%8A%A5-2026-08-03.html)** *(2026-08-03)*
 
 ---
 
@@ -123,15 +123,15 @@ Not "US announced new China tariffs."
         ▼
   Structured Intelligence
         │
-   ┌────┼────┬──────────┐
-   ▼    ▼    ▼          ▼
- Report JSON Email  Telegram
+   ┌────┼────┬──────────┬──────────┐
+   ▼    ▼    ▼          ▼          ▼
+ Report JSON Email  Telegram  Event DB
+                              (SQLite)
 ```
 
 - **Single-pass 1M context pipeline** — AI sees everything at once, no fragmented stages
 - **Event Knowledge Graph** — Cross-day event tracking with automatic dedup and merging
-- **Layered Prompt System** — 6 modular layers, single version maintained
-- **AI Memory** — Event Database as long-term memory for the AI
+- **Event Database (SQLite)** — 5-table schema as AI long-term memory. Events never deleted, evidence snapshots prevent link rot, assessments fully versioned. ([Design doc →](docs/EVENT_SCHEMA_V1.md))
 - **Risk Propagation Engine** — 9 quantified transmission chains
 
 ---

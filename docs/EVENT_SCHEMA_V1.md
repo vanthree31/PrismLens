@@ -1,7 +1,7 @@
 # PrismLens Event Schema V1
 
-**状态**: REVIEWED — 已通过评审  
-**日期**: 2026-07-13  
+**状态**: REVIEWED + Phase 1 IMPLEMENTED (2026-08-03)  
+**日期**: 2026-07-13 (设计) / 2026-08-03 (Phase 1 落地)  
 **设计原则**: 五张核心表，Identity 与 Expression 彻底分离，Event 永不删除
 
 ---
@@ -498,16 +498,27 @@ ORDER BY e.current_risk_score DESC;
 
 ## 迁移路径（从 JSON → SQLite）
 
-### 第一阶段：共存
-- 保留 `data/events/events_*.json` 日报 JSON（不改现有流程）
-- 新增 SQLite 写入（写入两份，JSON 和 SQLite 同时存在）
-- 日报生成仍读 JSON
+### 第一阶段：共存 ✅ 已完成（2026-08-03）
 
-### 第二阶段：切换读
+- ✅ 保留 `data/events/events_*.json` 日报 JSON（不改现有流程）
+- ✅ 新增 SQLite 写入（写入两份，JSON 和 SQLite 同时存在）
+- ✅ 日报生成仍读 JSON
+
+实施: `src/event_database.py` (~840行) — 完整五表 + 19个索引 + FTS5 + EventWriter + EventReader + backfill CLI。`main.py` 在 `save_event_graph` 后同步写入 SQLite，失败仅 warning（零风险）。
+
+CLI 工具:
+```bash
+python -m src.event_database --init          # 初始化数据库
+python -m src.event_database --backfill      # 从 JSON 回填全部历史
+python -m src.event_database --backfill --days 30 --dry-run  # 预览最近30天
+python -m src.event_database --stats         # 查看各表行数
+```
+
+### 第二阶段：切换读（待实施）
 - 新模块（Timeline/Search）读 SQLite
 - 日报生成仍读 JSON（兼容）
 
-### 第三阶段：完全切换
+### 第三阶段：完全切换（待实施）
 - 日报生成改为读 SQLite
 - JSON 文件保留为备份（90天后清理）
 - `data/prismlens.db` 成为唯一数据源
@@ -535,3 +546,4 @@ ORDER BY e.current_risk_score DESC;
 |------|------|------|
 | V1 DRAFT | 2026-07-13 | 初始设计，五表结构 |
 | V1 REVIEWED | 2026-07-13 | 5 处关键修改：identity_key、Evidence 快照、Assessment 全版本化、Relation 版本化+过期、Event Alias；四条铁律 |
+| V1 IMPLEMENTED | 2026-08-03 | Phase 1 共存落地：`src/event_database.py` 五表 DDL + EventWriter/EventReader/backfill CLI；`main.py` 双写（JSON+SQLite）；20个测试。Phase 2/3 待实施。 |

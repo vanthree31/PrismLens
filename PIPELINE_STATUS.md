@@ -54,6 +54,14 @@ Pipeline 冻结后：
 - **max_tokens 禁止修改**
 - **新产品功能 → Python Product Layer 实现，不修改 Prompt**
 
+## Freeze-Era Changes Log
+
+| 日期 | 变更 | 类型 | 说明 |
+|------|------|------|------|
+| 2026-08-03 | Event DB Phase 1 | 数据层新增 ✅ | `src/event_database.py` 五表 SQLite；`main.py` 双写（JSON+SQLite），日报输出/Prompt/JSON 均未改动 |
+
+> 数据层新增属于 Development Priority 2，即使 Pipeline 冻结也允许实施。
+
 ## Daily Metrics
 
 自动写入 `data/runs.db`。查询：
