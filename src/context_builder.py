@@ -132,37 +132,62 @@ class ContextBuilder:
             )
         return self
 
-    def add_evolution(self) -> "ContextBuilder":
-        """添加活跃事件演化追踪"""
+    def add_evolution(self, max_events: int = 10) -> "ContextBuilder":
+        """添加活跃事件演化追踪（Phase 2: SQLite 优先，JSON 回退）"""
+        content = ""
         try:
-            from src.evolution_tracker import EvolutionTracker
+            # Phase 2: 从 SQLite Event DB 读取活跃事件
+            from src.event_database import EventReader
 
-            tracker = EvolutionTracker()
-            master = tracker._load_master() if hasattr(tracker, "_load_master") else {}
-            if master:
-                active = [
-                    v
-                    for v in master.values()
-                    if isinstance(v, dict) and v.get("current_risk", 0) > 0
-                ]
-                if active:
-                    lines = ["**活跃演化事件**:"]
-                    for evt in sorted(active, key=lambda x: x.get("current_risk", 0), reverse=True)[
-                        :10
-                    ]:
-                        title = evt.get("title", evt.get("event_id", ""))
-                        phase = evt.get("current_phase", "")
-                        risk = evt.get("current_risk", "")
-                        lines.append(f"- {title} (阶段:{phase}, 风险:{risk})")
-                    content = "\n".join(lines)
-                    est_tokens = len(content) // 3
-                    self.sections.append(
-                        ContextSection(
-                            "evolution", content, priority=6, estimated_tokens=est_tokens
-                        )
+            reader = EventReader()
+            active = reader.get_active_events(min_risk=0)
+            if active:
+                lines = ["**活跃演化事件** (Event DB):"]
+                for evt in active[:max_events]:
+                    title = evt.get("display_title", "")
+                    phase = evt.get("current_phase", "")
+                    risk = evt.get("current_risk_score", "")
+                    signal = evt.get("current_signal_level", "")
+                    region = evt.get("region", "")
+                    lines.append(
+                        f"- [{signal}] {title} "
+                        f"(阶段:{phase}, 风险:{risk}, 区域:{region})"
                     )
+                content = "\n".join(lines)
         except Exception as e:
-            logger.debug(f"演化追踪加载失败: {e}")
+            logger.debug(f"Event DB 演化数据读取失败，回退 JSON: {e}")
+
+        # JSON fallback
+        if not content:
+            try:
+                from src.evolution_tracker import EvolutionTracker
+
+                tracker = EvolutionTracker()
+                master = tracker._load_master() if hasattr(tracker, "_load_master") else {}
+                if master:
+                    active = [
+                        v
+                        for v in master.values()
+                        if isinstance(v, dict) and v.get("current_risk", 0) > 0
+                    ]
+                    if active:
+                        lines = ["**活跃演化事件** (JSON):"]
+                        for evt in sorted(
+                            active, key=lambda x: x.get("current_risk", 0), reverse=True
+                        )[:max_events]:
+                            title = evt.get("title", evt.get("event_id", ""))
+                            phase = evt.get("current_phase", "")
+                            risk = evt.get("current_risk", "")
+                            lines.append(f"- {title} (阶段:{phase}, 风险:{risk})")
+                        content = "\n".join(lines)
+            except Exception as e:
+                logger.debug(f"演化追踪 JSON fallback 也失败: {e}")
+
+        if content:
+            est_tokens = len(content) // 3
+            self.sections.append(
+                ContextSection("evolution", content, priority=6, estimated_tokens=est_tokens)
+            )
         return self
 
     def add_source_health(self, news_items: list[NewsItem]) -> "ContextBuilder":
@@ -185,27 +210,118 @@ class ContextBuilder:
         return self
 
     def add_yesterday_events(self) -> "ContextBuilder":
-        """添加昨日事件参考"""
+        """添加昨日事件参考（Phase 2: SQLite 优先，JSON 回退）"""
+        content = ""
         try:
             yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-            events_file = get_history_dir().parent / "events" / f"events_{yesterday}.json"
-            if events_file.exists():
-                data = json.loads(events_file.read_text(encoding="utf-8"))
-                events = data.get("events", [])
-                if events:
-                    titles = [e.get("title", "") for e in events[:20] if e.get("title")]
+
+            # Phase 2: 从 SQLite Event DB 读取昨日事件
+            from src.event_database import EventReader
+
+            reader = EventReader()
+            events = reader.get_events_by_date(yesterday, limit=30)
+            if events:
+                titles = [e.get("display_title", "") for e in events[:20] if e.get("display_title")]
+                if titles:
                     content = (
                         "昨日已提取事件（如当前事件在此列表中大量出现，"
-                        "则该聚类不是新兴信号）:\n" + "\n".join(f"- {t}" for t in titles)
+                        "则该聚类不是新兴信号 | Event DB）:\n"
+                        + "\n".join(f"- {t}" for t in titles)
                     )
-                    est_tokens = len(content) // 3
-                    self.sections.append(
-                        ContextSection(
-                            "yesterday_events", content, priority=5, estimated_tokens=est_tokens
+        except Exception as e:
+            logger.debug(f"Event DB 昨日事件读取失败，回退 JSON: {e}")
+
+        # JSON fallback
+        if not content:
+            try:
+                yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+                events_file = get_history_dir().parent / "events" / f"events_{yesterday}.json"
+                if events_file.exists():
+                    data = json.loads(events_file.read_text(encoding="utf-8"))
+                    events = data.get("events", [])
+                    if events:
+                        titles = [e.get("title", "") for e in events[:20] if e.get("title")]
+                        content = (
+                            "昨日已提取事件（如当前事件在此列表中大量出现，"
+                            "则该聚类不是新兴信号 | JSON）:\n"
+                            + "\n".join(f"- {t}" for t in titles)
                         )
+            except Exception:
+                pass
+
+        if content:
+            est_tokens = len(content) // 3
+            self.sections.append(
+                ContextSection(
+                    "yesterday_events", content, priority=5, estimated_tokens=est_tokens
+                )
+            )
+        return self
+
+    def add_event_timeline(self, days: int = 7, top_n: int = 5) -> "ContextBuilder":
+        """添加活跃事件的近期演化时间线（Phase 2: SQLite 专有功能）
+
+        从 event_revisions 表读取最近 N 天的阶段变化和风险趋势，
+        帮助 LLM 理解事件是升级中、降温中还是稳定。
+
+        Args:
+            days: 回溯天数
+            top_n: 取前 N 个最活跃事件
+        """
+        content = ""
+        try:
+            from src.event_database import EventReader
+
+            reader = EventReader()
+            active = reader.get_active_events(min_risk=20)
+
+            if active:
+                lines = [f"**事件演化时间线（最近{days}天）**:"]
+                for evt in active[:top_n]:
+                    eid = evt["id"]
+                    title = evt.get("display_title", eid)
+                    signal = evt.get("current_signal_level", "C")
+                    timeline = reader.get_timeline(eid, days=days)
+
+                    if not timeline:
+                        continue
+
+                    # 提取阶段变化和风险走势
+                    phases = [r.get("phase", "") for r in timeline]
+                    risks = [r.get("risk_score", 0) for r in timeline]
+                    transitions = [r.get("phase_transition") for r in timeline if r.get("phase_transition")]
+
+                    # 去重连续相同阶段
+                    unique_phases = []
+                    for p in phases:
+                        if not unique_phases or unique_phases[-1] != p:
+                            unique_phases.append(p)
+
+                    phase_path = " → ".join(unique_phases[:5])
+                    risk_trend = (
+                        "↑" if len(risks) >= 2 and risks[0] > risks[-1]
+                        else "↓" if len(risks) >= 2 and risks[0] < risks[-1]
+                        else "→"
                     )
-        except Exception:
-            pass
+
+                    lines.append(
+                        f"- [{signal}] {title}\n"
+                        f"  阶段: {phase_path}\n"
+                        f"  风险: {risks[0] if risks else '?'} {risk_trend} "
+                        f"(变动: {len(transitions)}次)"
+                    )
+
+                content = "\n".join(lines)
+        except Exception as e:
+            logger.debug(f"Event DB 时间线读取失败: {e}")
+
+        if content:
+            est_tokens = len(content) // 3
+            self.sections.append(
+                ContextSection(
+                    "event_timeline", content, priority=7, estimated_tokens=est_tokens
+                )
+            )
         return self
 
     def add_section(self, name: str, content: str, priority: int = 5) -> "ContextBuilder":

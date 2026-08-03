@@ -104,6 +104,7 @@ class NewsSummarizerV3:
         builder.add_market_data()
         builder.add_history(days=90)
         builder.add_evolution()
+        builder.add_event_timeline(days=7, top_n=5)  # Phase 2: SQLite 事件演化时间线
         builder.add_source_health(news_items)
         builder.add_yesterday_events()
         dynamic_context = builder.build()
