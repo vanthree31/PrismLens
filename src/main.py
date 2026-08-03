@@ -436,6 +436,21 @@ def run(
             logger.info("  → 更新事件图谱...")
             event_graph = build_event_graph_from_extraction(extracted, today)
             save_event_graph(event_graph)
+
+            # Phase 1: 同步写入 SQLite Event DB（JSON 仍为主数据源）
+            try:
+                from src.event_database import EventWriter
+
+                EventWriter().write_daily_events(
+                    event_graph.events,
+                    extracted,
+                    today,
+                    model_name=env.get("model_name", ""),
+                )
+                logger.info(f"  → Event DB 同步完成: {len(event_graph.events)} 个事件")
+            except Exception as e:
+                logger.warning(f"[step:event_db] SQLite 同步失败（JSON 流程不受影响）: {e}")
+
             state.mark_step("event_graph", "completed")
             metrics.data["output"]["events_count"] = len(event_graph.events)
         except Exception as e:
