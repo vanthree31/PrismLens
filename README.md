@@ -56,7 +56,7 @@ ChatGPT 是你去问它。PrismLens 是它每天来找你。
 ═══════════════════════════════════════
 ```
 
-**[📰 查看最新日报样例 →](https://htmlpreview.github.io/?https://github.com/vanthree31/PrismLens/blob/main/samples/%E6%AF%8F%E6%97%A5%E7%AE%80%E6%8A%A5-2026-08-03.html)** *(2026-08-03)*
+**[📰 查看最新日报样例 →](https://htmlpreview.github.io/?https://github.com/vanthree31/PrismLens/blob/main/samples/%E6%AF%8F%E6%97%A5%E7%AE%80%E6%8A%A5-2026-08-04.html)** *(2026-08-04)*
 
 ---
 
