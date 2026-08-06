@@ -488,16 +488,23 @@ def _transform_watch_cards(html: str, lang: str = "zh") -> str:
     """
     if lang == "en":
         watch_section_header = "48-Hour Key Watchpoints"
-        field_pattern = r"<strong>(Watch Item|Current Status|Escalation Trigger|De-escalation Trigger|Monitoring Method)</strong>\s*[:：]\s*"
+        field_pattern = r"<strong>(Watch Item|Current Status|Escalation Trigger|De-escalation Trigger|Monitoring Method)\s*[:：]?\s*</strong>\s*[:：]?\s*"
     else:
         watch_section_header = "未来48小时关键观察哨"
-        field_pattern = r"<strong>(观察项|当前状态|升级触发|缓和触发|监控方式)</strong>\s*[:：]\s*"
+        field_pattern = (
+            r"<strong>(观察项|当前状态|升级触发|缓和触发|监控方式)\s*[:：]?\s*</strong>\s*[:：]?\s*"
+        )
 
     def parse_watch_fields(p_content: str) -> dict:
         """从<p>内容中解析观察哨字段"""
         fields = {}
-        pattern = field_pattern
-        matches = list(re.finditer(pattern, p_content))
+        matches = list(re.finditer(field_pattern, p_content))
+
+        if not matches:
+            # 兼容无 <strong> 字段名的格式（如 08-03 样例）：
+            # <strong>观察项名称</strong>：当前状态：xxx；升级触发：yyy；...
+            fields = parse_plain_watch_fields(p_content)
+            return fields
 
         for i, match in enumerate(matches):
             field_name = match.group(1)
@@ -509,6 +516,48 @@ def _transform_watch_cards(html: str, lang: str = "zh") -> str:
             value = p_content[start:end].strip()
             value = re.sub(r"<[^>]+>", "", value).strip()
             fields[field_name] = value
+
+        return fields
+
+    def parse_plain_watch_fields(p_content: str) -> dict:
+        """解析无 <strong> 字段名的观察哨（08-03 格式）：
+        观察项名称为 strong 内容，其余字段以纯文本形式用"；"分隔。
+        示例：<strong>美伊谈判进展</strong>：当前状态：xxx；升级触发：yyy；...
+        """
+        field_names = (
+            ["Current Status", "Escalation Trigger", "De-escalation Trigger", "Monitoring Method"]
+            if lang == "en"
+            else ["当前状态", "升级触发", "缓和触发", "监控方式"]
+        )
+        clean = re.sub(r"<[^>]+>", "", p_content).strip()
+
+        # 定位第一个字段名，其前的文本作为观察项名称
+        title = clean
+        body = ""
+        for name in field_names:
+            m = re.search(rf"{re.escape(name)}\s*[：:]\s*", clean)
+            if m:
+                title = clean[: m.start()].strip().strip("：:")
+                body = clean[m.start() :]
+                break
+
+        # 标题若带"观察项："前缀则剥离（如 <strong>观察项：</strong> 格式）
+        if title:
+            title = re.sub(r"^(?:观察项|Watch Item)\s*[：:]\s*", "", title)
+        fields = {"观察项": title} if title else {}
+        # 按字段名切分剩余内容
+        splitter = r"(?=(?:" + "|".join(re.escape(n) for n in field_names) + r")\s*[：:])"
+        for part in re.split(splitter, body):
+            part = part.strip()
+            if not part:
+                continue
+            m = re.match(
+                r"(" + "|".join(re.escape(n) for n in field_names) + r")\s*[：:]\s*(.*)",
+                part,
+                re.DOTALL,
+            )
+            if m:
+                fields[m.group(1)] = m.group(2).strip().strip("；;")
 
         return fields
 
@@ -543,48 +592,61 @@ def _transform_watch_cards(html: str, lang: str = "zh") -> str:
         card += "</div>"
         return card
 
-    # 查找观察哨 section
-    section_pattern = (
-        rf"(<h3[^>]*>{watch_section_header}</h3>)(.*?)(?=<h3|<h2|<hr class=\"section-sep\">|$)"
-    )
+    # 查找观察哨 section（兼容 <h3> 和 <h4>，标题允许带括号后缀如"（3-5个）"）
+    section_pattern = rf"(<h[34][^>]*>{watch_section_header}[^<]*</h[34]>)(.*?)(?=<h[234]|<hr class=\"section-sep\">|$)"
 
     def replace_watch_section(match):
-        h3_tag = match.group(1)
+        heading_tag = match.group(1)
         content = match.group(2)
 
-        # 按 <p> 标签提取所有观察项字段
-        # 策略：找到所有 <p>，按"观察项/Watch Item"字段分组
-        paragraphs = re.findall(r"<p>(.*?)</p>", content, re.DOTALL)
+        # 观察项起点：<li><strong>名称</strong>（无 <li> 时兼容 <p><strong>名称</strong>）。
+        # 每字段一行的布局（如 <strong>观察项：</strong>）优先按固定词"观察项"切块；
+        # 每观察哨一行的布局（观察项为具体名称）按"非字段名 strong"切块。
+        if lang == "en":
+            field_names = [
+                "Current Status",
+                "Escalation Trigger",
+                "De-escalation Trigger",
+                "Monitoring Method",
+            ]
+            fixed_marker = "Watch Item"
+        else:
+            field_names = ["当前状态", "升级触发", "缓和触发", "监控方式"]
+            fixed_marker = "观察项"
+        exclude = "|".join(re.escape(n) for n in field_names)
+        item_prefix = r"<li>\s*" if "<li>" in content else r"<p>\s*"
 
-        # 找到每个观察项的起始位置
-        watch_items = []
-        current_item = None
+        fixed_pattern = re.compile(
+            rf"{item_prefix}<strong>({re.escape(fixed_marker)})\s*[:：]?\s*</strong>", re.DOTALL
+        )
+        if fixed_pattern.search(content):
+            item_pattern = fixed_pattern
+        else:
+            item_pattern = re.compile(
+                rf"{item_prefix}<strong>((?:(?!{exclude})[^<])*?)</strong>", re.DOTALL
+            )
 
-        for p_text in paragraphs:
-            clean = re.sub(r"<[^>]+>", "", p_text).strip()
-            if "观察项" in clean or "Watch Item" in clean:
-                if current_item:
-                    watch_items.append(current_item)
-                current_item = [p_text]
-            elif current_item is not None:
-                current_item.append(p_text)
-
-        if current_item:
-            watch_items.append(current_item)
-
-        if not watch_items:
-            return h3_tag + content
+        # 定位所有观察项起点（文本位置，而非扁平提取，嵌套列表不会错位）
+        starts = [(m.start(), m.group(1).strip()) for m in item_pattern.finditer(content)]
+        if not starts:
+            return heading_tag + content
 
         # 构建卡片网格
         cards_html = '<div class="watch-grid">'
-        for i, item_paragraphs in enumerate(watch_items):
-            combined = " ".join(item_paragraphs)
-            fields = parse_watch_fields(combined)
-            if fields:
-                cards_html += build_watch_card(fields, i) + ""
+        n_cards = 0
+        for i, (pos, _title) in enumerate(starts):
+            end = starts[i + 1][0] if i + 1 < len(starts) else len(content)
+            block = content[pos:end]
+            fields = parse_watch_fields(block)  # 内部含无 strong 字段名的 plain 解析
+            if not fields:
+                continue
+            cards_html += build_watch_card(fields, i)
+            n_cards += 1
         cards_html += "</div>"
 
-        return h3_tag + cards_html
+        if n_cards == 0:
+            return heading_tag + content
+        return heading_tag + cards_html
 
     pattern = section_pattern
     html = re.sub(pattern, replace_watch_section, html, flags=re.DOTALL)
