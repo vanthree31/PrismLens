@@ -1,0 +1,45 @@
+# 新闻源配置示例（开源版）
+# 完整 101 源配置属于商业授权部分，本文件提供最小可运行示例。
+# 使用方式：复制为 sources.yaml 并按需补充源。
+
+fetch_strategy:
+  tier_1_direct_rss:
+    priority: 10
+    description: 核心源：直接 RSS feed，最高优先级
+    timeout: 20
+    max_retries: 3
+  tier_2_google_news:
+    priority: 6
+    description: 补充源：Google News RSS 代理，中等优先级
+    timeout: 15
+    max_retries: 2
+  tier_3_scraping:
+    priority: 3
+    description: 低优先级：网页爬虫，最不稳定
+    timeout: 10
+    max_retries: 1
+health_thresholds:
+  min_success_rate: 0.3
+  cooldown_hours: 24
+  max_consecutive_fails: 5
+sources:
+- name: CNN
+  url: http://rss.cnn.com/rss/edition_world.rss
+  type: rss
+  region: 北美
+  media_type: mainstream_media
+  narrative_alignment: western_liberal
+  credibility: 7
+  signal_weight: 6
+  bias_score: 5
+  weight: 8
+- name: Al Jazeera
+  url: https://www.aljazeera.com/xml/rss/all.xml
+  type: rss
+  region: 中东
+  media_type: mainstream_media
+  narrative_alignment: gulf_monarchy
+  credibility: 7
+  signal_weight: 6
+  bias_score: 5
+  weight: 7

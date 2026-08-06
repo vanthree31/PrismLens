@@ -1,16 +1,24 @@
-# PrismLens
-
-<p align="right">
-  <a href="README_EN.md">English</a> | <b>中文</b>
+<p align="center">
+  <h1 align="center">🔭 PrismLens</h1>
+  <p align="center"><strong>每天早晨，五分钟理解世界。</strong></p>
+  <p align="center">
+    <a href="README_EN.md">English</a> | <b>中文</b>
+  </p>
+  <p align="center">
+    <img src="https://github.com/vanthree31/PrismLens/actions/workflows/ci.yml/badge.svg" alt="CI">
+    <img src="https://img.shields.io/github/license/vanthree31/PrismLens" alt="License">
+    <img src="https://img.shields.io/badge/AI-1M%20Context-blue" alt="1M Context">
+  </p>
 </p>
 
-> **每天早晨，五分钟理解世界。**
+> PrismLens 每天自动抓取 **100+ 全球新闻源**，用 AI 生成一份专业的国际战略情报日报。
+> 不是新闻摘要，是情报分析：**多方立场对比 · 风险传导链 · 90 天事件记忆**。
 
-PrismLens 每天自动抓取 100+ 全球新闻源，用 AI 生成一份专业的国际战略情报日报，推送到你的邮箱。
+<img src="screenshots/README-01-hero.png" alt="日报首屏" width="100%">
 
 ---
 
-## 为什么不是 ChatGPT？
+## 为什么是 PrismLens
 
 | | ChatGPT | RSS 阅读器 | PrismLens |
 |---|:---:|:---:|:---:|
@@ -21,60 +29,37 @@ PrismLens 每天自动抓取 100+ 全球新闻源，用 AI 生成一份专业的
 | **风险传导** | ✗ 需要自己分析 | ✗ | ✓ 自动计算金融影响链 |
 | **历史趋势** | ✗ | ✗ | ✓ 事件从 Day 1 到现在的完整演化 |
 
-ChatGPT 是你去问它。PrismLens 是它每天来找你。
+ChatGPT 是你去问它。**PrismLens 是它每天来找你。**
 
 ---
 
-## 每天收到什么
+## 日报长什么样
 
-一份完整的 10 章情报日报，自动推送到邮箱。
+一份 10 章完整情报日报，核心部分长这样：
 
-```
-═══════════════════════════════════════
-  今日核心判断
-  30 秒读懂全球最重要的变化
-───────────────────────────────────
-  核心风险矩阵
-  概率 × 影响 × 传导链
-───────────────────────────────────
-  多阵营叙事对比
-  CNN、BBC、RT、新华社……
-  同一事件，不同立场如何报道
-───────────────────────────────────
-  金融风险层
-  市场数据 + 美股/港股/A股 + 大宗商品
-───────────────────────────────────
-  科技竞争
-  半导体、AI 芯片、出口管制
-───────────────────────────────────
-  事件聚类与长期趋势
-  30-90 天战略展望（三情景概率分布）
-───────────────────────────────────
-  投资研判 + 资源安全
-───────────────────────────────────
-  原始新闻链接（全部可溯源）
-═══════════════════════════════════════
-```
+**未来 48 小时关键观察哨** —— 每个风险点一张卡片：当前状态、升级/缓和触发阈值、监控方式
 
-**[📰 查看最新日报样例 →](https://htmlpreview.github.io/?https://github.com/vanthree31/PrismLens/blob/main/samples/%E6%AF%8F%E6%97%A5%E7%AE%80%E6%8A%A5-2026-08-04.html)** *(2026-08-04)*
+<img src="screenshots/README-02-watch.png" alt="观察哨卡片" width="100%">
+
+**核心风险矩阵** —— 概率 × 影响 × 量化传导链
+
+<img src="screenshots/README-03-risk.png" alt="风险矩阵" width="100%">
+
+**[📰 查看完整日报样例 →](https://htmlpreview.github.io/?https://github.com/vanthree31/PrismLens/blob/main/samples/%E6%AF%8F%E6%97%A5%E7%AE%80%E6%8A%A5-2026-08-04.html)** *(2026-08-04)*
 
 ---
 
-## 为什么和别人不一样
+## 核心能力
 
 ### 多棱视角
 
-同一事件，五方报道。
-
-CNN 怎么写？RT 怎么写？新华社怎么写？半岛电视台怎么写？
+同一事件，五方报道。CNN 怎么写？RT 怎么写？新华社怎么写？半岛电视台怎么写？
 
 不只告诉你"发生了什么"，还告诉你"各方怎么看"。
 
 ### 事件记忆
 
-AI 不只是总结今天。
-
-它知道昨天发生了什么，上周发生了什么，90 天趋势是什么。
+AI 不只是总结今天。它知道昨天发生了什么，上周发生了什么，90 天趋势是什么。
 
 今天的美伊冲突不是"一条新闻"——它是事件的 Day 47，AI 记得从 Day 1 到今天的每一步变化。
 
@@ -83,28 +68,16 @@ AI 不只是总结今天。
 不告诉你"油价涨了"。告诉你：
 
 ```
-中东冲突升级
-    │
-    ▼
-霍尔木兹海峡航运中断
-    │
-    ▼
-全球油价 ↑ → 通胀预期 ↑ → 美债收益率 ↑
-    │
-    ▼
-科技股估值承压 → 纳斯达克 ↓
-    │
-    ▼
-资金流向避险资产 → 黄金 ↑
+中东冲突升级 → 霍尔木兹海峡航运中断 → 油价↑ → 通胀↑ → 美债收益率↑ → 科技股估值承压 → 黄金↑
 ```
 
 这不是新闻摘要。这是情报分析。
 
-### 不是解释发生了什么，而是解释为什么重要
+### 为什么重要
 
 不写"今天美国宣布对华新关税"。
 
-写"这是过去 90 天内的第 4 轮升级，覆盖范围从前 3 轮的芯片扩大到 AI 基础设施。可能影响：英伟达 Q3 中国区收入预估下调 15-20%，韩国 HBM 供应链间接承压。"
+写"这是过去 90 天内的第 4 轮升级，覆盖范围从前 3 轮的芯片扩大到 AI 基础设施。可能影响：英伟达 Q3 中国区收入预估下调 15-20%……"
 
 ---
 
@@ -114,27 +87,30 @@ AI 不只是总结今天。
 100+ RSS 源（并行抓取）
         │
         ▼
-  Context Builder
-  新闻 + 昨日事件 + 市场数据 + 90天趋势
+  Context Builder（新闻 + 昨日事件 + 市场数据 + 90天趋势）
         │
         ▼
   1M Context LLM（单次推理）
         │
         ▼
-  Structured Intelligence
+  日报（HTML）＋ JSON 结构化输出
         │
    ┌────┼────┬──────────┬──────────┐
    ▼    ▼    ▼          ▼          ▼
  日报  JSON  Email  Telegram  Event DB
-                              (SQLite)
+                              (SQLite 五表)
 ```
 
 - **单阶段长上下文 Pipeline** — AI 一次性看到全部信息，不是分段拼接
 - **事件知识图谱** — 跨日追踪同一事件，自动识别升级/降温/合并
-- **Event Database (SQLite)** — 五表架构，AI 长期记忆。事件永不删除，证据防 404，分析完全版本化。（[设计文档 →](docs/EVENT_SCHEMA_V1.md)）
+- **Event Database (SQLite)** — 五表架构，AI 长期记忆，事件永不删除，分析完全版本化
 - **风险传导引擎** — 9 条量化传导链，地缘事件 → 金融市场
 
 ---
+
+## 开源说明
+
+⚠️ **重要**：本仓库是 PrismLens 核心引擎的开源展示。完整 101 新闻源配置、评分算法与 Pro 能力（完整 10 章日报、阵营对比、90 天记忆、S/A 级预警推送）属于**商业授权部分**，不在仓库中。
 
 ## 快速开始
 
@@ -142,11 +118,12 @@ AI 不只是总结今天。
 git clone https://github.com/vanthree31/PrismLens.git
 cd PrismLens
 pip install -r requirements.txt
-cp .env.example .env   # 填写 DeepSeek API Key
-python run.py           # 生成今日日报
+cp .env.example .env   # 填写 DeepSeek API Key（或任意 OpenAI 兼容 API）
 ```
 
-**环境要求：** Python 3.10+ · DeepSeek API Key（或任意 OpenAI 兼容 API）
+> 开源版需自行提供新闻源配置（`config/sources.yaml`，参考 `sources.yaml.example`）。完整源配置请联系授权：vanthree31@gmail.com
+
+**环境要求：** Python 3.10+ · DeepSeek API Key
 
 ---
 
