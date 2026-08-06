@@ -342,6 +342,21 @@ def run(
         logger.info(f"HTML 报告已生成: {report_path}")
         state.mark_step("html", "completed")
 
+        # 产物结构断言：检测"设计的功能是否真的出现在产物里"（静默失效 → 显式失败）
+        try:
+            from src.html_validator import validate_report_structure
+
+            v = validate_report_structure(report_path.read_text(encoding="utf-8"), lang=lang)
+            if not v["passed"]:
+                logger.warning(f"HTML结构验证: {v['summary']}")
+                for issue in v["issues"]:
+                    if not issue["ok"]:
+                        logger.warning(f"  [结构] {issue['check']}: {issue['detail']}")
+            else:
+                logger.info(f"HTML结构验证: {v['summary']}")
+        except Exception as e:
+            logger.warning(f"HTML结构验证异常: {e}")
+
         # 立即打开浏览器（不等待后续步骤）
         if auto_open:
             open_report(report_path)
