@@ -1327,15 +1327,14 @@ if __name__ == "__main__":
     elif args.search:
         reader = EventReader()
         results = reader.search(args.search, limit=args.search_limit)
-        print(f"\n搜索: \"{args.search}\" — {len(results)} 条结果\n")
+        print(f'\n搜索: "{args.search}" — {len(results)} 条结果\n')
         for i, r in enumerate(results, 1):
+            print(f"{i}. [{r.get('current_signal_level', '?')}] {r.get('display_title', '?')[:60]}")
             print(
-                f"{i}. [{r.get('current_signal_level', '?')}] "
-                f"{r.get('display_title', '?')[:60]}"
+                f"   风险: {r.get('current_risk_score', 0)} | "
+                f"区域: {r.get('region', '?')} | "
+                f"阶段: {r.get('current_phase', '?')}"
             )
-            print(f"   风险: {r.get('current_risk_score', 0)} | "
-                  f"区域: {r.get('region', '?')} | "
-                  f"阶段: {r.get('current_phase', '?')}")
 
     else:
         parser.print_help()

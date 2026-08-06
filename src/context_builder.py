@@ -149,10 +149,7 @@ class ContextBuilder:
                     risk = evt.get("current_risk_score", "")
                     signal = evt.get("current_signal_level", "")
                     region = evt.get("region", "")
-                    lines.append(
-                        f"- [{signal}] {title} "
-                        f"(阶段:{phase}, 风险:{risk}, 区域:{region})"
-                    )
+                    lines.append(f"- [{signal}] {title} (阶段:{phase}, 风险:{risk}, 区域:{region})")
                 content = "\n".join(lines)
         except Exception as e:
             logger.debug(f"Event DB 演化数据读取失败，回退 JSON: {e}")
@@ -225,8 +222,7 @@ class ContextBuilder:
                 if titles:
                     content = (
                         "昨日已提取事件（如当前事件在此列表中大量出现，"
-                        "则该聚类不是新兴信号 | Event DB）:\n"
-                        + "\n".join(f"- {t}" for t in titles)
+                        "则该聚类不是新兴信号 | Event DB）:\n" + "\n".join(f"- {t}" for t in titles)
                     )
         except Exception as e:
             logger.debug(f"Event DB 昨日事件读取失败，回退 JSON: {e}")
@@ -243,8 +239,7 @@ class ContextBuilder:
                         titles = [e.get("title", "") for e in events[:20] if e.get("title")]
                         content = (
                             "昨日已提取事件（如当前事件在此列表中大量出现，"
-                            "则该聚类不是新兴信号 | JSON）:\n"
-                            + "\n".join(f"- {t}" for t in titles)
+                            "则该聚类不是新兴信号 | JSON）:\n" + "\n".join(f"- {t}" for t in titles)
                         )
             except Exception:
                 pass
@@ -252,9 +247,7 @@ class ContextBuilder:
         if content:
             est_tokens = len(content) // 3
             self.sections.append(
-                ContextSection(
-                    "yesterday_events", content, priority=5, estimated_tokens=est_tokens
-                )
+                ContextSection("yesterday_events", content, priority=5, estimated_tokens=est_tokens)
             )
         return self
 
@@ -289,7 +282,9 @@ class ContextBuilder:
                     # 提取阶段变化和风险走势
                     phases = [r.get("phase", "") for r in timeline]
                     risks = [r.get("risk_score", 0) for r in timeline]
-                    transitions = [r.get("phase_transition") for r in timeline if r.get("phase_transition")]
+                    transitions = [
+                        r.get("phase_transition") for r in timeline if r.get("phase_transition")
+                    ]
 
                     # 去重连续相同阶段
                     unique_phases = []
@@ -299,8 +294,10 @@ class ContextBuilder:
 
                     phase_path = " → ".join(unique_phases[:5])
                     risk_trend = (
-                        "↑" if len(risks) >= 2 and risks[0] > risks[-1]
-                        else "↓" if len(risks) >= 2 and risks[0] < risks[-1]
+                        "↑"
+                        if len(risks) >= 2 and risks[0] > risks[-1]
+                        else "↓"
+                        if len(risks) >= 2 and risks[0] < risks[-1]
                         else "→"
                     )
 
@@ -318,9 +315,7 @@ class ContextBuilder:
         if content:
             est_tokens = len(content) // 3
             self.sections.append(
-                ContextSection(
-                    "event_timeline", content, priority=7, estimated_tokens=est_tokens
-                )
+                ContextSection("event_timeline", content, priority=7, estimated_tokens=est_tokens)
             )
         return self
 
