@@ -8,3 +8,4 @@ jinja2>=3.1
 tenacity>=8.2
 lxml>=5.0
 yfinance>=0.2.31
+akshare>=1.18.0
